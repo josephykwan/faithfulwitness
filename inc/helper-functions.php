@@ -243,8 +243,16 @@ function fw_render_resource_card( $post ) {
             </h3>
             <p class="card__excerpt"><?php echo esc_html( wp_trim_words( get_the_excerpt( $post ), 20, '…' ) ); ?></p>
             <div class="card__footer">
+                <?php
+                $btn_label = get_post_meta( $post->ID, 'fw_resource_button_label', true );
+                if ( ! $btn_label ) {
+                    $btn_label = $file_url
+                        ? __( 'Download', 'faithfulwitness' )
+                        : ( $external ? __( 'Read Article', 'faithfulwitness' ) : __( 'View', 'faithfulwitness' ) );
+                }
+                ?>
                 <a class="btn btn--sm btn--outline" href="<?php echo esc_url( $permalink ); ?>"<?php echo $external ? ' target="_blank" rel="noopener noreferrer"' : ''; ?>>
-                    <?php echo $file_url ? esc_html__( 'Download', 'faithfulwitness' ) : ( $external ? esc_html__( 'Read Article', 'faithfulwitness' ) : esc_html__( 'View', 'faithfulwitness' ) ); ?>
+                    <?php echo esc_html( $btn_label ); ?>
                     <?php if ( $external ) : ?><span aria-hidden="true">↗</span><?php endif; ?>
                 </a>
             </div>

@@ -78,6 +78,8 @@ require_once get_template_directory() . '/inc/enqueue.php';
 require_once get_template_directory() . '/inc/helper-functions.php';
 require_once get_template_directory() . '/inc/shortcodes.php';
 require_once get_template_directory() . '/inc/page-setup.php';
+require_once get_template_directory() . '/inc/acf-fields.php';
+require_once get_template_directory() . '/inc/admin-menu.php';
 
 // ============================================================
 // CONTENT WIDTH
@@ -143,14 +145,13 @@ add_action( 'init', 'fw_register_rest_meta' );
 function fw_register_page_templates( $templates ) {
     $templates['page-templates/template-map.php']                = __( 'Organizing Map',       'faithfulwitness' );
     $templates['page-templates/template-resources.php']          = __( 'Resource Library',     'faithfulwitness' );
-    $templates['page-templates/template-events.php']             = __( 'Events Page',           'faithfulwitness' );
     $templates['page-templates/template-take-action.php']        = __( 'Take Action',           'faithfulwitness' );
     $templates['page-templates/template-know-your-rights.php']   = __( 'Know Your Rights',      'faithfulwitness' );
     $templates['page-templates/template-network.php']            = __( 'Find Your Network',     'faithfulwitness' );
     $templates['page-templates/template-stories.php']            = __( 'Stories',               'faithfulwitness' );
     $templates['page-templates/template-spiritual-formation.php']= __( 'Spiritual Formation',   'faithfulwitness' );
     $templates['page-templates/template-news.php']               = __( 'News & Media',           'faithfulwitness' );
-    $templates['page-templates/template-events.php']             = __( 'Events Calendar',        'faithfulwitness' );
+    $templates['page-templates/template-events.php']             = __( 'Events Calendar',        'faithfulwitness' ); // replaces old "Events Page" registration
     return $templates;
 }
 add_filter( 'theme_page_templates', 'fw_register_page_templates' );

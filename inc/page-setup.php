@@ -94,11 +94,15 @@ function fw_create_missing_pages() {
         update_post_meta( $page_id, '_wp_page_template', $data['template'] );
     }
 
+    fw_seed_story_categories();
     fw_seed_placeholder_resources();
     fw_seed_placeholder_partners();
     fw_seed_placeholder_story();
     fw_seed_placeholder_media_hits();
     fw_seed_placeholder_events();
+    fw_seed_kyr_initiative();
+    fw_seed_example_resource();
+    fw_seed_admin_guide_pages();
 }
 add_action( 'admin_init', 'fw_create_missing_pages' );
 
@@ -424,6 +428,287 @@ function fw_seed_placeholder_events() {
         update_post_meta( $post_id, 'fw_event_scope',             'national' );
         wp_set_post_terms( $post_id, [ $e['category'] ], 'fw_event_category' );
     }
+}
+
+// ============================================================
+// SEED STORY TYPE CATEGORIES
+// ============================================================
+function fw_seed_story_categories() {
+    $cats = [
+        'church-story'       => __( 'Church Story', 'faithfulwitness' ),
+        'immigrant-voice'    => __( 'Immigrant Voice', 'faithfulwitness' ),
+        'pastor-reflection'  => __( 'Pastor Reflection', 'faithfulwitness' ),
+        'policy-advocacy'    => __( 'Policy & Advocacy', 'faithfulwitness' ),
+    ];
+    foreach ( $cats as $slug => $name ) {
+        if ( ! term_exists( $slug, 'category' ) ) {
+            wp_insert_term( $name, 'category', [ 'slug' => $slug ] );
+        }
+    }
+}
+
+// ============================================================
+// SEED KNOW YOUR RIGHTS INITIATIVE
+// ============================================================
+function fw_seed_kyr_initiative() {
+    $existing = get_page_by_path( 'know-your-rights-initiative', OBJECT, 'fw_initiative' );
+    if ( $existing ) return;
+
+    $post_id = wp_insert_post( [
+        'post_title'   => __( 'Know Your Rights', 'faithfulwitness' ),
+        'post_name'    => 'know-your-rights-initiative',
+        'post_excerpt' => __( 'Equipping faith communities to understand and share legal rights with immigrant neighbors through Know Your Rights trainings, court accompaniment, and direct legal education.', 'faithfulwitness' ),
+        'post_content' => '<p>' . __( 'This initiative trains churches and congregations to host Know Your Rights workshops, provide court accompaniment, and serve as informed community advocates for immigrant families navigating the legal system.', 'faithfulwitness' ) . '</p>',
+        'post_status'  => 'publish',
+        'post_type'    => 'fw_initiative',
+        'post_author'  => 1,
+    ] );
+
+    if ( ! is_wp_error( $post_id ) ) {
+        update_post_meta( $post_id, 'fw_initiative_status',    'active' );
+        update_post_meta( $post_id, 'fw_initiative_cta_label', __( 'Get Trained', 'faithfulwitness' ) );
+        update_post_meta( $post_id, 'fw_initiative_cta_url',   home_url( '/events' ) );
+    }
+}
+
+// ============================================================
+// SEED EXAMPLE FULLY-BUILT RESOURCE
+// ============================================================
+function fw_seed_example_resource() {
+    $existing = get_page_by_path( 'know-your-rights-congregation-guide', OBJECT, 'fw_resource' );
+    if ( $existing ) return;
+
+    // Find the KYR initiative ID if it exists.
+    $kyr = get_page_by_path( 'know-your-rights-initiative', OBJECT, 'fw_initiative' );
+    $kyr_id = $kyr ? $kyr->ID : 0;
+
+    $post_id = wp_insert_post( [
+        'post_title'   => __( 'Know Your Rights: Congregation Training Guide', 'faithfulwitness' ),
+        'post_name'    => 'know-your-rights-congregation-guide',
+        'post_excerpt' => __( 'A complete facilitator guide for hosting a Know Your Rights workshop in your congregation. Includes agenda, talking points, handouts, and follow-up resources.', 'faithfulwitness' ),
+        'post_content' => '<p>' . __( 'This guide walks church leaders through hosting a two-hour Know Your Rights training for congregation members and their immigrant neighbors. Includes a step-by-step facilitation guide, printable handouts, and local resource referral template.', 'faithfulwitness' ) . '</p><p>' . __( '<strong>What you\'ll find inside:</strong></p><ul><li>Opening prayer and framing (15 min)</li><li>What are your legal rights? (30 min)</li><li>ICE encounters: what to do (20 min)</li><li>Court accompaniment overview (15 min)</li><li>Community Q&A (30 min)</li><li>Closing and next steps (10 min)</li></ul>', 'faithfulwitness' ) . '</p>',
+        'post_status'  => 'publish',
+        'post_type'    => 'fw_resource',
+        'post_author'  => 1,
+    ] );
+
+    if ( is_wp_error( $post_id ) ) return;
+
+    // Assign taxonomies — ensure terms exist first.
+    if ( ! term_exists( 'pdf-guide', 'fw_resource_type' ) ) {
+        wp_insert_term( __( 'PDF Guide', 'faithfulwitness' ), 'fw_resource_type', [ 'slug' => 'pdf-guide' ] );
+    }
+    if ( ! term_exists( 'know-your-rights', 'fw_resource_issue_area' ) ) {
+        wp_insert_term( __( 'Know Your Rights', 'faithfulwitness' ), 'fw_resource_issue_area', [ 'slug' => 'know-your-rights' ] );
+    }
+    if ( ! term_exists( 'congregations', 'fw_resource_audience' ) ) {
+        wp_insert_term( __( 'Congregations', 'faithfulwitness' ), 'fw_resource_audience', [ 'slug' => 'congregations' ] );
+    }
+
+    wp_set_post_terms( $post_id, [ 'pdf-guide' ],       'fw_resource_type' );
+    wp_set_post_terms( $post_id, [ 'know-your-rights' ], 'fw_resource_issue_area' );
+    wp_set_post_terms( $post_id, [ 'congregations' ],    'fw_resource_audience' );
+
+    update_post_meta( $post_id, 'fw_resource_featured',     '1' );
+    update_post_meta( $post_id, 'fw_resource_button_label', __( 'Download Guide', 'faithfulwitness' ) );
+
+    if ( $kyr_id ) {
+        update_post_meta( $post_id, 'fw_related_initiative_id', $kyr_id );
+    }
+}
+
+// ============================================================
+// SEED ADMIN GUIDE PAGES (private)
+// ============================================================
+function fw_seed_admin_guide_pages() {
+    // Only create if none exist.
+    $existing = get_page_by_path( 'admin-guide-content-management', OBJECT, 'page' );
+    if ( $existing ) return;
+
+    $guide_pages = [
+        [
+            'title'   => __( 'Admin Guide: Content Management', 'faithfulwitness' ),
+            'slug'    => 'admin-guide-content-management',
+            'content' => fw_admin_guide_index_content(),
+        ],
+        [
+            'title'   => __( 'Admin Guide: Adding Resources', 'faithfulwitness' ),
+            'slug'    => 'admin-guide-adding-resources',
+            'content' => fw_admin_guide_resources_content(),
+        ],
+        [
+            'title'   => __( 'Admin Guide: Adding Events', 'faithfulwitness' ),
+            'slug'    => 'admin-guide-adding-events',
+            'content' => fw_admin_guide_events_content(),
+        ],
+        [
+            'title'   => __( 'Admin Guide: Adding Stories', 'faithfulwitness' ),
+            'slug'    => 'admin-guide-adding-stories',
+            'content' => fw_admin_guide_stories_content(),
+        ],
+        [
+            'title'   => __( 'Admin Guide: Network Partners & Map', 'faithfulwitness' ),
+            'slug'    => 'admin-guide-network-partners',
+            'content' => fw_admin_guide_partners_content(),
+        ],
+    ];
+
+    $index_id = 0;
+    foreach ( $guide_pages as $i => $guide ) {
+        $post_id = wp_insert_post( [
+            'post_title'   => $guide['title'],
+            'post_name'    => $guide['slug'],
+            'post_content' => $guide['content'],
+            'post_status'  => 'private',
+            'post_type'    => 'page',
+            'post_author'  => 1,
+        ] );
+        if ( ! is_wp_error( $post_id ) && $i === 0 ) {
+            $index_id = $post_id;
+        }
+        // Set child guides under the index page.
+        if ( ! is_wp_error( $post_id ) && $i > 0 && $index_id ) {
+            wp_update_post( [ 'ID' => $post_id, 'post_parent' => $index_id ] );
+        }
+    }
+}
+
+/** Content for admin guide index page. */
+function fw_admin_guide_index_content() {
+    return '<h2>Welcome to the Faithful Witness Content Dashboard</h2>
+<p>This guide explains how to add and manage all content on the Faithful Witness website. You do <strong>not</strong> need to edit any theme files to manage content — everything is handled through these admin forms.</p>
+<h3>Quick Links</h3>
+<ul>
+<li><a href="' . esc_url( home_url( '/admin-guide-adding-resources' ) ) . '">Adding Resources to the Resource Library</a></li>
+<li><a href="' . esc_url( home_url( '/admin-guide-adding-events' ) ) . '">Adding Events to the Events Calendar</a></li>
+<li><a href="' . esc_url( home_url( '/admin-guide-adding-stories' ) ) . '">Adding Stories</a></li>
+<li><a href="' . esc_url( home_url( '/admin-guide-network-partners' ) ) . '">Managing Network Partners &amp; the Map</a></li>
+</ul>
+<h3>Content Types at a Glance</h3>
+<table>
+<thead><tr><th>Content Type</th><th>Where it appears</th><th>How to add</th></tr></thead>
+<tbody>
+<tr><td><strong>Resources</strong></td><td>Resource Library (/resources)</td><td>Faithful Witness → + Add a Resource</td></tr>
+<tr><td><strong>Events</strong></td><td>Events Calendar (/events) + Homepage widget</td><td>Faithful Witness → + Add an Event</td></tr>
+<tr><td><strong>Stories</strong></td><td>Stories page (/stories) + Blog</td><td>Faithful Witness → + Add a Story</td></tr>
+<tr><td><strong>Media Hits</strong></td><td>News &amp; Media (/news)</td><td>Faithful Witness → + Add a Media Hit</td></tr>
+<tr><td><strong>Network Partners</strong></td><td>Find Your Network (/network) + map</td><td>Faithful Witness → Network Partners</td></tr>
+</tbody>
+</table>';
+}
+
+/** Content for resources admin guide. */
+function fw_admin_guide_resources_content() {
+    return '<h2>How to Add a Resource</h2>
+<p>Resources appear on the <strong>Resource Library</strong> page (/resources). They can be PDF downloads, external articles, toolkits, or prayer guides.</p>
+<h3>Step-by-Step</h3>
+<ol>
+<li>Go to <strong>Faithful Witness → + Add a Resource</strong> in the sidebar.</li>
+<li>Enter the resource <strong>Title</strong> (e.g. "Know Your Rights: A Guide for Congregations").</li>
+<li>Add a short <strong>Description</strong> in the Excerpt box — this appears as the card summary on the library page.</li>
+<li>In the <strong>Resource Details</strong> box, fill in:
+  <ul>
+  <li><strong>External Link</strong> — paste the URL if the resource lives on another site (e.g. a PDF hosted on Google Drive).</li>
+  <li><strong>Downloadable File</strong> — if uploading directly, use the Media Library to upload the PDF, copy the attachment ID, and paste it here.</li>
+  <li><strong>Button Label</strong> — customize the call-to-action button (e.g. "Download Guide", "Read Article"). Leave blank for the default.</li>
+  <li><strong>Feature this resource</strong> — check this to show the resource in the "Start Here" section at the top of the library.</li>
+  </ul>
+</li>
+<li>In the right sidebar, assign:
+  <ul>
+  <li><strong>Resource Type</strong> — select PDF Guide, Article, Toolkit, or Prayer Guide.</li>
+  <li><strong>Issue Area</strong> — the topic (e.g. Know Your Rights, Spiritual Formation).</li>
+  <li><strong>Audience</strong> — who the resource is for (Congregations, Church Leaders, etc.).</li>
+  </ul>
+</li>
+<li>Click <strong>Publish</strong>.</li>
+</ol>
+<p><strong>Tip:</strong> Resources without a file or external link will link to their own post page — make sure the post has content in that case.</p>';
+}
+
+/** Content for events admin guide. */
+function fw_admin_guide_events_content() {
+    return '<h2>How to Add an Event</h2>
+<p>Events appear on the <strong>Events Calendar</strong> (/events) and in the homepage upcoming events widget (next 3 events).</p>
+<h3>Step-by-Step</h3>
+<ol>
+<li>Go to <strong>Faithful Witness → + Add an Event</strong>.</li>
+<li>Enter the event <strong>Title</strong> (e.g. "Know Your Rights Training — Chicago").</li>
+<li>Add a short <strong>Description</strong> in the Excerpt box.</li>
+<li>In the <strong>Event Details</strong> box, fill in:
+  <ul>
+  <li><strong>Start Date</strong> and <strong>End Date</strong> (if multi-day).</li>
+  <li><strong>Start Time</strong> and <strong>End Time</strong>.</li>
+  <li><strong>Location Name</strong>, <strong>Street Address</strong>, <strong>City</strong>, <strong>State</strong>.</li>
+  <li><strong>Registration Link</strong> — paste a Mailchimp, Eventbrite, or Zoom link here.</li>
+  <li><strong>Event Scope</strong> — National or Local.</li>
+  <li><strong>Virtual</strong> — check this for online events, then paste the virtual event link.</li>
+  </ul>
+</li>
+<li>In the right sidebar, assign an <strong>Event Category</strong> (Prayer Gathering, KYR Training, Webinar, etc.).</li>
+<li>Click <strong>Publish</strong>.</li>
+</ol>
+<p><strong>Tip:</strong> Past events (where the date is before today) are automatically hidden from the homepage widget but remain visible on the Events Calendar page.</p>';
+}
+
+/** Content for stories admin guide. */
+function fw_admin_guide_stories_content() {
+    return '<h2>How to Add a Story</h2>
+<p>Stories are regular WordPress blog posts that appear on the <strong>Stories</strong> page (/stories). They are personal narratives from churches, immigrant families, pastors, and advocates.</p>
+<h3>Step-by-Step</h3>
+<ol>
+<li>Go to <strong>Faithful Witness → + Add a Story</strong>.</li>
+<li>Enter the story <strong>Title</strong> — use the first-person voice if possible (e.g. "What We Saw at the Courthouse").</li>
+<li>Write or paste the full story in the main content editor.</li>
+<li>Add a short <strong>Excerpt</strong> — this appears as the preview text on the Stories page.</li>
+<li>In the <strong>Story Details</strong> sidebar panel, fill in:
+  <ul>
+  <li><strong>Author Name</strong> — the person\'s real name or pseudonym.</li>
+  <li><strong>Author\'s Church</strong> — congregation name.</li>
+  <li><strong>City</strong> — where the story takes place.</li>
+  </ul>
+</li>
+<li>In the right sidebar, assign a <strong>Category</strong>:
+  <ul>
+  <li>Church Story</li>
+  <li>Immigrant Voice</li>
+  <li>Pastor Reflection</li>
+  <li>Policy &amp; Advocacy</li>
+  </ul>
+</li>
+<li>Add a <strong>Featured Image</strong> if you have one (recommended: horizontal photo, at least 1200px wide).</li>
+<li>Click <strong>Publish</strong>.</li>
+</ol>';
+}
+
+/** Content for network partners admin guide. */
+function fw_admin_guide_partners_content() {
+    return '<h2>How to Add a Network Partner (and Map Pin)</h2>
+<p>Network Partners appear on the <strong>Find Your Network</strong> page (/network) as cards with map pins. Each partner needs location coordinates to appear on the map.</p>
+<h3>Step-by-Step</h3>
+<ol>
+<li>Go to <strong>Faithful Witness → Network Partners</strong>.</li>
+<li>Click <strong>Add New Organizing Group</strong>.</li>
+<li>Enter the organization <strong>Name</strong> as the post title.</li>
+<li>Add a short <strong>Description</strong> in the Excerpt box.</li>
+<li>In the <strong>Organizing Group Details</strong> box, fill in:
+  <ul>
+  <li><strong>City</strong> and <strong>State</strong>.</li>
+  <li><strong>Latitude</strong> and <strong>Longitude</strong> — find these by searching the city or address on <a href="https://www.google.com/maps" target="_blank">Google Maps</a>, right-clicking the location, and copying the coordinates.</li>
+  <li><strong>Contact Email</strong>, <strong>Phone</strong>, <strong>Website URL</strong>.</li>
+  <li><strong>Social media URLs</strong> (Instagram, Facebook, Twitter).</li>
+  <li><strong>Organization Type</strong> — select National Partner, Local Church, or Organizing Group. This controls the map pin color.</li>
+  </ul>
+</li>
+<li>Click <strong>Publish</strong>.</li>
+</ol>
+<h3>Map Pin Colors</h3>
+<ul>
+<li><strong>Navy</strong> = National Partner</li>
+<li><strong>Amber</strong> = Local Church</li>
+<li><strong>Teal</strong> = Organizing Group</li>
+</ul>
+<p><strong>Important:</strong> The map will not show a pin unless both Latitude and Longitude are filled in.</p>';
 }
 
 // ============================================================

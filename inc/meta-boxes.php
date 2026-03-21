@@ -133,8 +133,9 @@ function fw_render_resource_meta_box( $post ) {
     echo '<p><label style="font-weight:600;"><input type="checkbox" name="fw_resource_featured" value="1"' . checked( $featured, '1', false ) . ' style="margin-right:6px;">' . esc_html__( 'Feature this resource at the top of the Resource Library', 'faithfulwitness' ) . '</label></p>';
 
     $fields = [
-        'fw_resource_url'       => [ 'label' => 'External Link (if applicable)', 'type' => 'url' ],
-        'fw_resource_file_id'   => [ 'label' => 'Downloadable File (Media ID)', 'type' => 'text', 'placeholder' => 'Attach via Media Library' ],
+        'fw_resource_url'          => [ 'label' => 'External Link (if applicable)', 'type' => 'url' ],
+        'fw_resource_file_id'      => [ 'label' => 'Downloadable File (Media ID)', 'type' => 'text', 'placeholder' => 'Attach via Media Library' ],
+        'fw_resource_button_label' => [ 'label' => 'Button Label', 'type' => 'text', 'placeholder' => 'Default: Download / Read Article / View' ],
     ];
     fw_render_fields( $post->ID, $fields );
 
@@ -260,7 +261,7 @@ function fw_save_meta_boxes( $post_id ) {
     // Resource
     if ( isset( $_POST['fw_resource_nonce'] ) &&
          wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['fw_resource_nonce'] ) ), 'fw_resource_meta' ) ) {
-        $resource_fields = [ 'fw_resource_url', 'fw_resource_file_id', 'fw_related_initiative_id' ];
+        $resource_fields = [ 'fw_resource_url', 'fw_resource_file_id', 'fw_related_initiative_id', 'fw_resource_button_label' ];
         foreach ( $resource_fields as $field ) {
             if ( isset( $_POST[ $field ] ) ) {
                 update_post_meta( $post_id, $field, sanitize_text_field( wp_unslash( $_POST[ $field ] ) ) );

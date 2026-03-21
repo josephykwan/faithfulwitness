@@ -12,7 +12,26 @@
  * 7. Scripture Anchor (Acts 4:20)
  * 8. Partner Logos
  */
-get_header(); ?>
+get_header();
+
+/**
+ * Get a homepage setting — prefers ACF Options when available, falls back to Customizer.
+ *
+ * @param string $acf_key      ACF field name on the options page.
+ * @param string $mod_key      Customizer theme_mod key.
+ * @param mixed  $default      Default value when neither is set.
+ * @return mixed
+ */
+function fw_hp_option( $acf_key, $mod_key, $default = '' ) {
+    if ( function_exists( 'get_field' ) ) {
+        $val = get_field( $acf_key, 'option' );
+        if ( $val !== null && $val !== '' && $val !== false ) {
+            return $val;
+        }
+    }
+    return get_theme_mod( $mod_key, $default );
+}
+?>
 
 <!-- ============================================================
      1. HERO
@@ -240,14 +259,14 @@ $campaign = ! empty( $featured_campaign ) ? $featured_campaign[0] : null;
                     <?php if ( $campaign ) :
                         echo esc_html( get_the_title( $campaign ) );
                     else :
-                        echo esc_html( get_theme_mod( 'fw_campaign_title', __( 'Stand With Immigrant Families', 'faithfulwitness' ) ) );
+                        echo esc_html( fw_hp_option( 'fw_campaign_headline', 'fw_campaign_title', __( 'Stand With Immigrant Families', 'faithfulwitness' ) ) );
                     endif; ?>
                 </h2>
                 <p class="campaign-highlight__desc">
                     <?php if ( $campaign ) :
                         echo esc_html( wp_trim_words( get_the_excerpt( $campaign ), 30, '…' ) );
                     else :
-                        echo esc_html( get_theme_mod( 'fw_campaign_desc', __( 'The moment calls for faithful witnesses to speak and act with courage. Join churches across the country in this critical campaign.', 'faithfulwitness' ) ) );
+                        echo esc_html( fw_hp_option( 'fw_campaign_description', 'fw_campaign_desc', __( 'The moment calls for faithful witnesses to speak and act with courage. Join churches across the country in this critical campaign.', 'faithfulwitness' ) ) );
                     endif; ?>
                 </p>
             </div>
@@ -358,28 +377,40 @@ if ( ! empty( $next_events ) ) : ?>
         <p class="partners-label"><?php esc_html_e( 'In partnership with:', 'faithfulwitness' ); ?></p>
         <div class="partner-logos">
             <?php
-            $partners = [
-                [
-                    'name' => 'NaLEC',
-                    'url'  => 'https://nalec.org',
-                    'logo' => get_theme_mod( 'fw_partner_nalec_logo', '' ),
-                ],
-                [
-                    'name' => 'CCDA',
-                    'url'  => 'https://ccda.org',
-                    'logo' => get_theme_mod( 'fw_partner_ccda_logo', '' ),
-                ],
-                [
-                    'name' => 'World Relief',
-                    'url'  => 'https://worldrelief.org',
-                    'logo' => get_theme_mod( 'fw_partner_worldrelief_logo', '' ),
-                ],
-                [
-                    'name' => 'Undivided',
-                    'url'  => 'https://undivided.us',
-                    'logo' => get_theme_mod( 'fw_partner_undivided_logo', '' ),
-                ],
-            ];
+            // Try ACF Options repeater first (fw_partners), fallback to static list with Customizer mods.
+            $acf_partners = function_exists( 'get_field' ) ? get_field( 'fw_partners', 'option' ) : null;
+            if ( ! empty( $acf_partners ) && is_array( $acf_partners ) ) {
+                $partners = array_map( function( $row ) {
+                    return [
+                        'name' => $row['fw_partner_name'] ?? '',
+                        'url'  => $row['fw_partner_url']  ?? '',
+                        'logo' => $row['fw_partner_logo'] ?? '',
+                    ];
+                }, $acf_partners );
+            } else {
+                $partners = [
+                    [
+                        'name' => 'NaLEC',
+                        'url'  => 'https://nalec.org',
+                        'logo' => get_theme_mod( 'fw_partner_nalec_logo', '' ),
+                    ],
+                    [
+                        'name' => 'CCDA',
+                        'url'  => 'https://ccda.org',
+                        'logo' => get_theme_mod( 'fw_partner_ccda_logo', '' ),
+                    ],
+                    [
+                        'name' => 'World Relief',
+                        'url'  => 'https://worldrelief.org',
+                        'logo' => get_theme_mod( 'fw_partner_worldrelief_logo', '' ),
+                    ],
+                    [
+                        'name' => 'Undivided',
+                        'url'  => 'https://undivided.us',
+                        'logo' => get_theme_mod( 'fw_partner_undivided_logo', '' ),
+                    ],
+                ];
+            }
             foreach ( $partners as $partner ) : ?>
             <a href="<?php echo esc_url( $partner['url'] ); ?>"
                class="partner-logo-link"
