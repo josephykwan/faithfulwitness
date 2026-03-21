@@ -28,6 +28,10 @@ function fw_register_acf_fields() {
     fw_acf_group_media_hits();
     fw_acf_group_organizing_groups();
     fw_acf_group_stories();
+    fw_acf_group_page_heroes();
+    fw_acf_group_page_take_action();
+    fw_acf_group_page_formation();
+    fw_acf_group_page_kyr();
     fw_acf_options_homepage();
 }
 
@@ -501,6 +505,400 @@ function fw_acf_group_stories() {
 }
 
 // ============================================================
+// PAGE HEROES — shared eyebrow / title / subtitle / bg
+// Attaches to every custom page template so editors can edit
+// the hero banner directly on the page edit screen (ACF Free).
+// ============================================================
+function fw_acf_group_page_heroes() {
+    acf_add_local_field_group( [
+        'key'    => 'group_fw_page_hero',
+        'title'  => 'Page Hero',
+        'fields' => [
+            [
+                'key'          => 'field_fw_page_hero_eyebrow',
+                'label'        => 'Eyebrow Label',
+                'name'         => 'fw_page_hero_eyebrow',
+                'type'         => 'text',
+                'instructions' => 'Small label above the main headline. Keep it under 5 words.',
+                'required'     => 0,
+            ],
+            [
+                'key'          => 'field_fw_page_hero_title',
+                'label'        => 'Hero Headline',
+                'name'         => 'fw_page_hero_title',
+                'type'         => 'text',
+                'instructions' => 'Main H1 headline for this page. Leave blank to use the page title.',
+                'required'     => 0,
+            ],
+            [
+                'key'          => 'field_fw_page_hero_subtitle',
+                'label'        => 'Hero Subtitle',
+                'name'         => 'fw_page_hero_subtitle',
+                'type'         => 'textarea',
+                'instructions' => 'Short paragraph below the headline. 1–2 sentences.',
+                'rows'         => 2,
+                'new_lines'    => '',
+                'required'     => 0,
+            ],
+            [
+                'key'          => 'field_fw_page_hero_bg',
+                'label'        => 'Background Image',
+                'name'         => 'fw_page_hero_bg',
+                'type'         => 'image',
+                'instructions' => 'Optional full-width banner image (1600×600 px recommended).',
+                'return_format'=> 'url',
+                'library'      => 'all',
+                'required'     => 0,
+            ],
+        ],
+        'location' => [
+            [ [ 'param' => 'page_template', 'operator' => '==', 'value' => 'page-templates/template-take-action.php' ] ],
+            [ [ 'param' => 'page_template', 'operator' => '==', 'value' => 'page-templates/template-spiritual-formation.php' ] ],
+            [ [ 'param' => 'page_template', 'operator' => '==', 'value' => 'page-templates/template-know-your-rights.php' ] ],
+            [ [ 'param' => 'page_template', 'operator' => '==', 'value' => 'page-templates/template-network.php' ] ],
+            [ [ 'param' => 'page_template', 'operator' => '==', 'value' => 'page-templates/template-stories.php' ] ],
+            [ [ 'param' => 'page_template', 'operator' => '==', 'value' => 'page-templates/template-news.php' ] ],
+            [ [ 'param' => 'page_template', 'operator' => '==', 'value' => 'page-templates/template-map.php' ] ],
+        ],
+        'menu_order'            => 0,
+        'position'              => 'normal',
+        'style'                 => 'default',
+        'label_placement'       => 'top',
+        'instruction_placement' => 'field',
+    ] );
+}
+
+// ============================================================
+// TAKE ACTION PAGE — action card content
+// ============================================================
+function fw_acf_group_page_take_action() {
+    acf_add_local_field_group( [
+        'key'    => 'group_fw_take_action',
+        'title'  => 'Take Action — Audience Cards',
+        'fields' => [
+
+            // Card 1
+            [
+                'key'          => 'field_fw_ta_card1_audience',
+                'label'        => 'Card 1 — Audience Label',
+                'name'         => 'fw_ta_card1_audience',
+                'type'         => 'text',
+                'default_value'=> "I'm uncertain",
+                'wrapper'      => [ 'width' => '50' ],
+            ],
+            [
+                'key'          => 'field_fw_ta_card1_title',
+                'label'        => 'Card 1 — Title',
+                'name'         => 'fw_ta_card1_title',
+                'type'         => 'text',
+                'default_value'=> 'Start by learning',
+                'wrapper'      => [ 'width' => '50' ],
+            ],
+            [
+                'key'          => 'field_fw_ta_card1_desc',
+                'label'        => 'Card 1 — Description',
+                'name'         => 'fw_ta_card1_desc',
+                'type'         => 'textarea',
+                'rows'         => 3,
+                'new_lines'    => '',
+                'default_value'=> "You sense something is wrong but aren't sure what faithful engagement looks like. Start with our resources — guides, articles, and tools to help you understand immigration through a Gospel lens.",
+            ],
+            [
+                'key'          => 'field_fw_ta_card1_btn_label',
+                'label'        => 'Card 1 — Button Label',
+                'name'         => 'fw_ta_card1_btn_label',
+                'type'         => 'text',
+                'default_value'=> 'Browse Resources',
+                'wrapper'      => [ 'width' => '50' ],
+            ],
+            [
+                'key'          => 'field_fw_ta_card1_btn_url',
+                'label'        => 'Card 1 — Button URL',
+                'name'         => 'fw_ta_card1_btn_url',
+                'type'         => 'url',
+                'default_value'=> '/resources',
+                'wrapper'      => [ 'width' => '50' ],
+            ],
+
+            // Card 2
+            [
+                'key'          => 'field_fw_ta_card2_audience',
+                'label'        => 'Card 2 — Audience Label',
+                'name'         => 'fw_ta_card2_audience',
+                'type'         => 'text',
+                'default_value'=> "I'm ready to organize",
+                'wrapper'      => [ 'width' => '50' ],
+            ],
+            [
+                'key'          => 'field_fw_ta_card2_title',
+                'label'        => 'Card 2 — Title',
+                'name'         => 'fw_ta_card2_title',
+                'type'         => 'text',
+                'default_value'=> 'Find your local group',
+                'wrapper'      => [ 'width' => '50' ],
+            ],
+            [
+                'key'          => 'field_fw_ta_card2_desc',
+                'label'        => 'Card 2 — Description',
+                'name'         => 'fw_ta_card2_desc',
+                'type'         => 'textarea',
+                'rows'         => 3,
+                'new_lines'    => '',
+                'default_value'=> "You're a church leader, pastor, or congregation ready to act. Connect with other faithful witnesses in your area, access organizing toolkits, and join the national network.",
+            ],
+            [
+                'key'          => 'field_fw_ta_card2_btn_label',
+                'label'        => 'Card 2 — Button Label',
+                'name'         => 'fw_ta_card2_btn_label',
+                'type'         => 'text',
+                'default_value'=> 'Find a Group Near Me',
+                'wrapper'      => [ 'width' => '50' ],
+            ],
+            [
+                'key'          => 'field_fw_ta_card2_btn_url',
+                'label'        => 'Card 2 — Button URL',
+                'name'         => 'fw_ta_card2_btn_url',
+                'type'         => 'url',
+                'default_value'=> '/network',
+                'wrapper'      => [ 'width' => '50' ],
+            ],
+
+            // Card 3
+            [
+                'key'          => 'field_fw_ta_card3_audience',
+                'label'        => 'Card 3 — Audience Label',
+                'name'         => 'fw_ta_card3_audience',
+                'type'         => 'text',
+                'default_value'=> "I'm directly affected",
+                'wrapper'      => [ 'width' => '50' ],
+            ],
+            [
+                'key'          => 'field_fw_ta_card3_title',
+                'label'        => 'Card 3 — Title',
+                'name'         => 'fw_ta_card3_title',
+                'type'         => 'text',
+                'default_value'=> 'Connect with support',
+                'wrapper'      => [ 'width' => '50' ],
+            ],
+            [
+                'key'          => 'field_fw_ta_card3_desc',
+                'label'        => 'Card 3 — Description',
+                'name'         => 'fw_ta_card3_desc',
+                'type'         => 'textarea',
+                'rows'         => 3,
+                'new_lines'    => '',
+                'default_value'=> 'You or someone you love is navigating the immigration system right now. Access practical Know Your Rights information, find a local group, and connect with a community that will stand with you.',
+            ],
+            [
+                'key'          => 'field_fw_ta_card3_btn_label',
+                'label'        => 'Card 3 — Button Label',
+                'name'         => 'fw_ta_card3_btn_label',
+                'type'         => 'text',
+                'default_value'=> 'Know Your Rights',
+                'wrapper'      => [ 'width' => '50' ],
+            ],
+            [
+                'key'          => 'field_fw_ta_card3_btn_url',
+                'label'        => 'Card 3 — Button URL',
+                'name'         => 'fw_ta_card3_btn_url',
+                'type'         => 'url',
+                'default_value'=> '/know-your-rights',
+                'wrapper'      => [ 'width' => '50' ],
+            ],
+
+        ],
+        'location' => [
+            [ [ 'param' => 'page_template', 'operator' => '==', 'value' => 'page-templates/template-take-action.php' ] ],
+        ],
+        'menu_order'            => 5,
+        'position'              => 'normal',
+        'style'                 => 'default',
+        'label_placement'       => 'top',
+        'instruction_placement' => 'field',
+    ] );
+}
+
+// ============================================================
+// SPIRITUAL FORMATION PAGE — intro + pathway cards
+// ============================================================
+function fw_acf_group_page_formation() {
+    acf_add_local_field_group( [
+        'key'    => 'group_fw_formation',
+        'title'  => 'Spiritual Formation — Page Content',
+        'fields' => [
+
+            [
+                'key'          => 'field_fw_formation_intro',
+                'label'        => 'Intro Paragraph',
+                'name'         => 'fw_formation_intro',
+                'type'         => 'textarea',
+                'instructions' => 'The opening paragraph beneath the hero. 2–4 sentences.',
+                'rows'         => 4,
+                'new_lines'    => '',
+                'default_value'=> 'The Faithful Witness Campaign integrates spiritual formation directly into local organizing work. We believe that sustainable advocacy flows from a rooted spiritual life — not from political urgency alone. Formation before and beneath action is not a slogan. It is how we sustain ourselves for the long road ahead.',
+            ],
+
+            // Pathway 1
+            [
+                'key'          => 'field_fw_formation_path1_title',
+                'label'        => 'Pathway 1 — Title',
+                'name'         => 'fw_formation_path1_title',
+                'type'         => 'text',
+                'default_value'=> 'Prayer & Lament',
+                'wrapper'      => [ 'width' => '50' ],
+            ],
+            [
+                'key'          => 'field_fw_formation_path1_desc',
+                'label'        => 'Pathway 1 — Description',
+                'name'         => 'fw_formation_path1_desc',
+                'type'         => 'textarea',
+                'rows'         => 3,
+                'new_lines'    => '',
+                'default_value'=> "Prayers, liturgies, and lament practices for congregations standing at the intersection of faith and injustice. You don't have to be okay. You just have to keep praying.",
+                'wrapper'      => [ 'width' => '50' ],
+            ],
+
+            // Pathway 2
+            [
+                'key'          => 'field_fw_formation_path2_title',
+                'label'        => 'Pathway 2 — Title',
+                'name'         => 'fw_formation_path2_title',
+                'type'         => 'text',
+                'default_value'=> 'Scripture & Discernment',
+                'wrapper'      => [ 'width' => '50' ],
+            ],
+            [
+                'key'          => 'field_fw_formation_path2_desc',
+                'label'        => 'Pathway 2 — Description',
+                'name'         => 'fw_formation_path2_desc',
+                'type'         => 'textarea',
+                'rows'         => 3,
+                'new_lines'    => '',
+                'default_value'=> 'Bible study guides, sermon resources, and discernment frameworks for congregations wrestling with immigration through a Gospel lens. What does the text say? What does it ask of us?',
+                'wrapper'      => [ 'width' => '50' ],
+            ],
+
+            // Pathway 3
+            [
+                'key'          => 'field_fw_formation_path3_title',
+                'label'        => 'Pathway 3 — Title',
+                'name'         => 'fw_formation_path3_title',
+                'type'         => 'text',
+                'default_value'=> 'Pastoral Care Resources',
+                'wrapper'      => [ 'width' => '50' ],
+            ],
+            [
+                'key'          => 'field_fw_formation_path3_desc',
+                'label'        => 'Pathway 3 — Description',
+                'name'         => 'fw_formation_path3_desc',
+                'type'         => 'textarea',
+                'rows'         => 3,
+                'new_lines'    => '',
+                'default_value'=> 'Tools for pastors and church leaders caring for immigrant congregants, processing vicarious trauma, and sustaining themselves and their teams for the long work of justice.',
+                'wrapper'      => [ 'width' => '50' ],
+            ],
+
+            // Scripture pullquote
+            [
+                'key'          => 'field_fw_formation_scripture_text',
+                'label'        => 'Scripture Pullquote',
+                'name'         => 'fw_formation_scripture_text',
+                'type'         => 'textarea',
+                'instructions' => 'Bible verse displayed at the bottom of the page.',
+                'rows'         => 2,
+                'new_lines'    => '',
+                'default_value'=> 'We cannot help speaking about what we have seen and heard.',
+                'wrapper'      => [ 'width' => '75' ],
+            ],
+            [
+                'key'          => 'field_fw_formation_scripture_ref',
+                'label'        => 'Scripture Reference',
+                'name'         => 'fw_formation_scripture_ref',
+                'type'         => 'text',
+                'default_value'=> 'Acts 4:20',
+                'placeholder'  => 'e.g. Acts 4:20',
+                'wrapper'      => [ 'width' => '25' ],
+            ],
+
+        ],
+        'location' => [
+            [ [ 'param' => 'page_template', 'operator' => '==', 'value' => 'page-templates/template-spiritual-formation.php' ] ],
+        ],
+        'menu_order'            => 5,
+        'position'              => 'normal',
+        'style'                 => 'default',
+        'label_placement'       => 'top',
+        'instruction_placement' => 'field',
+    ] );
+}
+
+// ============================================================
+// KNOW YOUR RIGHTS PAGE — section content + download URL
+// ============================================================
+function fw_acf_group_page_kyr() {
+    acf_add_local_field_group( [
+        'key'    => 'group_fw_kyr',
+        'title'  => 'Know Your Rights — Page Content',
+        'fields' => [
+
+            [
+                'key'          => 'field_fw_kyr_download_url',
+                'label'        => '"Download All Materials" URL',
+                'name'         => 'fw_kyr_download_all_url',
+                'type'         => 'url',
+                'instructions' => 'Link to the ZIP file or Google Drive folder with all KYR materials.',
+                'required'     => 0,
+            ],
+
+            [
+                'key'          => 'field_fw_kyr_ice_content',
+                'label'        => 'Section 1 — If ICE Comes to Your Door',
+                'name'         => 'fw_kyr_ice_content',
+                'type'         => 'wysiwyg',
+                'instructions' => 'Bullet points and paragraphs for the "If ICE comes to your door" section. Use the toolbar to add bullet lists.',
+                'tabs'         => 'visual',
+                'toolbar'      => 'basic',
+                'media_upload' => 0,
+                'required'     => 0,
+            ],
+
+            [
+                'key'          => 'field_fw_kyr_detained_content',
+                'label'        => 'Section 2 — If Someone Is Detained',
+                'name'         => 'fw_kyr_detained_content',
+                'type'         => 'wysiwyg',
+                'instructions' => 'Bullet points and paragraphs for the "If someone is detained" section.',
+                'tabs'         => 'visual',
+                'toolbar'      => 'basic',
+                'media_upload' => 0,
+                'required'     => 0,
+            ],
+
+            [
+                'key'          => 'field_fw_kyr_sanctuary_content',
+                'label'        => 'Section 3 — For Congregations & Sanctuaries',
+                'name'         => 'fw_kyr_sanctuary_content',
+                'type'         => 'wysiwyg',
+                'instructions' => 'Bullet points and paragraphs for the congregation sanctuary section.',
+                'tabs'         => 'visual',
+                'toolbar'      => 'basic',
+                'media_upload' => 0,
+                'required'     => 0,
+            ],
+
+        ],
+        'location' => [
+            [ [ 'param' => 'page_template', 'operator' => '==', 'value' => 'page-templates/template-know-your-rights.php' ] ],
+        ],
+        'menu_order'            => 5,
+        'position'              => 'normal',
+        'style'                 => 'default',
+        'label_placement'       => 'top',
+        'instruction_placement' => 'field',
+    ] );
+}
+
+// ============================================================
 // ACF OPTIONS PAGE — Homepage Settings
 // ============================================================
 function fw_acf_options_homepage() {
@@ -519,60 +917,445 @@ function fw_acf_options_homepage() {
         'title'  => 'Homepage Settings',
         'fields' => [
 
-            // ── CAMPAIGN SECTION ─────────────────────────────────
+            // ── HERO TAB ─────────────────────────────────────────
+            [
+                'key'   => 'field_fw_hp_tab_hero',
+                'label' => 'Hero Banner',
+                'type'  => 'tab',
+            ],
+            [
+                'key'           => 'field_fw_hero_eyebrow',
+                'label'         => 'Eyebrow Text',
+                'name'          => 'fw_hero_eyebrow',
+                'type'          => 'text',
+                'instructions'  => 'Small label above the main headline. Keep it under 6 words.',
+                'default_value' => 'A Gospel-Centered Campaign',
+                'placeholder'   => 'e.g. A Gospel-Centered Campaign',
+            ],
+            [
+                'key'           => 'field_fw_hero_title',
+                'label'         => 'Main Headline',
+                'name'          => 'fw_hero_title',
+                'type'          => 'text',
+                'instructions'  => 'The large H1 in the hero banner. Keep it under 10 words.',
+                'default_value' => 'A Gospel-Centered Response for a Divided Time',
+            ],
+            [
+                'key'           => 'field_fw_hero_subtitle',
+                'label'         => 'Subtitle',
+                'name'          => 'fw_hero_subtitle',
+                'type'          => 'textarea',
+                'instructions'  => 'Paragraph below the headline. 1–2 sentences.',
+                'rows'          => 2,
+                'new_lines'     => '',
+                'default_value' => 'Forming the Church for courageous, nonviolent, Gospel-rooted engagement around immigration.',
+            ],
+            [
+                'key'           => 'field_fw_hero_bg',
+                'label'         => 'Background Image',
+                'name'          => 'fw_hero_bg',
+                'type'          => 'image',
+                'instructions'  => 'Wide banner image (1600×600 px recommended). Leave blank to use the default.',
+                'return_format' => 'url',
+                'library'       => 'all',
+            ],
+            [
+                'key'           => 'field_fw_hero_cta1_label',
+                'label'         => 'Button 1 — Label',
+                'name'          => 'fw_hero_cta1_label',
+                'type'          => 'text',
+                'default_value' => 'Join the Campaign',
+                'wrapper'       => [ 'width' => '50' ],
+            ],
+            [
+                'key'           => 'field_fw_hero_cta1_url',
+                'label'         => 'Button 1 — URL',
+                'name'          => 'fw_hero_cta1_url',
+                'type'          => 'url',
+                'instructions'  => 'Where the primary (accent) button links.',
+                'wrapper'       => [ 'width' => '50' ],
+            ],
+            [
+                'key'           => 'field_fw_hero_cta2_label',
+                'label'         => 'Button 2 — Label',
+                'name'          => 'fw_hero_cta2_label',
+                'type'          => 'text',
+                'default_value' => 'Find Your Network',
+                'wrapper'       => [ 'width' => '50' ],
+            ],
+            [
+                'key'           => 'field_fw_hero_cta2_url',
+                'label'         => 'Button 2 — URL',
+                'name'          => 'fw_hero_cta2_url',
+                'type'          => 'url',
+                'instructions'  => 'Where the secondary (outline) button links.',
+                'wrapper'       => [ 'width' => '50' ],
+            ],
+
+            // ── VALUES STRIP TAB ─────────────────────────────────
+            [
+                'key'   => 'field_fw_hp_tab_values',
+                'label' => 'Values Strip',
+                'type'  => 'tab',
+            ],
+            [
+                'key'     => 'field_fw_hp_values_note',
+                'label'   => '',
+                'name'    => '',
+                'type'    => 'message',
+                'message' => 'The "We Choose" strip shows four value pairs (e.g. "Hope over despair"). Edit each word and contrast phrase below.',
+            ],
+            [
+                'key'           => 'field_fw_value1_word',
+                'label'         => 'Value 1 — Word',
+                'name'          => 'fw_value1_word',
+                'type'          => 'text',
+                'default_value' => 'Hope',
+                'wrapper'       => [ 'width' => '50' ],
+            ],
+            [
+                'key'           => 'field_fw_value1_over',
+                'label'         => 'Value 1 — "over ___"',
+                'name'          => 'fw_value1_over',
+                'type'          => 'text',
+                'default_value' => 'over despair',
+                'wrapper'       => [ 'width' => '50' ],
+            ],
+            [
+                'key'           => 'field_fw_value2_word',
+                'label'         => 'Value 2 — Word',
+                'name'          => 'fw_value2_word',
+                'type'          => 'text',
+                'default_value' => 'Courage',
+                'wrapper'       => [ 'width' => '50' ],
+            ],
+            [
+                'key'           => 'field_fw_value2_over',
+                'label'         => 'Value 2 — "over ___"',
+                'name'          => 'fw_value2_over',
+                'type'          => 'text',
+                'default_value' => 'over silence',
+                'wrapper'       => [ 'width' => '50' ],
+            ],
+            [
+                'key'           => 'field_fw_value3_word',
+                'label'         => 'Value 3 — Word',
+                'name'          => 'fw_value3_word',
+                'type'          => 'text',
+                'default_value' => 'Nonviolence',
+                'wrapper'       => [ 'width' => '50' ],
+            ],
+            [
+                'key'           => 'field_fw_value3_over',
+                'label'         => 'Value 3 — "over ___"',
+                'name'          => 'fw_value3_over',
+                'type'          => 'text',
+                'default_value' => 'over fear',
+                'wrapper'       => [ 'width' => '50' ],
+            ],
+            [
+                'key'           => 'field_fw_value4_word',
+                'label'         => 'Value 4 — Word',
+                'name'          => 'fw_value4_word',
+                'type'          => 'text',
+                'default_value' => 'Love',
+                'wrapper'       => [ 'width' => '50' ],
+            ],
+            [
+                'key'           => 'field_fw_value4_over',
+                'label'         => 'Value 4 — "over ___"',
+                'name'          => 'fw_value4_over',
+                'type'          => 'text',
+                'default_value' => 'over division',
+                'wrapper'       => [ 'width' => '50' ],
+            ],
+
+            // ── THREE COMMITMENTS TAB ────────────────────────────
+            [
+                'key'   => 'field_fw_hp_tab_commitments',
+                'label' => 'Three Commitments',
+                'type'  => 'tab',
+            ],
+            [
+                'key'           => 'field_fw_commit1_title',
+                'label'         => 'Commitment 1 — Title',
+                'name'          => 'fw_commit1_title',
+                'type'          => 'text',
+                'default_value' => 'Local Grassroots Movements & Formation',
+            ],
+            [
+                'key'           => 'field_fw_commit1_desc',
+                'label'         => 'Commitment 1 — Description',
+                'name'          => 'fw_commit1_desc',
+                'type'          => 'textarea',
+                'rows'          => 3,
+                'new_lines'     => '',
+                'default_value' => 'Cultivating faithful leadership in local communities — rooting people in Gospel values before, during, and after action.',
+            ],
+            [
+                'key'           => 'field_fw_commit1_url',
+                'label'         => 'Commitment 1 — Learn More URL',
+                'name'          => 'fw_commit1_url',
+                'type'          => 'url',
+                'instructions'  => 'Where the "Learn more →" link points.',
+                'default_value' => '/spiritual-formation',
+            ],
+            [
+                'key'           => 'field_fw_commit2_title',
+                'label'         => 'Commitment 2 — Title',
+                'name'          => 'fw_commit2_title',
+                'type'          => 'text',
+                'default_value' => 'Presence & Accompaniment',
+            ],
+            [
+                'key'           => 'field_fw_commit2_desc',
+                'label'         => 'Commitment 2 — Description',
+                'name'          => 'fw_commit2_desc',
+                'type'          => 'textarea',
+                'rows'          => 3,
+                'new_lines'     => '',
+                'default_value' => 'Walking with those navigating fear and uncertainty — court accompaniment, Know Your Rights trainings, food and transportation assistance, and pastoral care.',
+            ],
+            [
+                'key'           => 'field_fw_commit2_url',
+                'label'         => 'Commitment 2 — Learn More URL',
+                'name'          => 'fw_commit2_url',
+                'type'          => 'url',
+                'default_value' => '/know-your-rights',
+            ],
+            [
+                'key'           => 'field_fw_commit3_title',
+                'label'         => 'Commitment 3 — Title',
+                'name'          => 'fw_commit3_title',
+                'type'          => 'text',
+                'default_value' => 'Public Witness in the Public Square',
+            ],
+            [
+                'key'           => 'field_fw_commit3_desc',
+                'label'         => 'Commitment 3 — Description',
+                'name'          => 'fw_commit3_desc',
+                'type'          => 'textarea',
+                'rows'          => 3,
+                'new_lines'     => '',
+                'default_value' => 'Speaking with one moral voice on policy that upholds human dignity, due process, humanitarian protections, and nonviolence.',
+            ],
+            [
+                'key'           => 'field_fw_commit3_url',
+                'label'         => 'Commitment 3 — Learn More URL',
+                'name'          => 'fw_commit3_url',
+                'type'          => 'url',
+                'default_value' => '/take-action',
+            ],
+
+            // ── AUDIENCE CARDS TAB ───────────────────────────────
+            [
+                'key'   => 'field_fw_hp_tab_audience',
+                'label' => 'Audience Cards',
+                'type'  => 'tab',
+            ],
+            // Card 1
+            [
+                'key'           => 'field_fw_audience1_label',
+                'label'         => 'Card 1 — Eyebrow Label',
+                'name'          => 'fw_audience1_label',
+                'type'          => 'text',
+                'default_value' => 'Starting Point',
+                'wrapper'       => [ 'width' => '50' ],
+            ],
+            [
+                'key'           => 'field_fw_audience1_title',
+                'label'         => 'Card 1 — Title',
+                'name'          => 'fw_audience1_title',
+                'type'          => 'text',
+                'default_value' => 'For those who are uncertain',
+                'wrapper'       => [ 'width' => '50' ],
+            ],
+            [
+                'key'           => 'field_fw_audience1_desc',
+                'label'         => 'Card 1 — Description',
+                'name'          => 'fw_audience1_desc',
+                'type'          => 'textarea',
+                'rows'          => 3,
+                'new_lines'     => '',
+                'default_value' => "You sense something is wrong but aren't sure what faithful engagement looks like. You want to understand the issues through a Gospel lens before acting. This is a safe place to learn, ask hard questions, and be formed.",
+            ],
+            [
+                'key'           => 'field_fw_audience1_btn_label',
+                'label'         => 'Card 1 — Button Label',
+                'name'          => 'fw_audience1_btn_label',
+                'type'          => 'text',
+                'default_value' => 'Start by learning',
+                'wrapper'       => [ 'width' => '50' ],
+            ],
+            [
+                'key'           => 'field_fw_audience1_btn_url',
+                'label'         => 'Card 1 — Button URL',
+                'name'          => 'fw_audience1_btn_url',
+                'type'          => 'url',
+                'default_value' => '/resources',
+                'wrapper'       => [ 'width' => '50' ],
+            ],
+            // Card 2
+            [
+                'key'           => 'field_fw_audience2_label',
+                'label'         => 'Card 2 — Eyebrow Label',
+                'name'          => 'fw_audience2_label',
+                'type'          => 'text',
+                'default_value' => 'Ready to Organize',
+                'wrapper'       => [ 'width' => '50' ],
+            ],
+            [
+                'key'           => 'field_fw_audience2_title',
+                'label'         => 'Card 2 — Title',
+                'name'          => 'fw_audience2_title',
+                'type'          => 'text',
+                'default_value' => 'For those ready to engage',
+                'wrapper'       => [ 'width' => '50' ],
+            ],
+            [
+                'key'           => 'field_fw_audience2_desc',
+                'label'         => 'Card 2 — Description',
+                'name'          => 'fw_audience2_desc',
+                'type'          => 'textarea',
+                'rows'          => 3,
+                'new_lines'     => '',
+                'default_value' => "You're a church leader, pastor, or congregation ready to move from concern to action. You want practical tools, community support, and a network of faithful witnesses who will walk alongside you.",
+            ],
+            [
+                'key'           => 'field_fw_audience2_btn_label',
+                'label'         => 'Card 2 — Button Label',
+                'name'          => 'fw_audience2_btn_label',
+                'type'          => 'text',
+                'default_value' => 'Find your local group',
+                'wrapper'       => [ 'width' => '50' ],
+            ],
+            [
+                'key'           => 'field_fw_audience2_btn_url',
+                'label'         => 'Card 2 — Button URL',
+                'name'          => 'fw_audience2_btn_url',
+                'type'          => 'url',
+                'default_value' => '/network',
+                'wrapper'       => [ 'width' => '50' ],
+            ],
+            // Card 3
+            [
+                'key'           => 'field_fw_audience3_label',
+                'label'         => 'Card 3 — Eyebrow Label',
+                'name'          => 'fw_audience3_label',
+                'type'          => 'text',
+                'default_value' => 'Direct Support',
+                'wrapper'       => [ 'width' => '50' ],
+            ],
+            [
+                'key'           => 'field_fw_audience3_title',
+                'label'         => 'Card 3 — Title',
+                'name'          => 'fw_audience3_title',
+                'type'          => 'text',
+                'default_value' => 'For those directly affected',
+                'wrapper'       => [ 'width' => '50' ],
+            ],
+            [
+                'key'           => 'field_fw_audience3_desc',
+                'label'         => 'Card 3 — Description',
+                'name'          => 'fw_audience3_desc',
+                'type'          => 'textarea',
+                'rows'          => 3,
+                'new_lines'     => '',
+                'default_value' => "You or someone you love is navigating the immigration system right now. You need practical help, legal information, and a community that will stand with you without judgment or fear.",
+            ],
+            [
+                'key'           => 'field_fw_audience3_btn_label',
+                'label'         => 'Card 3 — Button Label',
+                'name'          => 'fw_audience3_btn_label',
+                'type'          => 'text',
+                'default_value' => 'Connect with support',
+                'wrapper'       => [ 'width' => '50' ],
+            ],
+            [
+                'key'           => 'field_fw_audience3_btn_url',
+                'label'         => 'Card 3 — Button URL',
+                'name'          => 'fw_audience3_btn_url',
+                'type'          => 'url',
+                'default_value' => '/know-your-rights',
+                'wrapper'       => [ 'width' => '50' ],
+            ],
+
+            // ── SCRIPTURE ANCHOR TAB ─────────────────────────────
+            [
+                'key'   => 'field_fw_hp_tab_scripture',
+                'label' => 'Scripture Anchor',
+                'type'  => 'tab',
+            ],
+            [
+                'key'           => 'field_fw_scripture_text',
+                'label'         => 'Scripture Text',
+                'name'          => 'fw_scripture_text',
+                'type'          => 'textarea',
+                'instructions'  => 'Bible verse displayed in the full-width scripture section.',
+                'rows'          => 2,
+                'new_lines'     => '',
+                'default_value' => 'As for us, we cannot help speaking about what we have seen and heard.',
+                'wrapper'       => [ 'width' => '75' ],
+            ],
+            [
+                'key'           => 'field_fw_scripture_ref',
+                'label'         => 'Scripture Reference',
+                'name'          => 'fw_scripture_ref',
+                'type'          => 'text',
+                'default_value' => 'Acts 4:20',
+                'placeholder'   => 'e.g. Acts 4:20',
+                'wrapper'       => [ 'width' => '25' ],
+            ],
+
+            // ── CAMPAIGN SECTION TAB ─────────────────────────────
             [
                 'key'   => 'field_fw_hp_tab_campaign',
                 'label' => 'Campaign Highlight',
                 'type'  => 'tab',
             ],
-
             [
                 'key'           => 'field_fw_campaign_headline',
                 'label'         => 'Campaign Headline',
                 'name'          => 'fw_campaign_headline',
                 'type'          => 'text',
-                'instructions'  => 'The bold headline shown in the campaign highlight section on the homepage. Keep it under 8 words.',
+                'instructions'  => 'Shown when no Initiative post is published. Keep it under 8 words.',
                 'default_value' => 'Stand With Immigrant Families',
                 'placeholder'   => 'e.g. Stand With Immigrant Families',
             ],
-
             [
                 'key'           => 'field_fw_campaign_description',
                 'label'         => 'Campaign Description',
                 'name'          => 'fw_campaign_description',
                 'type'          => 'textarea',
-                'instructions'  => 'A short description of the current campaign — 1-2 sentences shown under the headline. Keep it concise and action-oriented.',
+                'instructions'  => 'Shown when no Initiative post is published. 1–2 sentences.',
                 'rows'          => 3,
                 'new_lines'     => '',
                 'default_value' => 'The moment calls for faithful witnesses to speak and act with courage. Join churches across the country in this critical campaign.',
             ],
-
             [
                 'key'           => 'field_fw_campaign_cta_label',
                 'label'         => 'Button Label',
                 'name'          => 'fw_campaign_cta_label',
                 'type'          => 'text',
-                'instructions'  => 'The text on the action button in the campaign section.',
+                'instructions'  => 'Text on the action button.',
                 'default_value' => 'Take Action',
                 'wrapper'       => [ 'width' => '50' ],
             ],
-
             [
                 'key'           => 'field_fw_campaign_cta_url',
                 'label'         => 'Button URL',
                 'name'          => 'fw_campaign_cta_url',
                 'type'          => 'url',
-                'instructions'  => 'Where the action button links to. Can be an internal page like /take-action or an external URL.',
+                'instructions'  => 'Where the action button links to.',
                 'wrapper'       => [ 'width' => '50' ],
             ],
 
-            // ── PARTNER LOGOS ────────────────────────────────────
+            // ── PARTNER LOGOS TAB ────────────────────────────────
             [
                 'key'   => 'field_fw_hp_tab_partners',
                 'label' => 'Partner Logos',
                 'type'  => 'tab',
             ],
-
             [
                 'key'          => 'field_fw_partner1_name',
                 'label'        => 'Partner 1 — Name',
@@ -587,7 +1370,7 @@ function fw_acf_options_homepage() {
                 'name'         => 'fw_partner1_logo_url',
                 'type'         => 'image',
                 'return_format'=> 'url',
-                'instructions' => 'Upload a logo image (PNG preferred). Displayed at about 80px tall.',
+                'instructions' => 'PNG preferred. Displayed at ~80px tall.',
                 'wrapper'      => [ 'width' => '33' ],
             ],
             [
@@ -598,7 +1381,6 @@ function fw_acf_options_homepage() {
                 'default_value'=> 'https://nalec.org',
                 'wrapper'      => [ 'width' => '33' ],
             ],
-
             [
                 'key'          => 'field_fw_partner2_name',
                 'label'        => 'Partner 2 — Name',
@@ -623,7 +1405,6 @@ function fw_acf_options_homepage() {
                 'default_value'=> 'https://ccda.org',
                 'wrapper'      => [ 'width' => '33' ],
             ],
-
             [
                 'key'          => 'field_fw_partner3_name',
                 'label'        => 'Partner 3 — Name',
@@ -648,7 +1429,6 @@ function fw_acf_options_homepage() {
                 'default_value'=> 'https://worldrelief.org',
                 'wrapper'      => [ 'width' => '33' ],
             ],
-
             [
                 'key'          => 'field_fw_partner4_name',
                 'label'        => 'Partner 4 — Name',

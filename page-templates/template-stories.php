@@ -23,12 +23,19 @@ get_header();
 $categories = get_categories( [ 'hide_empty' => false ] );
 ?>
 
+<?php
+// Page-level ACF fields — edit via Pages → Stories → edit
+$hero_eyebrow  = get_field( 'fw_page_hero_eyebrow' )  ?: __( 'From the Field', 'faithfulwitness' );
+$hero_title    = get_field( 'fw_page_hero_title' )    ?: __( 'Stories of Faithful Witness', 'faithfulwitness' );
+$hero_subtitle = get_field( 'fw_page_hero_subtitle' ) ?: __( 'From churches, families, and leaders navigating this moment together.', 'faithfulwitness' );
+?>
+
 <!-- Hero -->
 <section class="stories-hero" id="stories-top">
     <div class="container">
-        <span class="hero__eyebrow" style="color:var(--color-accent-light);"><?php esc_html_e( 'From the Field', 'faithfulwitness' ); ?></span>
-        <h1><?php esc_html_e( 'Stories of Faithful Witness', 'faithfulwitness' ); ?></h1>
-        <p><?php esc_html_e( 'From churches, families, and leaders navigating this moment together.', 'faithfulwitness' ); ?></p>
+        <span class="hero__eyebrow" style="color:var(--color-accent-light);"><?php echo esc_html( $hero_eyebrow ); ?></span>
+        <h1><?php echo esc_html( $hero_title ); ?></h1>
+        <p><?php echo esc_html( $hero_subtitle ); ?></p>
     </div>
 </section>
 
