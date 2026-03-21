@@ -54,6 +54,9 @@ if ( $notice ) : ?>
                 </a>
             </nav>
 
+            <!-- Google Translate widget -->
+            <div id="google_translate_element" class="google-translate-widget" aria-label="<?php esc_attr_e( 'Language selector', 'faithfulwitness' ); ?>"></div>
+
             <!-- Mobile toggle -->
             <button class="nav-toggle" id="nav-toggle"
                     aria-controls="primary-nav"
@@ -69,6 +72,25 @@ if ( $notice ) : ?>
 </header>
 
 <main class="site-content" id="main-content">
+
+<?php
+// Google Translate — initialize widget (free, no API key required)
+add_action( 'wp_footer', function () {
+    ?>
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement(
+                { pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE },
+                'google_translate_element'
+            );
+        }
+    </script>
+    <script type="text/javascript"
+        src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit">
+    </script>
+    <?php
+}, 20 );
+?>
 
 <?php
 /**

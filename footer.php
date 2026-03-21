@@ -112,6 +112,11 @@
             </div>
         </div>
 
+        <!-- Site-wide legal disclaimer -->
+        <div class="footer-disclaimer" style="border-top:1px solid rgba(255,255,255,0.08);padding-top:var(--space-6);margin-bottom:var(--space-6);">
+            <?php fw_render_legal_disclaimer(); ?>
+        </div>
+
         <div class="footer-bottom">
             <span>
                 &copy; <?php echo esc_html( gmdate( 'Y' ) ); ?>

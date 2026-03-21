@@ -153,6 +153,8 @@ function fw_register_page_templates( $templates ) {
     $templates['page-templates/template-spiritual-formation.php']= __( 'Spiritual Formation',   'faithfulwitness' );
     $templates['page-templates/template-news.php']               = __( 'News & Media',           'faithfulwitness' );
     $templates['page-templates/template-events.php']             = __( 'Events Calendar',        'faithfulwitness' ); // replaces old "Events Page" registration
+    $templates['page-templates/template-find-support.php']       = __( 'Find Support',            'faithfulwitness' );
+    $templates['page-templates/template-about.php']              = __( 'About',                   'faithfulwitness' );
     return $templates;
 }
 add_filter( 'theme_page_templates', 'fw_register_page_templates' );
@@ -165,6 +167,7 @@ function fw_flush_rewrites() {
     fw_register_cpt_organizing_group();
     fw_register_cpt_resource();
     fw_register_cpt_event();
+    fw_register_cpt_support_entry();
     flush_rewrite_rules();
 }
 register_activation_hook( __FILE__, 'fw_flush_rewrites' );

@@ -158,3 +158,34 @@ function fw_register_cpt_media_hit() {
     ] );
 }
 add_action( 'init', 'fw_register_cpt_media_hit' );
+
+// ============================================================
+// SUPPORT ENTRIES (Find Support directory)
+// ============================================================
+function fw_register_cpt_support_entry() {
+    $labels = [
+        'name'               => __( 'Support Entries', 'faithfulwitness' ),
+        'singular_name'      => __( 'Support Entry', 'faithfulwitness' ),
+        'menu_name'          => __( 'Find Support', 'faithfulwitness' ),
+        'add_new_item'       => __( 'Add New Support Entry', 'faithfulwitness' ),
+        'edit_item'          => __( 'Edit Support Entry', 'faithfulwitness' ),
+        'new_item'           => __( 'New Support Entry', 'faithfulwitness' ),
+        'view_item'          => __( 'View Support Entry', 'faithfulwitness' ),
+        'search_items'       => __( 'Search Support Entries', 'faithfulwitness' ),
+        'not_found'          => __( 'No support entries found', 'faithfulwitness' ),
+        'not_found_in_trash' => __( 'No support entries found in trash', 'faithfulwitness' ),
+    ];
+
+    register_post_type( 'fw_support_entry', [
+        'labels'        => $labels,
+        'public'        => false,
+        'show_ui'       => true,
+        'has_archive'   => false,
+        'menu_icon'     => 'dashicons-heart',
+        'menu_position' => 10,
+        'supports'      => [ 'title', 'editor' ],
+        'rewrite'       => [ 'slug' => 'find-support', 'with_front' => false ],
+        'show_in_rest'  => true,
+    ] );
+}
+add_action( 'init', 'fw_register_cpt_support_entry' );

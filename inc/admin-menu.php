@@ -77,6 +77,16 @@ function fw_register_admin_menu() {
         'fw_admin_redirect_page'
     );
 
+    // Add a Support Entry
+    add_submenu_page(
+        'faithfulwitness-hub',
+        __( 'Add a Support Entry', 'faithfulwitness' ),
+        __( '+ Add a Support Entry', 'faithfulwitness' ),
+        'publish_posts',
+        'fw-add-support-entry',
+        'fw_admin_redirect_page'
+    );
+
     // Update Network Partners
     add_submenu_page(
         'faithfulwitness-hub',
@@ -109,7 +119,8 @@ function fw_handle_admin_redirects() {
         'fw-add-resource'  => admin_url( 'post-new.php?post_type=fw_resource' ),
         'fw-add-event'     => admin_url( 'post-new.php?post_type=fw_event' ),
         'fw-add-media-hit' => admin_url( 'post-new.php?post_type=fw_media_hit' ),
-        'fw-add-story'     => admin_url( 'post-new.php?post_type=post' ),
+        'fw-add-story'        => admin_url( 'post-new.php?post_type=post' ),
+        'fw-add-support-entry' => admin_url( 'post-new.php?post_type=fw_support_entry' ),
         'fw-partners'      => admin_url( 'edit.php?post_type=fw_organizing_group' ),
         'fw-admin-guides'  => fw_get_admin_guide_url(),
     ];
@@ -177,6 +188,13 @@ function fw_admin_dashboard_page() {
             'icon'  => '📚',
             'color' => '#D4750A',
         ],
+        [
+            'title' => __( 'Add a Support Entry', 'faithfulwitness' ),
+            'desc'  => __( 'Add a legal aid, basic needs, or other support organization to the Find Support directory.', 'faithfulwitness' ),
+            'url'   => admin_url( 'post-new.php?post_type=fw_support_entry' ),
+            'icon'  => '🤝',
+            'color' => '#1A5A6A',
+        ],
     ];
 
     // Add Homepage Settings link if ACF options page exists
@@ -240,7 +258,7 @@ function fw_admin_dashboard_page() {
             <tbody>
                 <?php
                 $recent = get_posts( [
-                    'post_type'   => [ 'fw_resource', 'fw_event', 'fw_media_hit', 'post', 'fw_organizing_group' ],
+                    'post_type'   => [ 'fw_resource', 'fw_event', 'fw_media_hit', 'post', 'fw_organizing_group', 'fw_support_entry' ],
                     'post_status' => [ 'publish', 'draft' ],
                     'numberposts' => 8,
                     'orderby'     => 'modified',
@@ -253,6 +271,7 @@ function fw_admin_dashboard_page() {
                     'fw_media_hit'       => __( 'Press Hit',   'faithfulwitness' ),
                     'post'               => __( 'Story',       'faithfulwitness' ),
                     'fw_organizing_group'=> __( 'Partner',     'faithfulwitness' ),
+                    'fw_support_entry'   => __( 'Support',     'faithfulwitness' ),
                 ];
 
                 foreach ( $recent as $item ) :

@@ -395,6 +395,31 @@ function fw_render_resource_card( $post ) {
 }
 
 /**
+ * Render the site-wide legal disclaimer.
+ *
+ * Used automatically on Know Your Rights pages and available
+ * for any template via <?php fw_render_legal_disclaimer(); ?>.
+ *
+ * @param bool $show_translation_note  Include the translation disclaimer (default true).
+ */
+function fw_render_legal_disclaimer( $show_translation_note = true ) {
+    ?>
+    <div class="fw-legal-disclaimer" role="note" aria-label="<?php esc_attr_e( 'Legal disclaimer', 'faithfulwitness' ); ?>">
+        <p class="fw-legal-disclaimer__text">
+            <strong><?php esc_html_e( 'Legal Disclaimer:', 'faithfulwitness' ); ?></strong>
+            <?php esc_html_e( 'The information provided on this website is for general educational purposes only and does not constitute legal advice. Faithful Witness is not a law firm and does not provide legal representation. If you or someone you know has an urgent legal need, please contact a qualified immigration attorney or accredited legal aid organization in your area.', 'faithfulwitness' ); ?>
+        </p>
+        <?php if ( $show_translation_note ) : ?>
+        <p class="fw-legal-disclaimer__text">
+            <strong><?php esc_html_e( 'Translation Notice:', 'faithfulwitness' ); ?></strong>
+            <?php esc_html_e( 'Some content on this site may be available in translation. Translations are provided for informational convenience only. In the event of any discrepancy between a translated version and the English original, the English version shall govern.', 'faithfulwitness' ); ?>
+        </p>
+        <?php endif; ?>
+    </div>
+    <?php
+}
+
+/**
  * Get an SVG icon for a resource type.
  *
  * @param string $type_slug

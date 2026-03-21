@@ -32,6 +32,8 @@ function fw_register_acf_fields() {
     fw_acf_group_page_take_action();
     fw_acf_group_page_formation();
     fw_acf_group_page_kyr();
+    fw_acf_group_support_entries();
+    fw_acf_group_page_about();
     fw_acf_options_homepage();
 }
 
@@ -559,6 +561,8 @@ function fw_acf_group_page_heroes() {
             [ [ 'param' => 'page_template', 'operator' => '==', 'value' => 'page-templates/template-stories.php' ] ],
             [ [ 'param' => 'page_template', 'operator' => '==', 'value' => 'page-templates/template-news.php' ] ],
             [ [ 'param' => 'page_template', 'operator' => '==', 'value' => 'page-templates/template-map.php' ] ],
+            [ [ 'param' => 'page_template', 'operator' => '==', 'value' => 'page-templates/template-find-support.php' ] ],
+            [ [ 'param' => 'page_template', 'operator' => '==', 'value' => 'page-templates/template-about.php' ] ],
         ],
         'menu_order'            => 0,
         'position'              => 'normal',
@@ -1506,6 +1510,171 @@ add_action( 'wp_ajax_fw_dismiss_acf_notice', function () {
     update_option( 'fw_acf_notice_dismissed', 1 );
     wp_send_json_success();
 } );
+
+// ============================================================
+// ABOUT PAGE — template-about.php
+// ============================================================
+function fw_acf_group_page_about() {
+    acf_add_local_field_group( [
+        'key'    => 'group_fw_page_about',
+        'title'  => __( 'About — Page Content', 'faithfulwitness' ),
+        'fields' => [
+            [
+                'key'          => 'field_fw_about_vision',
+                'label'        => __( 'Vision Statement', 'faithfulwitness' ),
+                'name'         => 'fw_about_vision',
+                'type'         => 'textarea',
+                'instructions' => __( 'One paragraph describing the long-term vision of Faithful Witness.', 'faithfulwitness' ),
+                'rows'         => 4,
+            ],
+            [
+                'key'          => 'field_fw_about_mission',
+                'label'        => __( 'Mission Statement', 'faithfulwitness' ),
+                'name'         => 'fw_about_mission',
+                'type'         => 'textarea',
+                'instructions' => __( 'One paragraph describing what Faithful Witness does and for whom.', 'faithfulwitness' ),
+                'rows'         => 4,
+            ],
+            [
+                'key'          => 'field_fw_about_distinctives',
+                'label'        => __( 'Our Distinctives', 'faithfulwitness' ),
+                'name'         => 'fw_about_distinctives',
+                'type'         => 'wysiwyg',
+                'instructions' => __( 'What makes Faithful Witness different? Use bullet points or short paragraphs.', 'faithfulwitness' ),
+                'tabs'         => 'all',
+                'toolbar'      => 'basic',
+                'media_upload' => 0,
+            ],
+            [
+                'key'          => 'field_fw_about_national_policies',
+                'label'        => __( 'National Policy Positions', 'faithfulwitness' ),
+                'name'         => 'fw_about_national_policies',
+                'type'         => 'wysiwyg',
+                'instructions' => __( 'Faithful Witness positions on federal immigration policy.', 'faithfulwitness' ),
+                'tabs'         => 'all',
+                'toolbar'      => 'basic',
+                'media_upload' => 0,
+            ],
+            [
+                'key'          => 'field_fw_about_local_policies',
+                'label'        => __( 'Local Policy Positions', 'faithfulwitness' ),
+                'name'         => 'fw_about_local_policies',
+                'type'         => 'wysiwyg',
+                'instructions' => __( 'Positions on state and local immigration enforcement and sanctuary policies.', 'faithfulwitness' ),
+                'tabs'         => 'all',
+                'toolbar'      => 'basic',
+                'media_upload' => 0,
+            ],
+            [
+                'key'          => 'field_fw_about_scripture_text',
+                'label'        => __( 'Scripture Pullquote', 'faithfulwitness' ),
+                'name'         => 'fw_about_scripture_text',
+                'type'         => 'textarea',
+                'instructions' => __( 'A scripture verse displayed prominently on the About page.', 'faithfulwitness' ),
+                'rows'         => 3,
+            ],
+            [
+                'key'          => 'field_fw_about_scripture_ref',
+                'label'        => __( 'Scripture Reference', 'faithfulwitness' ),
+                'name'         => 'fw_about_scripture_ref',
+                'type'         => 'text',
+                'instructions' => __( 'E.g. "Leviticus 19:33–34"', 'faithfulwitness' ),
+            ],
+        ],
+        'location' => [
+            [ [ 'param' => 'page_template', 'operator' => '==', 'value' => 'page-templates/template-about.php' ] ],
+        ],
+        'menu_order' => 5,
+        'style'      => 'default',
+    ] );
+}
+
+// ============================================================
+// SUPPORT ENTRIES — fw_support_entry
+// ============================================================
+function fw_acf_group_support_entries() {
+    acf_add_local_field_group( [
+        'key'    => 'group_fw_support_entry',
+        'title'  => __( 'Support Entry Details', 'faithfulwitness' ),
+        'fields' => [
+            [
+                'key'           => 'field_fw_support_type',
+                'label'         => __( 'Support Type', 'faithfulwitness' ),
+                'name'          => 'fw_support_type',
+                'type'          => 'select',
+                'instructions'  => __( 'Choose the category that best describes this organization\'s services.', 'faithfulwitness' ),
+                'choices'       => [
+                    'basic_needs' => __( 'Basic Needs (food, housing, clothing)', 'faithfulwitness' ),
+                    'legal'       => __( 'Legal Services', 'faithfulwitness' ),
+                    'spiritual'   => __( 'Spiritual & Pastoral Support', 'faithfulwitness' ),
+                    'community'   => __( 'Community & Social Services', 'faithfulwitness' ),
+                ],
+                'default_value' => 'community',
+                'allow_null'    => 0,
+                'required'      => 1,
+            ],
+            [
+                'key'          => 'field_fw_support_org_name',
+                'label'        => __( 'Organization Name', 'faithfulwitness' ),
+                'name'         => 'fw_support_org_name',
+                'type'         => 'text',
+                'instructions' => __( 'Full legal or public-facing name of the organization.', 'faithfulwitness' ),
+                'required'     => 1,
+            ],
+            [
+                'key'          => 'field_fw_support_description',
+                'label'        => __( 'Service Description', 'faithfulwitness' ),
+                'name'         => 'fw_support_description',
+                'type'         => 'textarea',
+                'instructions' => __( 'Brief description of the services offered (2–4 sentences).', 'faithfulwitness' ),
+                'rows'         => 4,
+            ],
+            [
+                'key'          => 'field_fw_support_area',
+                'label'        => __( 'Service Area', 'faithfulwitness' ),
+                'name'         => 'fw_support_area',
+                'type'         => 'text',
+                'instructions' => __( 'City, county, state, or region served. E.g. "Chicago Metro Area" or "Nationwide".', 'faithfulwitness' ),
+            ],
+            [
+                'key'          => 'field_fw_support_phone',
+                'label'        => __( 'Phone Number', 'faithfulwitness' ),
+                'name'         => 'fw_support_phone',
+                'type'         => 'text',
+                'instructions' => __( 'Include country code for international numbers.', 'faithfulwitness' ),
+            ],
+            [
+                'key'          => 'field_fw_support_email',
+                'label'        => __( 'Contact Email', 'faithfulwitness' ),
+                'name'         => 'fw_support_email',
+                'type'         => 'email',
+            ],
+            [
+                'key'          => 'field_fw_support_website',
+                'label'        => __( 'Website URL', 'faithfulwitness' ),
+                'name'         => 'fw_support_website',
+                'type'         => 'url',
+                'instructions' => __( 'Full URL including https://', 'faithfulwitness' ),
+            ],
+            [
+                'key'          => 'field_fw_support_legal_disclaimer',
+                'label'        => __( 'Show Legal Disclaimer', 'faithfulwitness' ),
+                'name'         => 'fw_support_legal_disclaimer',
+                'type'         => 'true_false',
+                'instructions' => __( 'Enable for Legal Services entries. Displays a "not legal advice" disclaimer alongside this listing.', 'faithfulwitness' ),
+                'default_value'=> 0,
+                'ui'           => 1,
+                'ui_on_text'   => __( 'Yes', 'faithfulwitness' ),
+                'ui_off_text'  => __( 'No', 'faithfulwitness' ),
+            ],
+        ],
+        'location' => [
+            [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'fw_support_entry' ] ],
+        ],
+        'menu_order' => 0,
+        'style'      => 'default',
+    ] );
+}
 
 // ============================================================
 // RELABEL "Excerpt" → "Short Description" in editors
