@@ -35,14 +35,12 @@
                     <?php endforeach; ?>
                 </div>
 
-                <!-- Mailchimp CTA in footer -->
+                <!-- Mailchimp compact signup in footer -->
                 <div style="margin-top: var(--space-6);">
-                    <a href="https://mailchi.mp/ccda/join-the-faithful-witness-campaign"
-                       class="btn btn--accent btn--sm"
-                       target="_blank"
-                       rel="noopener noreferrer">
-                        <?php esc_html_e( 'Join the Campaign', 'faithfulwitness' ); ?>
-                    </a>
+                    <p style="font-size:var(--text-sm);font-weight:700;margin-bottom:var(--space-3);opacity:.85;">
+                        <?php esc_html_e( 'Join the movement:', 'faithfulwitness' ); ?>
+                    </p>
+                    <?php fw_render_mailchimp_signup_section( 'inline' ); ?>
                 </div>
             </div>
 

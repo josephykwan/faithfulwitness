@@ -1292,3 +1292,135 @@
   .campaign-pack__resources  { grid-template-columns: 1fr; }
   .calendar-header-cell      { font-size: 9px; padding: 4px 2px; }
 }
+
+/* ============================================================
+   MAILCHIMP SIGNUP SECTION (homepage full + footer inline)
+   ============================================================ */
+
+.signup-section {
+  background: var(--color-primary);
+  color: #fff;
+  padding: var(--space-20) 0;
+}
+
+.signup-section__inner {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: var(--space-16);
+  align-items: start;
+}
+
+.signup-section__text .eyebrow {
+  color: var(--color-accent-light, #e8c472);
+}
+
+.signup-section__text h2 {
+  color: #fff;
+  font-size: var(--text-4xl);
+  margin-bottom: var(--space-4);
+}
+
+.signup-section__text p {
+  color: rgba(255,255,255,.85);
+  font-size: var(--text-lg);
+  max-width: 480px;
+}
+
+/* Form */
+.signup-form {
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 16px;
+  padding: var(--space-8);
+}
+
+.signup-form__row {
+  margin: 0 0 var(--space-4);
+}
+
+.signup-form__row label {
+  display: block;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  margin-bottom: var(--space-1);
+  color: rgba(255,255,255,.8);
+}
+
+.signup-form__row input[type="text"],
+.signup-form__row input[type="email"],
+.signup-form__row select {
+  width: 100%;
+  padding: .65rem 1rem;
+  border: 1.5px solid rgba(255,255,255,.25);
+  border-radius: 8px;
+  background: rgba(255,255,255,.1);
+  color: #fff;
+  font-size: var(--text-base);
+  outline: none;
+  transition: border-color .15s;
+}
+
+.signup-form__row input::placeholder { color: rgba(255,255,255,.45); }
+
+.signup-form__row input:focus,
+.signup-form__row select:focus {
+  border-color: rgba(255,255,255,.6);
+}
+
+.signup-form__row select option { color: #1a1a1a; background: #fff; }
+
+.signup-form__row--half {
+  /* used if we ever add first/last side-by-side */
+}
+
+.signup-form__legal {
+  font-size: var(--text-xs);
+  color: rgba(255,255,255,.45);
+  text-align: center;
+  margin-top: var(--space-3) !important;
+  margin-bottom: 0 !important;
+}
+
+/* Inline (footer) form */
+.fw-signup-inline__form {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: var(--space-2);
+}
+
+.fw-signup-inline__input {
+  flex: 1 1 180px;
+  padding: .55rem .9rem;
+  border: 1.5px solid rgba(255,255,255,.2);
+  border-radius: 8px;
+  background: rgba(255,255,255,.08);
+  color: #fff;
+  font-size: var(--text-sm);
+  outline: none;
+}
+
+.fw-signup-inline__input::placeholder { color: rgba(255,255,255,.4); }
+
+.fw-signup-inline__input:focus {
+  border-color: rgba(255,255,255,.5);
+}
+
+/* Responsive */
+@media ( max-width: 768px ) {
+  .signup-section__inner {
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+  }
+
+  .signup-section__text h2 { font-size: var(--text-3xl); }
+  .signup-section__text p  { max-width: 100%; }
+
+  .fw-signup-inline__form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .fw-signup-inline__input { flex: 1 1 auto; }
+}

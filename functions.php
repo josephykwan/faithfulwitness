@@ -80,6 +80,7 @@ require_once get_template_directory() . '/inc/shortcodes.php';
 require_once get_template_directory() . '/inc/page-setup.php';
 require_once get_template_directory() . '/inc/acf-fields.php';
 require_once get_template_directory() . '/inc/admin-menu.php';
+require_once get_template_directory() . '/inc/roles-capabilities.php';
 
 // ============================================================
 // CONTENT WIDTH

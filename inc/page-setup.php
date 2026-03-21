@@ -103,6 +103,8 @@ function fw_create_missing_pages() {
     fw_seed_kyr_initiative();
     fw_seed_example_resource();
     fw_seed_admin_guide_pages();
+    fw_seed_primary_nav_menu();
+    fw_seed_team_user();
 }
 add_action( 'admin_init', 'fw_create_missing_pages' );
 
@@ -728,4 +730,76 @@ function fw_seed_placeholder_story() {
         'post_type'    => 'post',
         'post_author'  => 1,
     ] );
+}
+
+// ============================================================
+// SEED PRIMARY NAVIGATION MENU
+// ============================================================
+function fw_seed_primary_nav_menu() {
+    // Only create if a "Primary Navigation" menu doesn't exist yet.
+    if ( wp_get_nav_menu_object( 'Primary Navigation' ) ) return;
+
+    $menu_id = wp_create_nav_menu( 'Primary Navigation' );
+    if ( is_wp_error( $menu_id ) ) return;
+
+    // Helper closure to add items.
+    $add = function( $title, $url, $parent = 0 ) use ( $menu_id ) {
+        return wp_update_nav_menu_item( $menu_id, 0, [
+            'menu-item-title'   => $title,
+            'menu-item-url'     => $url,
+            'menu-item-status'  => 'publish',
+            'menu-item-type'    => 'custom',
+            'menu-item-parent-id' => $parent,
+        ] );
+    };
+
+    // Top-level items
+    $our_work   = $add( __( 'Our Work', 'faithfulwitness' ), '#' );
+    $network    = $add( __( 'The Network', 'faithfulwitness' ), '#' );
+    $resources  = $add( __( 'Resources', 'faithfulwitness' ), '#' );
+    $add( __( 'Stories', 'faithfulwitness' ), home_url( '/stories' ) );
+    $add( __( 'News & Media', 'faithfulwitness' ), home_url( '/news' ) );
+    $add( __( 'Events', 'faithfulwitness' ), home_url( '/events' ) );
+    $add( __( 'Take Action', 'faithfulwitness' ), home_url( '/take-action' ) );
+
+    // Our Work sub-items
+    $add( __( 'Three Commitments', 'faithfulwitness' ), home_url( '/#commitments' ), $our_work );
+    $add( __( 'Campaigns', 'faithfulwitness' ),          home_url( '/take-action' ),   $our_work );
+
+    // The Network sub-items
+    $add( __( 'Find Local Groups', 'faithfulwitness' ),    home_url( '/network' ),  $network );
+    $add( __( 'Partner Organizations', 'faithfulwitness' ), home_url( '/network' ), $network );
+
+    // Resources sub-items
+    $add( __( 'Resource Library', 'faithfulwitness' ),    home_url( '/resources' ),          $resources );
+    $add( __( 'Know Your Rights', 'faithfulwitness' ),    home_url( '/know-your-rights' ),   $resources );
+    $add( __( 'Spiritual Formation', 'faithfulwitness' ), home_url( '/spiritual-formation' ), $resources );
+
+    // Assign the menu to the "primary" theme location.
+    $locations = get_theme_mod( 'nav_menu_locations', [] );
+    $locations['primary'] = $menu_id;
+    set_theme_mod( 'nav_menu_locations', $locations );
+}
+
+// ============================================================
+// SEED PLACEHOLDER TEAM USER (Content Manager)
+// ============================================================
+function fw_seed_team_user() {
+    // Only create if the "team" user doesn't exist.
+    if ( username_exists( 'team' ) ) return;
+
+    $user_id = wp_create_user(
+        'team',
+        wp_generate_password( 16, true, true ), // Random password — admin must reset.
+        'team@' . wp_parse_url( home_url(), PHP_URL_HOST )
+    );
+
+    if ( is_wp_error( $user_id ) ) return;
+
+    $user = new WP_User( $user_id );
+    $user->set_role( 'content_manager' );
+
+    // Add a note in user meta so the welcome email is clear.
+    update_user_meta( $user_id, 'fw_placeholder_user', true );
+    update_user_meta( $user_id, 'description', __( 'Content Manager placeholder account. Reset the password before handing off to the team.', 'faithfulwitness' ) );
 }

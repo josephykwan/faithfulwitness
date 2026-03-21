@@ -99,29 +99,7 @@ get_header(); ?>
     </div>
 </section>
 
-<!-- Email Signup Embed -->
-<section class="signup-embed-section" id="signup">
-    <div class="container">
-        <div class="signup-embed-inner">
-            <span class="eyebrow"><?php esc_html_e( 'Stay Connected', 'faithfulwitness' ); ?></span>
-            <h2><?php esc_html_e( 'Join the Campaign', 'faithfulwitness' ); ?></h2>
-            <p><?php esc_html_e( 'Get updates on our campaigns, events, and resources — and join thousands of faithful witnesses across the country.', 'faithfulwitness' ); ?></p>
-            <?php
-            // Output Mailchimp embed code from Customizer, or fallback link
-            $mc_embed = get_theme_mod( 'fw_mailchimp_embed_code', '' );
-            if ( $mc_embed ) :
-                echo wp_kses_post( $mc_embed );
-            else : ?>
-            <a href="https://mailchi.mp/ccda/join-the-faithful-witness-campaign"
-               class="btn btn--primary btn--lg"
-               target="_blank"
-               rel="noopener noreferrer">
-                <?php esc_html_e( 'Sign Up on Mailchimp', 'faithfulwitness' ); ?>
-            </a>
-            <?php endif; ?>
-        </div>
-    </div>
-</section>
+<?php fw_render_mailchimp_signup_section(); ?>
 
 <!-- Current Campaigns -->
 <section class="campaigns-section" id="campaigns">

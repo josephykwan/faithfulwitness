@@ -202,7 +202,12 @@ $hero_image = get_theme_mod(
 </section>
 
 <!-- ============================================================
-     5. NETWORK MAP TEASER
+     5. MAILCHIMP SIGNUP — Stay Connected
+     ============================================================ -->
+<?php fw_render_mailchimp_signup_section(); ?>
+
+<!-- ============================================================
+     6. NETWORK MAP TEASER
      ============================================================ -->
 <section class="map-teaser-section" id="network">
     <div class="container">
@@ -238,7 +243,7 @@ $hero_image = get_theme_mod(
 </section>
 
 <!-- ============================================================
-     6. CAMPAIGN HIGHLIGHT
+     7. CAMPAIGN HIGHLIGHT
      ============================================================ -->
 <?php
 $featured_campaign = get_posts( [
@@ -281,7 +286,7 @@ $campaign = ! empty( $featured_campaign ) ? $featured_campaign[0] : null;
 </section>
 
 <!-- ============================================================
-     6B. UPCOMING EVENTS WIDGET (mini)
+     7B. UPCOMING EVENTS WIDGET (mini)
      ============================================================ -->
 <?php
 $next_events = get_posts( [
@@ -354,7 +359,7 @@ if ( ! empty( $next_events ) ) : ?>
 <?php endif; ?>
 
 <!-- ============================================================
-     7. SCRIPTURE ANCHOR — Acts 4:20
+     8. SCRIPTURE ANCHOR — Acts 4:20
      ============================================================ -->
 <section class="scripture-section" id="scripture">
     <div class="container">
@@ -370,7 +375,7 @@ if ( ! empty( $next_events ) ) : ?>
 </section>
 
 <!-- ============================================================
-     8. PARTNER LOGOS
+     9. PARTNER LOGOS
      ============================================================ -->
 <section class="partners-section" id="partners">
     <div class="container">

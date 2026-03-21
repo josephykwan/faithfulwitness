@@ -6,6 +6,139 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 /**
+ * Render the Mailchimp signup section.
+ *
+ * Used on: homepage (Section 5), /take-action page.
+ *
+ * HOW TO CONNECT YOUR MAILCHIMP LIST:
+ *   1. Log into Mailchimp.
+ *   2. Go to Audience → Signup forms → Embedded forms.
+ *   3. Copy the form "action" URL (looks like:
+ *      https://yourname.us1.list-manage.com/subscribe/post?u=xxx&id=yyy)
+ *   4. Add this to your wp-config.php or paste into Customizer:
+ *      Appearance → Customize → Site Identity → Mailchimp Form Action URL
+ *   Until configured, the section shows a direct Mailchimp link.
+ *
+ * @param string $style  'full' (default, centered, dark bg) or 'inline' (light, compact)
+ */
+function fw_render_mailchimp_signup_section( $style = 'full' ) {
+    // Get the form action URL — check Customizer, then fall back to Mailchimp direct link.
+    $action_url = get_theme_mod( 'fw_mailchimp_action_url', '' );
+    $fallback   = 'https://mailchi.mp/ccda/join-the-faithful-witness-campaign';
+    $has_form   = ! empty( $action_url );
+
+    if ( $style === 'inline' ) :
+        // Compact footer/sidebar version
+        ?>
+        <div class="fw-signup-inline">
+            <?php if ( $has_form ) : ?>
+            <form action="<?php echo esc_url( $action_url ); ?>"
+                  method="post"
+                  target="_blank"
+                  class="fw-signup-inline__form">
+                <input type="hidden" name="SIGNUP_SOURCE" value="footer">
+                <label for="fw-footer-email" class="screen-reader-text"><?php esc_html_e( 'Email address', 'faithfulwitness' ); ?></label>
+                <input type="email"
+                       id="fw-footer-email"
+                       name="EMAIL"
+                       required
+                       placeholder="<?php esc_attr_e( 'Your email address', 'faithfulwitness' ); ?>"
+                       class="fw-signup-inline__input">
+                <button type="submit" class="btn btn--accent btn--sm">
+                    <?php esc_html_e( 'Join →', 'faithfulwitness' ); ?>
+                </button>
+            </form>
+            <?php else : ?>
+            <a href="<?php echo esc_url( $fallback ); ?>"
+               class="btn btn--accent btn--sm"
+               target="_blank"
+               rel="noopener noreferrer">
+                <?php esc_html_e( 'Join the Campaign →', 'faithfulwitness' ); ?>
+            </a>
+            <?php endif; ?>
+        </div>
+        <?php
+        return;
+    endif;
+
+    // Full section (homepage, take-action)
+    ?>
+    <section class="signup-section" id="stay-connected">
+        <div class="container">
+            <div class="signup-section__inner">
+                <div class="signup-section__text">
+                    <span class="eyebrow" style="color:var(--color-accent-light);"><?php esc_html_e( 'Get Involved', 'faithfulwitness' ); ?></span>
+                    <h2><?php esc_html_e( 'Stay connected to the movement', 'faithfulwitness' ); ?></h2>
+                    <p><?php esc_html_e( 'Join thousands of churches, pastors, and faithful witnesses. Get resources, event updates, and ways to take action — straight to your inbox.', 'faithfulwitness' ); ?></p>
+                </div>
+
+                <div class="signup-section__form-wrap">
+                    <?php if ( $has_form ) : ?>
+                    <form action="<?php echo esc_url( $action_url ); ?>"
+                          method="post"
+                          target="_blank"
+                          class="signup-form">
+                        <input type="hidden" name="SIGNUP_SOURCE" value="homepage">
+                        <p class="signup-form__row signup-form__row--half">
+                            <label for="fw-mc-fname"><?php esc_html_e( 'First Name', 'faithfulwitness' ); ?></label>
+                            <input type="text" id="fw-mc-fname" name="FNAME" required placeholder="<?php esc_attr_e( 'First name', 'faithfulwitness' ); ?>">
+                        </p>
+                        <p class="signup-form__row">
+                            <label for="fw-mc-email"><?php esc_html_e( 'Email Address', 'faithfulwitness' ); ?></label>
+                            <input type="email" id="fw-mc-email" name="EMAIL" required placeholder="<?php esc_attr_e( 'your@email.com', 'faithfulwitness' ); ?>">
+                        </p>
+                        <p class="signup-form__row">
+                            <label for="fw-mc-role"><?php esc_html_e( 'I am:', 'faithfulwitness' ); ?></label>
+                            <select id="fw-mc-role" name="ROLE">
+                                <option value=""><?php esc_html_e( 'Select one…', 'faithfulwitness' ); ?></option>
+                                <option value="pastor"><?php esc_html_e( 'A pastor or church leader', 'faithfulwitness' ); ?></option>
+                                <option value="member"><?php esc_html_e( 'A congregation member', 'faithfulwitness' ); ?></option>
+                                <option value="affected"><?php esc_html_e( 'Someone directly affected', 'faithfulwitness' ); ?></option>
+                                <option value="organizer"><?php esc_html_e( 'A community organizer', 'faithfulwitness' ); ?></option>
+                                <option value="learning"><?php esc_html_e( 'Just learning more', 'faithfulwitness' ); ?></option>
+                            </select>
+                        </p>
+                        <p class="signup-form__row">
+                            <!-- Mailchimp anti-bot honeypot -->
+                            <input type="text" name="b_<?php echo esc_attr( fw_mc_honeypot_name() ); ?>" tabindex="-1" value="" style="position:absolute;left:-5000px;" aria-hidden="true">
+                            <button type="submit" class="btn btn--primary btn--lg" style="width:100%;">
+                                <?php esc_html_e( 'Join the Campaign', 'faithfulwitness' ); ?>
+                            </button>
+                        </p>
+                        <p class="signup-form__legal"><?php esc_html_e( 'We send resources and updates. No spam. Unsubscribe anytime.', 'faithfulwitness' ); ?></p>
+                    </form>
+                    <?php else : ?>
+                    <div style="text-align:center;padding:2rem 0;">
+                        <p style="opacity:.9;margin-bottom:1.5rem;"><?php esc_html_e( 'Click below to join the Faithful Witness Campaign and receive updates, resources, and events.', 'faithfulwitness' ); ?></p>
+                        <a href="<?php echo esc_url( $fallback ); ?>"
+                           class="btn btn--primary btn--lg"
+                           target="_blank"
+                           rel="noopener noreferrer">
+                            <?php esc_html_e( 'Join the Campaign', 'faithfulwitness' ); ?>
+                        </a>
+                        <p style="opacity:.5;font-size:var(--text-sm);margin-top:1rem;">
+                            <?php esc_html_e( 'To embed a full signup form, add your Mailchimp form action URL under Appearance → Customize → Site Identity.', 'faithfulwitness' ); ?>
+                        </p>
+                    </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </section>
+    <?php
+}
+
+/**
+ * Returns a stable honeypot field name fragment for Mailchimp forms.
+ * Replace the return value with your actual Mailchimp honeypot field name.
+ */
+function fw_mc_honeypot_name() {
+    // This is a placeholder — replace with the actual honeypot name from your
+    // Mailchimp embedded form code (the long string in the hidden b_ field).
+    return 'PLACEHOLDER_HONEYPOT';
+}
+
+/**
  * Output breadcrumbs for the current page.
  */
 function fw_breadcrumbs() {
