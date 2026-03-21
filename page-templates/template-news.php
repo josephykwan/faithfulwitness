@@ -1,0 +1,180 @@
+<?php
+/**
+ * Template Name: News & Media
+ *
+ * Two sections:
+ *   Press Coverage — fw_media_hit CPT cards (outlet, headline, pull quote, date)
+ *   Press Releases — WP posts with category "press-release"
+ * Plus a "Media Inquiries" CTA at the bottom.
+ */
+
+get_header(); ?>
+
+<!-- Hero -->
+<section class="news-hero" id="news-top">
+    <div class="container">
+        <span class="hero__eyebrow" style="color:var(--color-accent-light);"><?php esc_html_e( 'In the Public Square', 'faithfulwitness' ); ?></span>
+        <h1><?php esc_html_e( 'Faithful Witness in the News', 'faithfulwitness' ); ?></h1>
+        <p><?php esc_html_e( 'Coverage, statements, and press resources from the Faithful Witness campaign.', 'faithfulwitness' ); ?></p>
+    </div>
+</section>
+
+<!-- Section Nav -->
+<nav class="press-tabs-nav" aria-label="<?php esc_attr_e( 'Press sections', 'faithfulwitness' ); ?>">
+    <div class="container">
+        <a href="#press-coverage" class="press-tab-link press-tab-link--active"><?php esc_html_e( 'Press Coverage', 'faithfulwitness' ); ?></a>
+        <a href="#press-releases" class="press-tab-link"><?php esc_html_e( 'Press Releases & Statements', 'faithfulwitness' ); ?></a>
+    </div>
+</nav>
+
+<!-- ===============================================================
+     PRESS COVERAGE — fw_media_hit CPT
+     =============================================================== -->
+<section class="section press-section" id="press-coverage">
+    <div class="container">
+        <div class="section-header">
+            <span class="eyebrow"><?php esc_html_e( 'Media Coverage', 'faithfulwitness' ); ?></span>
+            <h2><?php esc_html_e( 'What the Press Is Saying', 'faithfulwitness' ); ?></h2>
+            <p><?php esc_html_e( 'News coverage of Faithful Witness and the communities we serve.', 'faithfulwitness' ); ?></p>
+        </div>
+
+        <div class="press-coverage-grid">
+            <?php
+            $media_hits = get_posts( [
+                'post_type'      => 'fw_media_hit',
+                'post_status'    => 'publish',
+                'posts_per_page' => -1,
+                'orderby'        => 'meta_value',
+                'meta_key'       => 'fw_media_pub_date',
+                'order'          => 'DESC',
+            ] );
+
+            if ( ! empty( $media_hits ) ) :
+                foreach ( $media_hits as $hit ) :
+                    $outlet    = get_post_meta( $hit->ID, 'fw_media_outlet', true );
+                    $url       = get_post_meta( $hit->ID, 'fw_media_url', true );
+                    $pub_date  = get_post_meta( $hit->ID, 'fw_media_pub_date', true );
+                    $quote     = get_post_meta( $hit->ID, 'fw_media_pull_quote', true );
+                    $logo_url  = get_post_meta( $hit->ID, 'fw_media_outlet_logo_url', true );
+                    $formatted = $pub_date ? date_i18n( get_option( 'date_format' ), strtotime( $pub_date ) ) : '';
+            ?>
+            <article class="press-card">
+                <div class="press-card__header">
+                    <?php if ( $logo_url ) : ?>
+                    <img src="<?php echo esc_url( $logo_url ); ?>"
+                         alt="<?php echo esc_attr( $outlet ); ?>"
+                         class="press-card__logo"
+                         loading="lazy">
+                    <?php else : ?>
+                    <span class="press-card__outlet-name"><?php echo esc_html( $outlet ?: __( 'Media Outlet', 'faithfulwitness' ) ); ?></span>
+                    <?php endif; ?>
+                    <?php if ( $formatted ) : ?>
+                    <time class="press-card__date" datetime="<?php echo esc_attr( $pub_date ); ?>"><?php echo esc_html( $formatted ); ?></time>
+                    <?php endif; ?>
+                </div>
+                <h3 class="press-card__headline">
+                    <?php if ( $url ) : ?>
+                    <a href="<?php echo esc_url( $url ); ?>" target="_blank" rel="noopener noreferrer">
+                        <?php echo esc_html( get_the_title( $hit ) ); ?> ↗
+                    </a>
+                    <?php else : ?>
+                    <?php echo esc_html( get_the_title( $hit ) ); ?>
+                    <?php endif; ?>
+                </h3>
+                <?php if ( $quote ) : ?>
+                <blockquote class="press-card__quote">
+                    <p><?php echo esc_html( $quote ); ?></p>
+                </blockquote>
+                <?php endif; ?>
+            </article>
+            <?php
+                endforeach;
+            else : ?>
+            <div class="press-empty">
+                <p><?php esc_html_e( 'Press coverage will appear here. Add media hits from the WordPress admin under Press Coverage.', 'faithfulwitness' ); ?></p>
+            </div>
+            <?php endif; ?>
+        </div>
+    </div>
+</section>
+
+<!-- ===============================================================
+     PRESS RELEASES — standard WP posts with "Press Release" category
+     =============================================================== -->
+<?php
+$pr_cat = get_category_by_slug( 'press-release' );
+$press_releases = new WP_Query( [
+    'post_type'      => 'post',
+    'post_status'    => 'publish',
+    'posts_per_page' => 20,
+    'orderby'        => 'date',
+    'order'          => 'DESC',
+    'tax_query'      => $pr_cat ? [ [
+        'taxonomy' => 'category',
+        'field'    => 'slug',
+        'terms'    => 'press-release',
+    ] ] : [],
+] );
+?>
+<section class="section section--alt press-section" id="press-releases">
+    <div class="container">
+        <div class="section-header">
+            <span class="eyebrow"><?php esc_html_e( 'Official Statements', 'faithfulwitness' ); ?></span>
+            <h2><?php esc_html_e( 'Press Releases & Statements', 'faithfulwitness' ); ?></h2>
+            <p><?php esc_html_e( 'Official statements and press releases from Faithful Witness and our network.', 'faithfulwitness' ); ?></p>
+        </div>
+
+        <div class="press-releases-list">
+            <?php if ( $press_releases->have_posts() ) :
+                while ( $press_releases->have_posts() ) : $press_releases->the_post(); ?>
+            <article class="press-release-item">
+                <time class="press-release-item__date" datetime="<?php echo esc_attr( get_the_date( 'Y-m-d' ) ); ?>">
+                    <?php echo esc_html( get_the_date() ); ?>
+                </time>
+                <div class="press-release-item__content">
+                    <h3 class="press-release-item__title">
+                        <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+                    </h3>
+                    <?php if ( $excerpt = get_the_excerpt() ) : ?>
+                    <p class="press-release-item__excerpt"><?php echo esc_html( wp_trim_words( $excerpt, 20, '…' ) ); ?></p>
+                    <?php endif; ?>
+                </div>
+                <a href="<?php the_permalink(); ?>" class="press-release-item__link" aria-label="<?php echo esc_attr( sprintf( __( 'Read full statement: %s', 'faithfulwitness' ), get_the_title() ) ); ?>">
+                    <?php esc_html_e( 'Read →', 'faithfulwitness' ); ?>
+                </a>
+            </article>
+            <?php
+                endwhile;
+                wp_reset_postdata();
+            else : ?>
+            <div class="press-empty">
+                <p><?php esc_html_e( 'Press releases will appear here. Publish WordPress posts using the "Press Release" category to add them.', 'faithfulwitness' ); ?></p>
+            </div>
+            <?php endif; ?>
+        </div>
+    </div>
+</section>
+
+<!-- Media Inquiries CTA -->
+<section class="media-inquiries-cta section" id="media-contact">
+    <div class="container">
+        <div class="media-inquiries-cta__inner">
+            <div>
+                <span class="eyebrow"><?php esc_html_e( 'Press Contact', 'faithfulwitness' ); ?></span>
+                <h2><?php esc_html_e( 'Media Inquiries', 'faithfulwitness' ); ?></h2>
+                <p><?php esc_html_e( 'For press inquiries, interview requests, or to receive our press kit, please contact:', 'faithfulwitness' ); ?></p>
+                <p>
+                    <a href="mailto:press@faithfulwitness.us" class="media-inquiries-cta__email">press@faithfulwitness.us</a>
+                    <span class="media-inquiries-cta__placeholder"><?php esc_html_e( '(Update this email in the page content)', 'faithfulwitness' ); ?></span>
+                </p>
+            </div>
+            <div>
+                <?php if ( $content = apply_filters( 'the_content', get_the_content() ) ) : ?>
+                <div class="entry-content"><?php echo $content; // phpcs:ignore ?></div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</section>
+
+<?php get_footer();

@@ -52,6 +52,16 @@ function fw_register_meta_boxes() {
         'high'
     );
 
+    // --- Media Hit ---
+    add_meta_box(
+        'fw_media_hit_details',
+        __( 'Media Hit Details', 'faithfulwitness' ),
+        'fw_render_media_hit_meta_box',
+        'fw_media_hit',
+        'normal',
+        'high'
+    );
+
     // --- Initiative ---
     add_meta_box(
         'fw_initiative_details',
@@ -82,6 +92,34 @@ function fw_render_organizing_group_meta_box( $post ) {
         'fw_twitter_url'   => [ 'label' => 'Twitter / X URL',  'type' => 'url' ],
     ];
     fw_render_fields( $post->ID, $fields );
+
+    // Org type select (for map pin color-coding)
+    $org_type = get_post_meta( $post->ID, 'fw_org_type', true ) ?: 'national-partner';
+    echo '<p><label style="font-weight:600;display:block;margin-bottom:4px;">Organization Type</label>';
+    echo '<select name="fw_org_type" style="width:100%">';
+    foreach ( [
+        'national-partner' => 'National Partner',
+        'local-church'     => 'Local Church',
+        'organizing-group' => 'Organizing Group',
+    ] as $val => $label ) {
+        printf( '<option value="%s"%s>%s</option>', esc_attr( $val ), selected( $org_type, $val, false ), esc_html( $label ) );
+    }
+    echo '</select></p>';
+}
+
+// ============================================================
+// MEDIA HIT META BOX
+// ============================================================
+function fw_render_media_hit_meta_box( $post ) {
+    wp_nonce_field( 'fw_media_hit_meta', 'fw_media_hit_nonce' );
+    $fields = [
+        'fw_media_outlet'          => [ 'label' => 'Outlet Name',       'type' => 'text', 'placeholder' => 'e.g. Christianity Today' ],
+        'fw_media_url'             => [ 'label' => 'Article URL',        'type' => 'url' ],
+        'fw_media_pub_date'        => [ 'label' => 'Publication Date',   'type' => 'date' ],
+        'fw_media_pull_quote'      => [ 'label' => 'Pull Quote / Excerpt','type' => 'text' ],
+        'fw_media_outlet_logo_url' => [ 'label' => 'Outlet Logo URL',    'type' => 'url', 'placeholder' => 'https://…' ],
+    ];
+    fw_render_fields( $post->ID, $fields );
 }
 
 // ============================================================
@@ -89,6 +127,11 @@ function fw_render_organizing_group_meta_box( $post ) {
 // ============================================================
 function fw_render_resource_meta_box( $post ) {
     wp_nonce_field( 'fw_resource_meta', 'fw_resource_nonce' );
+
+    // Featured checkbox
+    $featured = get_post_meta( $post->ID, 'fw_resource_featured', true );
+    echo '<p><label style="font-weight:600;"><input type="checkbox" name="fw_resource_featured" value="1"' . checked( $featured, '1', false ) . ' style="margin-right:6px;">' . esc_html__( 'Feature this resource at the top of the Resource Library', 'faithfulwitness' ) . '</label></p>';
+
     $fields = [
         'fw_resource_url'       => [ 'label' => 'External Link (if applicable)', 'type' => 'url' ],
         'fw_resource_file_id'   => [ 'label' => 'Downloadable File (Media ID)', 'type' => 'text', 'placeholder' => 'Attach via Media Library' ],
@@ -191,11 +234,22 @@ function fw_save_meta_boxes( $post_id ) {
     if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
     if ( ! current_user_can( 'edit_post', $post_id ) ) return;
 
+    // Media Hit
+    if ( isset( $_POST['fw_media_hit_nonce'] ) &&
+         wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['fw_media_hit_nonce'] ) ), 'fw_media_hit_meta' ) ) {
+        $hit_fields = [ 'fw_media_outlet', 'fw_media_url', 'fw_media_pub_date', 'fw_media_pull_quote', 'fw_media_outlet_logo_url' ];
+        foreach ( $hit_fields as $field ) {
+            if ( isset( $_POST[ $field ] ) ) {
+                update_post_meta( $post_id, $field, sanitize_text_field( wp_unslash( $_POST[ $field ] ) ) );
+            }
+        }
+    }
+
     // Organizing Group
     if ( isset( $_POST['fw_organizing_group_nonce'] ) &&
          wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['fw_organizing_group_nonce'] ) ), 'fw_organizing_group_meta' ) ) {
         $og_fields = [ 'fw_city', 'fw_state_abbr', 'fw_lat', 'fw_lng', 'fw_contact_email',
-                       'fw_contact_phone', 'fw_website_url', 'fw_instagram_url', 'fw_facebook_url', 'fw_twitter_url' ];
+                       'fw_contact_phone', 'fw_website_url', 'fw_instagram_url', 'fw_facebook_url', 'fw_twitter_url', 'fw_org_type' ];
         foreach ( $og_fields as $field ) {
             if ( isset( $_POST[ $field ] ) ) {
                 update_post_meta( $post_id, $field, sanitize_text_field( wp_unslash( $_POST[ $field ] ) ) );
@@ -212,6 +266,7 @@ function fw_save_meta_boxes( $post_id ) {
                 update_post_meta( $post_id, $field, sanitize_text_field( wp_unslash( $_POST[ $field ] ) ) );
             }
         }
+        update_post_meta( $post_id, 'fw_resource_featured', isset( $_POST['fw_resource_featured'] ) ? '1' : '0' );
     }
 
     // Event

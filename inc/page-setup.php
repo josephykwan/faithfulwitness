@@ -47,6 +47,16 @@ function fw_required_pages() {
             'template' => 'page-templates/template-spiritual-formation.php',
             'content'  => '',
         ],
+        'news' => [
+            'title'    => __( 'News & Media', 'faithfulwitness' ),
+            'template' => 'page-templates/template-news.php',
+            'content'  => '',
+        ],
+        'events' => [
+            'title'    => __( 'Events & Gatherings', 'faithfulwitness' ),
+            'template' => 'page-templates/template-events.php',
+            'content'  => '',
+        ],
     ];
 }
 
@@ -87,6 +97,8 @@ function fw_create_missing_pages() {
     fw_seed_placeholder_resources();
     fw_seed_placeholder_partners();
     fw_seed_placeholder_story();
+    fw_seed_placeholder_media_hits();
+    fw_seed_placeholder_events();
 }
 add_action( 'admin_init', 'fw_create_missing_pages' );
 
@@ -180,6 +192,7 @@ function fw_seed_placeholder_resources() {
         }
     }
 
+    $featured_count = 0;
     foreach ( $resources as $r ) {
         $post_id = wp_insert_post( [
             'post_title'   => $r['title'],
@@ -192,6 +205,11 @@ function fw_seed_placeholder_resources() {
         wp_set_post_terms( $post_id, [ $r['type'] ],       'fw_resource_type' );
         wp_set_post_terms( $post_id, [ $r['issue_area'] ], 'fw_resource_issue_area' );
         wp_set_post_terms( $post_id, [ $r['audience'] ],   'fw_resource_audience' );
+        // Mark first 3 resources as featured
+        if ( $featured_count < 3 ) {
+            update_post_meta( $post_id, 'fw_resource_featured', '1' );
+            $featured_count++;
+        }
     }
 }
 
@@ -250,6 +268,161 @@ function fw_seed_placeholder_partners() {
         update_post_meta( $post_id, 'fw_contact_email', $p['email'] );
         update_post_meta( $post_id, 'fw_city', $p['city'] );
         update_post_meta( $post_id, 'fw_state_abbr', $p['state'] );
+    }
+}
+
+// ============================================================
+// SEED PLACEHOLDER MEDIA HITS
+// ============================================================
+function fw_seed_placeholder_media_hits() {
+    $count = wp_count_posts( 'fw_media_hit' );
+    if ( isset( $count->publish ) && (int) $count->publish > 0 ) return;
+
+    $hits = [
+        [
+            'title'      => __( 'Faith groups mobilize around immigration enforcement', 'faithfulwitness' ),
+            'outlet'     => 'Christianity Today',
+            'url'        => '',
+            'pub_date'   => gmdate( 'Y-m-d', strtotime( '-30 days' ) ),
+            'pull_quote' => __( '"Churches across the country are asking what it means to be faithful witnesses in this moment — and more are answering the call."', 'faithfulwitness' ),
+            'logo_url'   => '',
+        ],
+        [
+            'title'      => __( 'Evangelical coalition calls for dignity in immigration debate', 'faithfulwitness' ),
+            'outlet'     => 'Religion News Service',
+            'url'        => '',
+            'pub_date'   => gmdate( 'Y-m-d', strtotime( '-14 days' ) ),
+            'pull_quote' => __( '"The Faithful Witness campaign is training churches to respond with Gospel values rather than partisan talking points."', 'faithfulwitness' ),
+            'logo_url'   => '',
+        ],
+    ];
+
+    foreach ( $hits as $h ) {
+        $post_id = wp_insert_post( [
+            'post_title'  => $h['title'],
+            'post_status' => 'publish',
+            'post_type'   => 'fw_media_hit',
+            'post_author' => 1,
+        ] );
+        if ( is_wp_error( $post_id ) ) continue;
+        update_post_meta( $post_id, 'fw_media_outlet',    $h['outlet'] );
+        update_post_meta( $post_id, 'fw_media_url',       $h['url'] );
+        update_post_meta( $post_id, 'fw_media_pub_date',  $h['pub_date'] );
+        update_post_meta( $post_id, 'fw_media_pull_quote', $h['pull_quote'] );
+        update_post_meta( $post_id, 'fw_media_outlet_logo_url', $h['logo_url'] );
+    }
+
+    // Also create a "Press Release" category and one sample press release
+    $cat_id = term_exists( 'press-release', 'category' );
+    if ( ! $cat_id ) {
+        $cat_id = wp_insert_term( __( 'Press Release', 'faithfulwitness' ), 'category', [ 'slug' => 'press-release' ] );
+        $cat_id = is_array( $cat_id ) ? $cat_id['term_id'] : 0;
+    } else {
+        $cat_id = is_array( $cat_id ) ? $cat_id['term_id'] : $cat_id;
+    }
+
+    $existing_pr = get_page_by_path( 'faithful-witness-statement-on-due-process', OBJECT, 'post' );
+    if ( ! $existing_pr && $cat_id ) {
+        $pr_id = wp_insert_post( [
+            'post_title'   => __( 'Faithful Witness Statement on Due Process and Human Dignity', 'faithfulwitness' ),
+            'post_name'    => 'faithful-witness-statement-on-due-process',
+            'post_excerpt' => __( 'A statement from the Faithful Witness campaign affirming our commitment to due process, human dignity, and Gospel-centered engagement on immigration.', 'faithfulwitness' ),
+            'post_content' => '<p>' . __( 'This is a placeholder press release. Replace with the actual statement text.', 'faithfulwitness' ) . '</p>',
+            'post_status'  => 'publish',
+            'post_type'    => 'post',
+            'post_author'  => 1,
+        ] );
+        if ( $pr_id && ! is_wp_error( $pr_id ) ) {
+            wp_set_post_categories( $pr_id, [ (int) $cat_id ] );
+        }
+    }
+}
+
+// ============================================================
+// SEED PLACEHOLDER EVENTS
+// ============================================================
+function fw_seed_placeholder_events() {
+    $count = wp_count_posts( 'fw_event' );
+    if ( isset( $count->publish ) && (int) $count->publish > 0 ) return;
+
+    // Ensure event category terms exist
+    $event_cat_terms = [
+        'kyr-training'         => __( 'Know Your Rights Training', 'faithfulwitness' ),
+        'prayer-gathering'     => __( 'Prayer Gathering', 'faithfulwitness' ),
+        'court-accompaniment'  => __( 'Court Accompaniment', 'faithfulwitness' ),
+        'community-formation'  => __( 'Community Formation', 'faithfulwitness' ),
+        'public-witness'       => __( 'Public Witness', 'faithfulwitness' ),
+        'webinar'              => __( 'Webinar', 'faithfulwitness' ),
+    ];
+    foreach ( $event_cat_terms as $slug => $name ) {
+        if ( ! term_exists( $slug, 'fw_event_category' ) ) {
+            wp_insert_term( $name, 'fw_event_category', [ 'slug' => $slug ] );
+        }
+    }
+
+    $today = gmdate( 'Y-m-d' );
+
+    $events = [
+        [
+            'title'    => __( 'Know Your Rights Training — Chicago', 'faithfulwitness' ),
+            'excerpt'  => __( 'An in-person Know Your Rights training for immigrants and their families, hosted by local faith communities. Learn your legal rights and how your church can support you.', 'faithfulwitness' ),
+            'date'     => gmdate( 'Y-m-d', strtotime( '+7 days' ) ),
+            'time'     => '10:00',
+            'end_time' => '12:00',
+            'virtual'  => '0',
+            'location' => 'Lakeview Community Church',
+            'city'     => 'Chicago',
+            'state'    => 'IL',
+            'reg_link' => '',
+            'category' => 'kyr-training',
+        ],
+        [
+            'title'    => __( 'Prayer Gathering for Immigrant Families', 'faithfulwitness' ),
+            'excerpt'  => __( 'A virtual prayer gathering for churches and individuals to pray together for immigrant families, detained individuals, and those walking through fear.', 'faithfulwitness' ),
+            'date'     => gmdate( 'Y-m-d', strtotime( '+14 days' ) ),
+            'time'     => '19:00',
+            'end_time' => '20:00',
+            'virtual'  => '1',
+            'location' => '',
+            'city'     => '',
+            'state'    => '',
+            'reg_link' => '',
+            'category' => 'prayer-gathering',
+        ],
+        [
+            'title'    => __( 'Faithful Witness Orientation Webinar', 'faithfulwitness' ),
+            'excerpt'  => __( 'New to the campaign? Join this orientation webinar to learn what Faithful Witness is, how it works, and how your congregation can get involved.', 'faithfulwitness' ),
+            'date'     => gmdate( 'Y-m-d', strtotime( '+21 days' ) ),
+            'time'     => '19:30',
+            'end_time' => '20:30',
+            'virtual'  => '1',
+            'location' => '',
+            'city'     => '',
+            'state'    => '',
+            'reg_link' => 'https://mailchi.mp/ccda/join-the-faithful-witness-campaign',
+            'category' => 'webinar',
+        ],
+    ];
+
+    foreach ( $events as $e ) {
+        $post_id = wp_insert_post( [
+            'post_title'   => $e['title'],
+            'post_excerpt' => $e['excerpt'],
+            'post_status'  => 'publish',
+            'post_type'    => 'fw_event',
+            'post_author'  => 1,
+        ] );
+        if ( is_wp_error( $post_id ) ) continue;
+        update_post_meta( $post_id, 'fw_event_date',              $e['date'] );
+        update_post_meta( $post_id, 'fw_event_time',              $e['time'] );
+        update_post_meta( $post_id, 'fw_event_end_time',          $e['end_time'] );
+        update_post_meta( $post_id, 'fw_event_virtual',           $e['virtual'] );
+        update_post_meta( $post_id, 'fw_event_location_name',     $e['location'] );
+        update_post_meta( $post_id, 'fw_event_city',              $e['city'] );
+        update_post_meta( $post_id, 'fw_event_state',             $e['state'] );
+        update_post_meta( $post_id, 'fw_event_registration_link', $e['reg_link'] );
+        update_post_meta( $post_id, 'fw_event_scope',             'national' );
+        wp_set_post_terms( $post_id, [ $e['category'] ], 'fw_event_category' );
     }
 }
 

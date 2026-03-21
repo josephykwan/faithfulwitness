@@ -262,6 +262,79 @@ $campaign = ! empty( $featured_campaign ) ? $featured_campaign[0] : null;
 </section>
 
 <!-- ============================================================
+     6B. UPCOMING EVENTS WIDGET (mini)
+     ============================================================ -->
+<?php
+$next_events = get_posts( [
+    'post_type'      => 'fw_event',
+    'post_status'    => 'publish',
+    'posts_per_page' => 3,
+    'meta_key'       => 'fw_event_date',
+    'orderby'        => 'meta_value',
+    'order'          => 'ASC',
+    'meta_query'     => [ [
+        'key'     => 'fw_event_date',
+        'value'   => gmdate( 'Y-m-d' ),
+        'compare' => '>=',
+        'type'    => 'DATE',
+    ] ],
+] );
+
+if ( ! empty( $next_events ) ) : ?>
+<section class="events-widget-section section section--alt" id="upcoming-events">
+    <div class="container">
+        <div class="section-header" style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1.5rem;margin-bottom:var(--space-8);">
+            <div>
+                <span class="eyebrow"><?php esc_html_e( 'Get Involved', 'faithfulwitness' ); ?></span>
+                <h2><?php esc_html_e( 'Upcoming Events', 'faithfulwitness' ); ?></h2>
+            </div>
+            <a href="<?php echo esc_url( home_url( '/events' ) ); ?>" class="btn btn--outline">
+                <?php esc_html_e( 'View all events →', 'faithfulwitness' ); ?>
+            </a>
+        </div>
+        <div class="events-widget-list">
+            <?php foreach ( $next_events as $ev ) :
+                $ev_date    = get_post_meta( $ev->ID, 'fw_event_date', true );
+                $ev_ts      = $ev_date ? strtotime( $ev_date ) : null;
+                $ev_virtual = get_post_meta( $ev->ID, 'fw_event_virtual', true );
+                $ev_city    = get_post_meta( $ev->ID, 'fw_event_city', true );
+                $ev_state   = get_post_meta( $ev->ID, 'fw_event_state', true );
+                $ev_reg     = get_post_meta( $ev->ID, 'fw_event_registration_link', true );
+                $ev_cats    = wp_get_post_terms( $ev->ID, 'fw_event_category', [ 'fields' => 'names' ] );
+            ?>
+            <div class="events-widget-item">
+                <div class="events-widget-item__date">
+                    <?php if ( $ev_ts ) : ?>
+                    <span class="events-widget-item__month"><?php echo esc_html( date_i18n( 'M', $ev_ts ) ); ?></span>
+                    <span class="events-widget-item__day"><?php echo esc_html( date_i18n( 'j', $ev_ts ) ); ?></span>
+                    <?php endif; ?>
+                </div>
+                <div class="events-widget-item__body">
+                    <?php if ( ! empty( $ev_cats ) && ! is_wp_error( $ev_cats ) ) : ?>
+                    <span class="tag tag--primary" style="font-size:11px;"><?php echo esc_html( $ev_cats[0] ); ?></span>
+                    <?php endif; ?>
+                    <strong class="events-widget-item__title"><?php echo esc_html( get_the_title( $ev ) ); ?></strong>
+                    <span class="events-widget-item__loc">
+                        <?php if ( $ev_virtual === '1' ) : ?>
+                        <?php esc_html_e( 'Virtual', 'faithfulwitness' ); ?>
+                        <?php elseif ( $ev_city ) : ?>
+                        <?php echo esc_html( implode( ', ', array_filter( [ $ev_city, $ev_state ] ) ) ); ?>
+                        <?php endif; ?>
+                    </span>
+                </div>
+                <a href="<?php echo esc_url( $ev_reg ?: get_permalink( $ev ) ); ?>"
+                   class="events-widget-item__cta btn btn--sm btn--primary"
+                   <?php echo $ev_reg ? 'target="_blank" rel="noopener noreferrer"' : ''; ?>>
+                    <?php esc_html_e( 'Register →', 'faithfulwitness' ); ?>
+                </a>
+            </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</section>
+<?php endif; ?>
+
+<!-- ============================================================
      7. SCRIPTURE ANCHOR — Acts 4:20
      ============================================================ -->
 <section class="scripture-section" id="scripture">

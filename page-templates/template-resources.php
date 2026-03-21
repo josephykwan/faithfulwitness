@@ -30,6 +30,59 @@ get_header(); ?>
     </div>
 </div>
 
+<!-- ================================================================
+     START HERE — Featured Resources
+     ================================================================ -->
+<?php
+$featured_resources = get_posts( [
+    'post_type'      => 'fw_resource',
+    'post_status'    => 'publish',
+    'posts_per_page' => 3,
+    'orderby'        => 'date',
+    'order'          => 'DESC',
+    'meta_query'     => [ [
+        'key'     => 'fw_resource_featured',
+        'value'   => '1',
+        'compare' => '=',
+    ] ],
+] );
+
+if ( ! empty( $featured_resources ) ) : ?>
+<section class="section resources-featured-section" id="start-here">
+    <div class="container">
+        <div class="section-header section-header--center">
+            <span class="eyebrow"><?php esc_html_e( 'Start Here', 'faithfulwitness' ); ?></span>
+            <h2><?php esc_html_e( 'Curated for You', 'faithfulwitness' ); ?></h2>
+            <p><?php esc_html_e( 'These three resources are the best place to begin. Chosen by our team for new and returning readers.', 'faithfulwitness' ); ?></p>
+        </div>
+        <div class="featured-resources-grid">
+            <?php foreach ( $featured_resources as $fr ) :
+                $type_tag  = fw_get_resource_type_tag( $fr->ID );
+                $res_url   = get_post_meta( $fr->ID, 'fw_resource_url', true );
+                $file_id   = get_post_meta( $fr->ID, 'fw_resource_file_id', true );
+                $link      = $res_url ?: ( $file_id ? wp_get_attachment_url( $file_id ) : get_permalink( $fr ) );
+            ?>
+            <article class="featured-resource-card">
+                <div class="featured-resource-card__star" aria-hidden="true">★</div>
+                <?php if ( $type_tag ) echo $type_tag; // phpcs:ignore ?>
+                <h3 class="featured-resource-card__title">
+                    <a href="<?php echo esc_url( $link ); ?>"<?php echo $res_url ? ' target="_blank" rel="noopener noreferrer"' : ''; ?>>
+                        <?php echo esc_html( $fr->post_title ); ?>
+                    </a>
+                </h3>
+                <?php if ( $fr->post_excerpt ) : ?>
+                <p class="featured-resource-card__excerpt"><?php echo esc_html( wp_trim_words( $fr->post_excerpt, 25, '…' ) ); ?></p>
+                <?php endif; ?>
+                <a href="<?php echo esc_url( $link ); ?>" class="btn btn--sm btn--primary" <?php echo $res_url ? 'target="_blank" rel="noopener noreferrer"' : ''; ?>>
+                    <?php esc_html_e( 'Access Resource →', 'faithfulwitness' ); ?>
+                </a>
+            </article>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</section>
+<?php endif; ?>
+
 <!-- Resource Library -->
 <section class="section resources-library" id="resource-library">
     <div class="container">
@@ -181,6 +234,100 @@ get_header(); ?>
             </button>
         </div>
 
+    </div>
+</section>
+
+<!-- ================================================================
+     RESOURCE PACKS BY CAMPAIGN
+     ================================================================ -->
+<?php
+$campaigns = get_posts( [
+    'post_type'      => 'fw_initiative',
+    'post_status'    => 'publish',
+    'posts_per_page' => -1,
+    'orderby'        => 'menu_order',
+    'order'          => 'ASC',
+] );
+
+$campaign_packs = [];
+foreach ( $campaigns as $campaign ) {
+    $campaign_resources = get_posts( [
+        'post_type'      => 'fw_resource',
+        'post_status'    => 'publish',
+        'posts_per_page' => 4,
+        'orderby'        => 'date',
+        'order'          => 'DESC',
+        'meta_query'     => [ [
+            'key'     => 'fw_related_initiative_id',
+            'value'   => $campaign->ID,
+            'compare' => '=',
+        ] ],
+    ] );
+    if ( ! empty( $campaign_resources ) ) {
+        $campaign_packs[] = [ 'campaign' => $campaign, 'resources' => $campaign_resources ];
+    }
+}
+
+if ( ! empty( $campaign_packs ) ) : ?>
+<section class="section section--alt campaign-packs-section" id="resource-packs">
+    <div class="container">
+        <div class="section-header">
+            <span class="eyebrow"><?php esc_html_e( 'Campaign Toolkits', 'faithfulwitness' ); ?></span>
+            <h2><?php esc_html_e( 'Resource Packs by Campaign', 'faithfulwitness' ); ?></h2>
+            <p><?php esc_html_e( 'Everything you need to engage with a specific campaign — curated in one place.', 'faithfulwitness' ); ?></p>
+        </div>
+
+        <?php foreach ( $campaign_packs as $pack ) :
+            $camp    = $pack['campaign'];
+            $cta_url = get_post_meta( $camp->ID, 'fw_initiative_cta_url', true );
+        ?>
+        <div class="campaign-pack">
+            <div class="campaign-pack__header">
+                <div>
+                    <h3 class="campaign-pack__title"><?php echo esc_html( $camp->post_title ); ?></h3>
+                    <?php if ( $camp->post_excerpt ) : ?>
+                    <p class="campaign-pack__desc"><?php echo esc_html( wp_trim_words( $camp->post_excerpt, 20, '…' ) ); ?></p>
+                    <?php endif; ?>
+                </div>
+                <a href="<?php echo esc_url( $cta_url ?: get_permalink( $camp ) ); ?>" class="btn btn--outline btn--sm">
+                    <?php esc_html_e( 'View Campaign →', 'faithfulwitness' ); ?>
+                </a>
+            </div>
+            <div class="campaign-pack__resources">
+                <?php foreach ( $pack['resources'] as $res ) :
+                    $type_tag = fw_get_resource_type_tag( $res->ID );
+                    $res_url  = get_post_meta( $res->ID, 'fw_resource_url', true );
+                    $file_id  = get_post_meta( $res->ID, 'fw_resource_file_id', true );
+                    $link     = $res_url ?: ( $file_id ? wp_get_attachment_url( $file_id ) : get_permalink( $res ) );
+                ?>
+                <article class="campaign-pack__card">
+                    <?php if ( $type_tag ) echo $type_tag; // phpcs:ignore ?>
+                    <h4 class="campaign-pack__card-title">
+                        <a href="<?php echo esc_url( $link ); ?>"<?php echo $res_url ? ' target="_blank" rel="noopener noreferrer"' : ''; ?>>
+                            <?php echo esc_html( $res->post_title ); ?>
+                        </a>
+                    </h4>
+                    <?php if ( $res->post_excerpt ) : ?>
+                    <p class="campaign-pack__card-excerpt"><?php echo esc_html( wp_trim_words( $res->post_excerpt, 15, '…' ) ); ?></p>
+                    <?php endif; ?>
+                </article>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <?php endforeach; ?>
+    </div>
+</section>
+<?php endif; ?>
+
+<!-- Request a Resource -->
+<section class="resources-request-section section" id="request-resource">
+    <div class="container" style="text-align:center;">
+        <p style="font-size:var(--text-lg);color:var(--color-text-muted);">
+            <?php esc_html_e( "Don't see what you need?", 'faithfulwitness' ); ?>
+            <a href="<?php echo esc_url( home_url( '/contact' ) ); ?>" style="color:var(--color-primary);font-weight:600;text-decoration:underline;">
+                <?php esc_html_e( 'Let us know →', 'faithfulwitness' ); ?>
+            </a>
+        </p>
     </div>
 </section>
 

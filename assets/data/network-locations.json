@@ -1,0 +1,53 @@
+{
+  "_comment": "Edit this file to add, remove, or update map pins. Each entry needs lat/lng coordinates. Types: national-partner, local-church, organizing-group",
+  "locations": [
+    {
+      "id": "nalec",
+      "name": "NaLEC — National Latino Evangelical Coalition",
+      "type": "national-partner",
+      "city": "Chicago",
+      "state": "IL",
+      "lat": 41.8781,
+      "lng": -87.6298,
+      "focus": ["Immigration Justice", "Church Formation", "Evangelical Leadership"],
+      "url": "https://nalec.org",
+      "description": "A national network of Latino evangelical leaders advancing immigration justice and church formation."
+    },
+    {
+      "id": "ccda",
+      "name": "CCDA — Christian Community Development Association",
+      "type": "national-partner",
+      "city": "Chicago",
+      "state": "IL",
+      "lat": 41.8950,
+      "lng": -87.6500,
+      "focus": ["Community Development", "Immigrant Support", "Church Organizing"],
+      "url": "https://ccda.org",
+      "description": "A national network supporting community development, immigrant support, and church-based organizing."
+    },
+    {
+      "id": "world-relief",
+      "name": "World Relief",
+      "type": "national-partner",
+      "city": "Baltimore",
+      "state": "MD",
+      "lat": 39.2904,
+      "lng": -76.6122,
+      "focus": ["Refugee Resettlement", "Immigrant Integration", "Church Mobilization"],
+      "url": "https://worldrelief.org",
+      "description": "Works with local churches for refugee resettlement, immigrant integration, and church mobilization."
+    },
+    {
+      "id": "undivided",
+      "name": "Undivided",
+      "type": "national-partner",
+      "city": "Denver",
+      "state": "CO",
+      "lat": 39.7392,
+      "lng": -104.9903,
+      "focus": ["Racial Reconciliation", "Immigration", "Church Curriculum"],
+      "url": "https://undivided.us",
+      "description": "A curriculum and movement helping churches navigate racial reconciliation and immigration together."
+    }
+  ]
+}

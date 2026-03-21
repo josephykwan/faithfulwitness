@@ -128,3 +128,33 @@ function fw_register_cpt_event() {
     ] );
 }
 add_action( 'init', 'fw_register_cpt_event' );
+
+// ============================================================
+// MEDIA HITS (Press Coverage)
+// ============================================================
+function fw_register_cpt_media_hit() {
+    $labels = [
+        'name'               => __( 'Media Hits', 'faithfulwitness' ),
+        'singular_name'      => __( 'Media Hit', 'faithfulwitness' ),
+        'menu_name'          => __( 'Press Coverage', 'faithfulwitness' ),
+        'add_new_item'       => __( 'Add New Media Hit', 'faithfulwitness' ),
+        'edit_item'          => __( 'Edit Media Hit', 'faithfulwitness' ),
+        'new_item'           => __( 'New Media Hit', 'faithfulwitness' ),
+        'view_item'          => __( 'View Media Hit', 'faithfulwitness' ),
+        'search_items'       => __( 'Search Media Hits', 'faithfulwitness' ),
+        'not_found'          => __( 'No media hits found', 'faithfulwitness' ),
+    ];
+
+    register_post_type( 'fw_media_hit', [
+        'labels'             => $labels,
+        'public'             => false,
+        'show_ui'            => true,
+        'has_archive'        => false,
+        'menu_icon'          => 'dashicons-megaphone',
+        'menu_position'      => 9,
+        'supports'           => [ 'title' ],
+        'rewrite'            => false,
+        'show_in_rest'       => true,
+    ] );
+}
+add_action( 'init', 'fw_register_cpt_media_hit' );

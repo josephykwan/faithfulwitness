@@ -183,3 +183,31 @@ function fw_register_taxonomy_resource_audience() {
     ] );
 }
 add_action( 'init', 'fw_register_taxonomy_resource_audience' );
+
+// ============================================================
+// EVENT CATEGORY
+// Applied to: fw_event
+// Values: prayer-gathering, kyr-training, court-accompaniment,
+//         community-formation, public-witness, webinar
+// ============================================================
+function fw_register_taxonomy_event_category() {
+    $labels = [
+        'name'              => __( 'Event Categories', 'faithfulwitness' ),
+        'singular_name'     => __( 'Event Category', 'faithfulwitness' ),
+        'all_items'         => __( 'All Event Categories', 'faithfulwitness' ),
+        'edit_item'         => __( 'Edit Event Category', 'faithfulwitness' ),
+        'add_new_item'      => __( 'Add New Event Category', 'faithfulwitness' ),
+        'menu_name'         => __( 'Event Categories', 'faithfulwitness' ),
+    ];
+
+    register_taxonomy( 'fw_event_category', [ 'fw_event' ], [
+        'labels'            => $labels,
+        'hierarchical'      => false,
+        'public'            => true,
+        'show_ui'           => true,
+        'show_admin_column' => true,
+        'show_in_rest'      => true,
+        'rewrite'           => [ 'slug' => 'event-category' ],
+    ] );
+}
+add_action( 'init', 'fw_register_taxonomy_event_category' );

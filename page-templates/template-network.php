@@ -26,35 +26,18 @@ get_header(); ?>
             <p><?php esc_html_e( 'The map below shows local organizing groups in the Faithful Witness network. Click a pin for contact info and a link to their page.', 'faithfulwitness' ); ?></p>
         </div>
 
-        <div class="network-map-embed">
-            <?php
-            $map_embed = get_theme_mod( 'fw_network_map_embed', '' );
-            if ( $map_embed ) :
-                echo wp_kses( $map_embed, [
-                    'iframe' => [
-                        'src'             => [],
-                        'width'           => [],
-                        'height'          => [],
-                        'allowfullscreen' => [],
-                        'loading'         => [],
-                        'referrerpolicy'  => [],
-                        'title'           => [],
-                        'style'           => [],
-                    ],
-                ] );
-            else : ?>
-            <iframe
-                src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d13166019.636825098!2d-95.71289!3d37.09024!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sus!4v1710000000000!5m2!1sen!2sus"
-                allowfullscreen=""
-                loading="lazy"
-                referrerpolicy="no-referrer-when-downgrade"
-                title="<?php esc_attr_e( 'Faithful Witness organizing groups map', 'faithfulwitness' ); ?>">
-            </iframe>
-            <?php endif; ?>
+        <!-- Leaflet interactive map -->
+        <div id="fw-network-map" class="fw-network-map" aria-label="<?php esc_attr_e( 'Interactive map of partner organizations', 'faithfulwitness' ); ?>"></div>
+
+        <!-- Map legend -->
+        <div class="map-legend" aria-label="<?php esc_attr_e( 'Map pin legend', 'faithfulwitness' ); ?>">
+            <span class="map-legend__item"><span class="map-legend__dot" style="background:#1B4F72;"></span><?php esc_html_e( 'National Partner', 'faithfulwitness' ); ?></span>
+            <span class="map-legend__item"><span class="map-legend__dot" style="background:#D4750A;"></span><?php esc_html_e( 'Local Church', 'faithfulwitness' ); ?></span>
+            <span class="map-legend__item"><span class="map-legend__dot" style="background:#1A5A6A;"></span><?php esc_html_e( 'Organizing Group', 'faithfulwitness' ); ?></span>
         </div>
 
-        <p style="font-size:var(--text-sm);color:var(--color-text-muted);text-align:center;margin-top:var(--space-4);">
-            <?php esc_html_e( 'This map will be updated with real group locations once GPS coordinates are provided. To add your group, use the registration form below.', 'faithfulwitness' ); ?>
+        <p class="network-map-hint">
+            <?php esc_html_e( 'Click a pin to learn more. Click a card below to highlight it on the map. To add your group, use the registration form at the bottom of this page.', 'faithfulwitness' ); ?>
         </p>
     </div>
 </section>
@@ -91,17 +74,20 @@ get_header(); ?>
 
             if ( ! empty( $groups ) ) :
                 foreach ( $groups as $group ) :
-                    $city    = get_post_meta( $group->ID, 'fw_city', true );
-                    $state   = get_post_meta( $group->ID, 'fw_state_abbr', true );
-                    $email   = get_post_meta( $group->ID, 'fw_contact_email', true );
-                    $website = get_post_meta( $group->ID, 'fw_website_url', true );
-                    $fb      = get_post_meta( $group->ID, 'fw_facebook_url', true );
-                    $ig      = get_post_meta( $group->ID, 'fw_instagram_url', true );
-                    $tw      = get_post_meta( $group->ID, 'fw_twitter_url', true );
-                    $terms   = wp_get_post_terms( $group->ID, 'fw_initiative_category', [ 'fields' => 'names' ] );
-                    $location = array_filter( [ $city, $state ] );
+                    $city       = get_post_meta( $group->ID, 'fw_city', true );
+                    $state      = get_post_meta( $group->ID, 'fw_state_abbr', true );
+                    $email      = get_post_meta( $group->ID, 'fw_contact_email', true );
+                    $website    = get_post_meta( $group->ID, 'fw_website_url', true );
+                    $fb         = get_post_meta( $group->ID, 'fw_facebook_url', true );
+                    $ig         = get_post_meta( $group->ID, 'fw_instagram_url', true );
+                    $tw         = get_post_meta( $group->ID, 'fw_twitter_url', true );
+                    $terms      = wp_get_post_terms( $group->ID, 'fw_initiative_category', [ 'fields' => 'names' ] );
+                    $location   = array_filter( [ $city, $state ] );
+                    $loc_id     = sanitize_title( get_the_title( $group ) ); // matches JSON "id" field
             ?>
-            <div class="partner-card" data-name="<?php echo esc_attr( strtolower( get_the_title( $group ) . ' ' . implode( ' ', $location ) ) ); ?>">
+            <div class="partner-card"
+                 data-name="<?php echo esc_attr( strtolower( get_the_title( $group ) . ' ' . implode( ' ', $location ) ) ); ?>"
+                 data-location-id="<?php echo esc_attr( $loc_id ); ?>">
                 <span class="partner-card__scope">
                     <?php echo esc_html( implode( ', ', $location ) ?: __( 'National Network', 'faithfulwitness' ) ); ?>
                 </span>

@@ -113,10 +113,21 @@ function fw_register_rest_meta() {
     $og_fields = [
         'fw_city', 'fw_state_abbr', 'fw_lat', 'fw_lng',
         'fw_contact_email', 'fw_contact_phone', 'fw_website_url',
-        'fw_instagram_url', 'fw_facebook_url', 'fw_twitter_url',
+        'fw_instagram_url', 'fw_facebook_url', 'fw_twitter_url', 'fw_org_type',
     ];
     foreach ( $og_fields as $field ) {
         register_post_meta( 'fw_organizing_group', $field, [
+            'show_in_rest'  => true,
+            'single'        => true,
+            'type'          => 'string',
+            'auth_callback' => '__return_true',
+        ] );
+    }
+
+    // Media hit fields
+    $hit_fields = [ 'fw_media_outlet', 'fw_media_url', 'fw_media_pub_date', 'fw_media_pull_quote', 'fw_media_outlet_logo_url' ];
+    foreach ( $hit_fields as $field ) {
+        register_post_meta( 'fw_media_hit', $field, [
             'show_in_rest'  => true,
             'single'        => true,
             'type'          => 'string',
@@ -138,6 +149,8 @@ function fw_register_page_templates( $templates ) {
     $templates['page-templates/template-network.php']            = __( 'Find Your Network',     'faithfulwitness' );
     $templates['page-templates/template-stories.php']            = __( 'Stories',               'faithfulwitness' );
     $templates['page-templates/template-spiritual-formation.php']= __( 'Spiritual Formation',   'faithfulwitness' );
+    $templates['page-templates/template-news.php']               = __( 'News & Media',           'faithfulwitness' );
+    $templates['page-templates/template-events.php']             = __( 'Events Calendar',        'faithfulwitness' );
     return $templates;
 }
 add_filter( 'theme_page_templates', 'fw_register_page_templates' );

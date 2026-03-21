@@ -1,174 +1,341 @@
 <?php
 /**
- * Template Name: Events Page
+ * Template Name: Events Calendar
  *
- * Displays upcoming events with tabs for National vs Local,
- * grouped by month, with optional state filter.
+ * Calendar view (monthly grid) + List view toggle.
+ * Event type filter using fw_event_category taxonomy.
+ * Mini upcoming-events widget is also embedded on the homepage.
  */
 
-get_header(); ?>
+get_header();
 
-<!-- Hero -->
-<div class="hero hero--short">
-    <?php if ( has_post_thumbnail() ) : ?>
-    <div class="hero__bg" style="background-image: url('<?php echo esc_url( get_the_post_thumbnail_url( null, 'fw-hero' ) ); ?>');"></div>
-    <div class="hero__overlay"></div>
-    <?php endif; ?>
-    <div class="container">
-        <div class="hero__content">
-            <span class="hero__eyebrow"><?php esc_html_e( 'Join the Movement', 'faithfulwitness' ); ?></span>
-            <h1><?php the_title(); ?></h1>
-            <?php if ( $excerpt = get_the_excerpt() ) : ?>
-            <p><?php echo esc_html( $excerpt ); ?></p>
-            <?php endif; ?>
-        </div>
-    </div>
-</div>
+// ── Month navigation ──────────────────────────────────────────────────────
+$year  = isset( $_GET['year'] )  ? (int) $_GET['year']  : (int) gmdate( 'Y' );
+$month = isset( $_GET['month'] ) ? (int) $_GET['month'] : (int) gmdate( 'm' );
+$year  = max( 2020, min( 2035, $year ) );
+$month = max( 1,    min( 12,   $month ) );
 
-<?php
-// Pull all upcoming events
-$all_events = get_posts( [
+$first_ts      = mktime( 0, 0, 0, $month, 1, $year );
+$days_in_month = (int) gmdate( 't', $first_ts );
+$first_weekday = (int) gmdate( 'w', $first_ts ); // 0=Sunday
+$month_label   = date_i18n( 'F Y', $first_ts );
+
+$base_url  = get_permalink();
+$prev_month = $month === 1 ? 12 : $month - 1;
+$prev_year  = $month === 1 ? $year - 1 : $year;
+$next_month = $month === 12 ? 1 : $month + 1;
+$next_year  = $month === 12 ? $year + 1 : $year;
+$prev_url   = add_query_arg( [ 'year' => $prev_year, 'month' => $prev_month ], $base_url );
+$next_url   = add_query_arg( [ 'year' => $next_year, 'month' => $next_month ], $base_url );
+
+// ── Fetch all upcoming events (for list view) ─────────────────────────────
+$all_upcoming = get_posts( [
     'post_type'      => 'fw_event',
     'post_status'    => 'publish',
     'posts_per_page' => -1,
     'meta_key'       => 'fw_event_date',
     'orderby'        => 'meta_value',
     'order'          => 'ASC',
+    'meta_query'     => [ [
+        'key'     => 'fw_event_date',
+        'value'   => gmdate( 'Y-m-d' ),
+        'compare' => '>=',
+        'type'    => 'DATE',
+    ] ],
 ] );
 
-// Split upcoming vs past
-$upcoming_events = [];
-$past_events     = [];
-$today           = strtotime( 'today' );
+// ── Fetch month events (for calendar view) ────────────────────────────────
+$month_start = sprintf( '%04d-%02d-01', $year, $month );
+$month_end   = sprintf( '%04d-%02d-%02d', $year, $month, $days_in_month );
+$month_events_raw = get_posts( [
+    'post_type'      => 'fw_event',
+    'post_status'    => 'publish',
+    'posts_per_page' => -1,
+    'meta_key'       => 'fw_event_date',
+    'orderby'        => 'meta_value',
+    'order'          => 'ASC',
+    'meta_query'     => [ [
+        'key'     => 'fw_event_date',
+        'value'   => [ $month_start, $month_end ],
+        'compare' => 'BETWEEN',
+        'type'    => 'DATE',
+    ] ],
+] );
 
-foreach ( $all_events as $ev ) {
-    $date = get_post_meta( $ev->ID, 'fw_event_date', true );
-    if ( ! $date || strtotime( $date ) >= $today ) {
-        $upcoming_events[] = $ev;
-    } else {
-        $past_events[] = $ev;
-    }
+$events_by_day = [];
+foreach ( $month_events_raw as $ev ) {
+    $d = (int) date_i18n( 'j', strtotime( get_post_meta( $ev->ID, 'fw_event_date', true ) ) );
+    $events_by_day[ $d ][] = $ev;
 }
 
-// Split by scope
-$national_events = array_filter( $upcoming_events, fn( $ev ) => get_post_meta( $ev->ID, 'fw_event_scope', true ) !== 'local' );
-$local_events    = array_filter( $upcoming_events, fn( $ev ) => get_post_meta( $ev->ID, 'fw_event_scope', true ) === 'local' );
+$today_day = ( $year === (int) gmdate( 'Y' ) && $month === (int) gmdate( 'm' ) ) ? (int) gmdate( 'j' ) : -1;
 ?>
 
-<section class="section events-section" id="events">
+<!-- Hero -->
+<section class="events-hero" id="events-top">
     <div class="container">
-
-        <!-- Tabs -->
-        <div class="events-tabs" role="tablist" aria-label="<?php esc_attr_e( 'Event type', 'faithfulwitness' ); ?>">
-            <button class="events-tab active" id="tab-all" role="tab" aria-selected="true" aria-controls="panel-all" data-tab="all">
-                <?php esc_html_e( 'All Events', 'faithfulwitness' ); ?>
-                <span class="events-tab__count"><?php echo esc_html( count( $upcoming_events ) ); ?></span>
-            </button>
-            <button class="events-tab" id="tab-national" role="tab" aria-selected="false" aria-controls="panel-national" data-tab="national">
-                <?php esc_html_e( 'National', 'faithfulwitness' ); ?>
-                <span class="events-tab__count"><?php echo esc_html( count( $national_events ) ); ?></span>
-            </button>
-            <button class="events-tab" id="tab-local" role="tab" aria-selected="false" aria-controls="panel-local" data-tab="local">
-                <?php esc_html_e( 'Local', 'faithfulwitness' ); ?>
-                <span class="events-tab__count"><?php echo esc_html( count( $local_events ) ); ?></span>
-            </button>
-        </div>
-
-        <!-- State filter (affects local tab) -->
-        <div class="events-filters" style="margin-bottom: var(--space-8);">
-            <label for="events-state-filter" class="sr-only"><?php esc_html_e( 'Filter by state', 'faithfulwitness' ); ?></label>
-            <select id="events-state-filter" class="form-control" style="max-width:200px;" aria-label="<?php esc_attr_e( 'Filter by state', 'faithfulwitness' ); ?>">
-                <option value=""><?php esc_html_e( 'All states', 'faithfulwitness' ); ?></option>
-                <?php
-                $states = get_terms( [ 'taxonomy' => 'fw_state', 'hide_empty' => true ] );
-                if ( $states && ! is_wp_error( $states ) ) :
-                    foreach ( $states as $s ) :
-                ?>
-                    <option value="<?php echo esc_attr( $s->slug ); ?>"><?php echo esc_html( $s->name ); ?></option>
-                <?php
-                    endforeach;
-                endif;
-                ?>
-            </select>
-        </div>
-
-        <?php if ( ! empty( $upcoming_events ) ) : ?>
-
-            <!-- All events tab panel -->
-            <div id="panel-all" role="tabpanel" aria-labelledby="tab-all" class="events-panel events-panel--active">
-                <?php fw_render_events_by_month( $upcoming_events ); ?>
-            </div>
-
-            <!-- National events tab panel -->
-            <div id="panel-national" role="tabpanel" aria-labelledby="tab-national" class="events-panel" hidden>
-                <?php if ( ! empty( $national_events ) ) :
-                    fw_render_events_by_month( $national_events );
-                else : ?>
-                    <p><?php esc_html_e( 'No upcoming national events.', 'faithfulwitness' ); ?></p>
-                <?php endif; ?>
-            </div>
-
-            <!-- Local events tab panel -->
-            <div id="panel-local" role="tabpanel" aria-labelledby="tab-local" class="events-panel" hidden>
-                <?php if ( ! empty( $local_events ) ) :
-                    fw_render_events_by_month( $local_events );
-                else : ?>
-                    <p><?php esc_html_e( 'No upcoming local events. Check back soon!', 'faithfulwitness' ); ?></p>
-                <?php endif; ?>
-            </div>
-
-        <?php else : ?>
-            <div style="text-align:center; padding: var(--space-16) 0;">
-                <p style="font-size: var(--text-xl); color: var(--color-text-muted);">
-                    <?php esc_html_e( 'No upcoming events at this time. Check back soon!', 'faithfulwitness' ); ?>
-                </p>
-            </div>
-        <?php endif; ?>
-
-    </div><!-- .container -->
+        <span class="hero__eyebrow" style="color:var(--color-accent-light);"><?php esc_html_e( 'Community & Training', 'faithfulwitness' ); ?></span>
+        <h1><?php esc_html_e( 'Upcoming Events & Gatherings', 'faithfulwitness' ); ?></h1>
+        <p><?php esc_html_e( 'Prayer gatherings, Know Your Rights trainings, court accompaniment, and more — in-person and virtual.', 'faithfulwitness' ); ?></p>
+    </div>
 </section>
 
-<!-- Past Events -->
-<?php if ( ! empty( $past_events ) ) : ?>
-<section class="section section--alt" id="past-events">
+<!-- Controls: Filter + View Toggle -->
+<div class="events-controls-bar">
     <div class="container">
-        <div class="section-header">
-            <span class="eyebrow"><?php esc_html_e( 'Archive', 'faithfulwitness' ); ?></span>
-            <h2><?php esc_html_e( 'Past Events', 'faithfulwitness' ); ?></h2>
+        <div class="events-controls">
+
+            <div class="events-filter-group" role="group" aria-label="<?php esc_attr_e( 'Filter by event type', 'faithfulwitness' ); ?>">
+                <button class="filter-pill active" data-event-type="" aria-pressed="true">
+                    <?php esc_html_e( 'All Events', 'faithfulwitness' ); ?>
+                </button>
+                <?php
+                $event_cats = get_terms( [ 'taxonomy' => 'fw_event_category', 'hide_empty' => false ] );
+                if ( $event_cats && ! is_wp_error( $event_cats ) ) :
+                    foreach ( $event_cats as $cat ) : ?>
+                <button class="filter-pill" data-event-type="<?php echo esc_attr( $cat->slug ); ?>" aria-pressed="false">
+                    <?php echo esc_html( $cat->name ); ?>
+                </button>
+                    <?php endforeach;
+                endif; ?>
+            </div>
+
+            <div class="events-view-toggle" role="group" aria-label="<?php esc_attr_e( 'Toggle calendar or list view', 'faithfulwitness' ); ?>">
+                <button id="btn-calendar-view" class="events-view-btn events-view-btn--active" aria-pressed="true">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    <?php esc_html_e( 'Calendar', 'faithfulwitness' ); ?>
+                </button>
+                <button id="btn-list-view" class="events-view-btn" aria-pressed="false">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                    <?php esc_html_e( 'List', 'faithfulwitness' ); ?>
+                </button>
+            </div>
+
         </div>
-        <div class="grid grid--3">
-            <?php foreach ( array_slice( array_reverse( $past_events ), 0, 6 ) as $ev ) :
-                get_template_part( 'template-parts/content', 'event-card', [ 'post' => $ev ] );
-            endforeach; ?>
+    </div>
+</div>
+
+<!-- ================================================================
+     CALENDAR VIEW
+     ================================================================ -->
+<section class="events-calendar-section section" id="events-calendar-view">
+    <div class="container">
+
+        <div class="calendar-nav">
+            <a href="<?php echo esc_url( $prev_url ); ?>" class="calendar-nav__btn">← <?php esc_html_e( 'Prev', 'faithfulwitness' ); ?></a>
+            <h2 class="calendar-nav__month"><?php echo esc_html( $month_label ); ?></h2>
+            <a href="<?php echo esc_url( $next_url ); ?>" class="calendar-nav__btn"><?php esc_html_e( 'Next', 'faithfulwitness' ); ?> →</a>
         </div>
+
+        <div class="calendar-grid" role="grid">
+            <?php foreach ( [ 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat' ] as $dname ) : ?>
+            <div class="calendar-header-cell" role="columnheader"><?php echo esc_html( $dname ); ?></div>
+            <?php endforeach; ?>
+
+            <?php for ( $i = 0; $i < $first_weekday; $i++ ) : ?>
+            <div class="calendar-day calendar-day--empty" role="gridcell"></div>
+            <?php endfor; ?>
+
+            <?php for ( $day = 1; $day <= $days_in_month; $day++ ) :
+                $is_today   = ( $day === $today_day );
+                $has_events = isset( $events_by_day[ $day ] );
+                $cls  = 'calendar-day';
+                if ( $is_today )   $cls .= ' calendar-day--today';
+                if ( $has_events ) $cls .= ' calendar-day--has-events';
+            ?>
+            <div class="<?php echo esc_attr( $cls ); ?>" role="gridcell">
+                <span class="calendar-day__num"><?php echo esc_html( $day ); ?></span>
+                <?php if ( $has_events ) : ?>
+                <div class="calendar-day__events">
+                    <?php foreach ( $events_by_day[ $day ] as $ev ) :
+                        $ev_cats = wp_get_post_terms( $ev->ID, 'fw_event_category', [ 'fields' => 'slugs' ] );
+                        $cat_str = is_array( $ev_cats ) ? implode( ',', $ev_cats ) : '';
+                    ?>
+                    <a href="<?php echo esc_url( get_permalink( $ev ) ); ?>"
+                       class="calendar-event-dot"
+                       data-categories="<?php echo esc_attr( $cat_str ); ?>"
+                       title="<?php echo esc_attr( get_the_title( $ev ) ); ?>">
+                        <span class="sr-only"><?php echo esc_html( get_the_title( $ev ) ); ?></span>
+                    </a>
+                    <?php endforeach; ?>
+                </div>
+                <?php endif; ?>
+            </div>
+            <?php endfor; ?>
+        </div>
+
+        <?php if ( empty( $month_events_raw ) ) : ?>
+        <p class="calendar-empty-note">
+            <?php esc_html_e( 'No events this month. Use the arrows to navigate, or switch to List view for all upcoming events.', 'faithfulwitness' ); ?>
+        </p>
+        <?php endif; ?>
+
+    </div>
+</section>
+
+<!-- ================================================================
+     LIST VIEW
+     ================================================================ -->
+<section class="events-list-section section" id="events-list-view" style="display:none;">
+    <div class="container">
+
+        <?php if ( ! empty( $all_upcoming ) ) :
+            foreach ( $all_upcoming as $ev ) :
+                $ev_date     = get_post_meta( $ev->ID, 'fw_event_date', true );
+                $ev_time     = get_post_meta( $ev->ID, 'fw_event_time', true );
+                $ev_end_time = get_post_meta( $ev->ID, 'fw_event_end_time', true );
+                $ev_virtual  = get_post_meta( $ev->ID, 'fw_event_virtual', true );
+                $ev_location = get_post_meta( $ev->ID, 'fw_event_location_name', true );
+                $ev_city     = get_post_meta( $ev->ID, 'fw_event_city', true );
+                $ev_state    = get_post_meta( $ev->ID, 'fw_event_state', true );
+                $ev_reg_link = get_post_meta( $ev->ID, 'fw_event_registration_link', true );
+                $ev_cats     = wp_get_post_terms( $ev->ID, 'fw_event_category' );
+                $cat_slugs   = is_array( $ev_cats ) && ! is_wp_error( $ev_cats ) ? wp_list_pluck( $ev_cats, 'slug' ) : [];
+                $cat_names   = is_array( $ev_cats ) && ! is_wp_error( $ev_cats ) ? wp_list_pluck( $ev_cats, 'name' ) : [];
+                $ev_ts       = $ev_date ? strtotime( $ev_date ) : null;
+        ?>
+        <article class="event-card" data-categories="<?php echo esc_attr( implode( ',', $cat_slugs ) ); ?>">
+
+            <div class="event-card__date-badge" aria-hidden="true">
+                <?php if ( $ev_ts ) : ?>
+                <span class="event-card__month"><?php echo esc_html( date_i18n( 'M', $ev_ts ) ); ?></span>
+                <span class="event-card__day"><?php echo esc_html( date_i18n( 'j', $ev_ts ) ); ?></span>
+                <?php endif; ?>
+            </div>
+
+            <div class="event-card__body">
+                <?php if ( ! empty( $cat_names ) ) : ?>
+                <div class="event-card__tags">
+                    <?php foreach ( $cat_names as $cname ) : ?>
+                    <span class="tag tag--primary"><?php echo esc_html( $cname ); ?></span>
+                    <?php endforeach; ?>
+                </div>
+                <?php endif; ?>
+
+                <h3 class="event-card__title">
+                    <a href="<?php echo esc_url( get_permalink( $ev ) ); ?>"><?php echo esc_html( get_the_title( $ev ) ); ?></a>
+                </h3>
+
+                <div class="event-card__meta">
+                    <?php if ( $ev_ts ) : ?>
+                    <span class="event-card__meta-item">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        <time datetime="<?php echo esc_attr( $ev_date ); ?>"><?php echo esc_html( date_i18n( get_option( 'date_format' ), $ev_ts ) ); ?></time>
+                        <?php if ( $ev_time ) : ?>
+                        · <?php echo esc_html( date_i18n( get_option( 'time_format' ), strtotime( $ev_date . ' ' . $ev_time ) ) ); ?><?php if ( $ev_end_time ) echo ' – ' . esc_html( date_i18n( get_option( 'time_format' ), strtotime( $ev_date . ' ' . $ev_end_time ) ) ); ?>
+                        <?php endif; ?>
+                    </span>
+                    <?php endif; ?>
+                    <span class="event-card__meta-item">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                        <?php if ( $ev_virtual === '1' ) : ?>
+                        <?php esc_html_e( 'Virtual', 'faithfulwitness' ); ?>
+                        <?php else : ?>
+                        <?php
+                        $loc_parts = array_filter( [ $ev_location, $ev_city, $ev_state ] );
+                        echo esc_html( implode( ', ', $loc_parts ) ?: __( 'Location TBD', 'faithfulwitness' ) );
+                        ?>
+                        <?php endif; ?>
+                    </span>
+                </div>
+
+                <?php if ( $desc = get_the_excerpt( $ev ) ) : ?>
+                <p class="event-card__excerpt"><?php echo esc_html( wp_trim_words( $desc, 20, '…' ) ); ?></p>
+                <?php endif; ?>
+            </div>
+
+            <div class="event-card__actions">
+                <?php if ( $ev_reg_link ) : ?>
+                <a href="<?php echo esc_url( $ev_reg_link ); ?>" class="btn btn--primary btn--sm" target="_blank" rel="noopener noreferrer">
+                    <?php esc_html_e( 'Register / RSVP →', 'faithfulwitness' ); ?>
+                </a>
+                <?php else : ?>
+                <a href="<?php echo esc_url( get_permalink( $ev ) ); ?>" class="btn btn--outline btn--sm">
+                    <?php esc_html_e( 'Learn More →', 'faithfulwitness' ); ?>
+                </a>
+                <?php endif; ?>
+            </div>
+
+        </article>
+        <?php
+            endforeach;
+        else : ?>
+        <div class="events-empty">
+            <p><?php esc_html_e( 'No upcoming events at this time. Check back soon, or join the campaign to receive event announcements.', 'faithfulwitness' ); ?></p>
+            <a href="https://mailchi.mp/ccda/join-the-faithful-witness-campaign" class="btn btn--primary" target="_blank" rel="noopener noreferrer">
+                <?php esc_html_e( 'Join the Campaign', 'faithfulwitness' ); ?>
+            </a>
+        </div>
+        <?php endif; ?>
+
+    </div>
+</section>
+
+<?php if ( $content = apply_filters( 'the_content', get_the_content() ) ) : ?>
+<section class="section section--alt">
+    <div class="container container--narrow">
+        <div class="entry-content"><?php echo $content; // phpcs:ignore ?></div>
     </div>
 </section>
 <?php endif; ?>
 
-<?php get_footer(); ?>
+<script>
+( function () {
+    var btnCal   = document.getElementById( 'btn-calendar-view' );
+    var btnList  = document.getElementById( 'btn-list-view' );
+    var calView  = document.getElementById( 'events-calendar-view' );
+    var listView = document.getElementById( 'events-list-view' );
+    var filterBtns = document.querySelectorAll( '.events-filter-group .filter-pill' );
+    var activeType = '';
 
-<?php
-/**
- * Helper: render events grouped by month.
- *
- * @param WP_Post[] $events
- */
-function fw_render_events_by_month( array $events ) {
-    $by_month = [];
-    foreach ( $events as $ev ) {
-        $date  = get_post_meta( $ev->ID, 'fw_event_date', true );
-        $month = $date ? date_i18n( 'F Y', strtotime( $date ) ) : __( 'Date TBD', 'faithfulwitness' );
-        $by_month[ $month ][] = $ev;
+    function showCalendar() {
+        calView.style.display  = '';
+        listView.style.display = 'none';
+        btnCal.classList.add( 'events-view-btn--active' );
+        btnList.classList.remove( 'events-view-btn--active' );
+        btnCal.setAttribute( 'aria-pressed', 'true' );
+        btnList.setAttribute( 'aria-pressed', 'false' );
+        applyFilter();
     }
 
-    foreach ( $by_month as $month_label => $month_events ) : ?>
-    <div class="events-month-group event-group" data-month="<?php echo esc_attr( $month_label ); ?>">
-        <h3 class="events-month-label"><?php echo esc_html( $month_label ); ?></h3>
-        <div class="grid grid--3">
-            <?php foreach ( $month_events as $ev ) :
-                get_template_part( 'template-parts/content', 'event-card', [ 'post' => $ev ] );
-            endforeach; ?>
-        </div>
-    </div>
-    <?php endforeach;
-}
+    function showList() {
+        calView.style.display  = 'none';
+        listView.style.display = '';
+        btnCal.classList.remove( 'events-view-btn--active' );
+        btnList.classList.add( 'events-view-btn--active' );
+        btnCal.setAttribute( 'aria-pressed', 'false' );
+        btnList.setAttribute( 'aria-pressed', 'true' );
+        applyFilter();
+    }
+
+    function applyFilter() {
+        // Filter list-view cards
+        document.querySelectorAll( '.event-card' ).forEach( function ( card ) {
+            var cats = ( card.dataset.categories || '' ).split( ',' ).map( function (s) { return s.trim(); } );
+            card.style.display = ( ! activeType || cats.includes( activeType ) ) ? '' : 'none';
+        } );
+        // Dim calendar dots
+        document.querySelectorAll( '.calendar-event-dot' ).forEach( function ( dot ) {
+            var cats = ( dot.dataset.categories || '' ).split( ',' ).map( function (s) { return s.trim(); } );
+            dot.style.opacity = ( ! activeType || cats.includes( activeType ) ) ? '1' : '0.2';
+        } );
+    }
+
+    if ( btnCal )  btnCal.addEventListener(  'click', showCalendar );
+    if ( btnList ) btnList.addEventListener( 'click', showList );
+
+    filterBtns.forEach( function ( btn ) {
+        btn.addEventListener( 'click', function () {
+            activeType = btn.dataset.eventType || '';
+            filterBtns.forEach( function (b) {
+                var match = ( b.dataset.eventType || '' ) === activeType;
+                b.classList.toggle( 'active', match );
+                b.setAttribute( 'aria-pressed', match ? 'true' : 'false' );
+            } );
+            applyFilter();
+        } );
+    } );
+} )();
+</script>
+
+<?php get_footer();

@@ -29,6 +29,8 @@ function fw_enqueue_assets() {
         'page-templates/template-network.php',
         'page-templates/template-stories.php',
         'page-templates/template-spiritual-formation.php',
+        'page-templates/template-news.php',
+        'page-templates/template-events.php',
     ];
     foreach ( $page_templates as $tpl ) {
         if ( is_page_template( $tpl ) ) {
@@ -42,7 +44,24 @@ function fw_enqueue_assets() {
         wp_enqueue_style( 'fw-pages', get_template_directory_uri() . '/assets/css/pages.css', [ 'fw-style' ], $ver );
     }
 
-    // Map page
+    // Network page — interactive Leaflet map with org-type pin colors
+    if ( is_page_template( 'page-templates/template-network.php' ) ) {
+        wp_enqueue_style( 'leaflet',
+            'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',
+            [], '1.9.4' );
+        wp_enqueue_script( 'leaflet',
+            'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js',
+            [], '1.9.4', true );
+        wp_enqueue_script( 'fw-network-map',
+            get_template_directory_uri() . '/assets/js/network-map.js',
+            [ 'leaflet' ], $ver, true );
+        wp_localize_script( 'fw-network-map', 'fwNetworkConfig', [
+            'jsonUrl'   => get_template_directory_uri() . '/assets/data/network-locations.json',
+            'ajaxUrl'   => admin_url( 'admin-ajax.php' ),
+        ] );
+    }
+
+    // Map page (legacy — full organizing map)
     if ( is_page_template( 'page-templates/template-map.php' ) || is_singular( 'fw_organizing_group' ) || is_post_type_archive( 'fw_organizing_group' ) ) {
         // Leaflet CSS + JS (CDN)
         wp_enqueue_style( 'leaflet',
