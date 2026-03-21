@@ -1,0 +1,209 @@
+<?php
+/**
+ * Template Name: Know Your Rights
+ *
+ * Practical legal information for immigrants and faith communities.
+ * Designed for urgent, practical use.
+ */
+
+get_header(); ?>
+
+<!-- Hero -->
+<section class="kyr-hero" id="kyr-top">
+    <div class="container">
+        <span class="hero__eyebrow" style="color:var(--color-accent-light);"><?php esc_html_e( 'Practical Information', 'faithfulwitness' ); ?></span>
+        <h1><?php esc_html_e( 'Know Your Rights', 'faithfulwitness' ); ?></h1>
+        <p><?php esc_html_e( 'Practical legal information for immigrants and the faith communities that walk with them.', 'faithfulwitness' ); ?></p>
+    </div>
+</section>
+
+<!-- Quick Access Cards -->
+<section class="kyr-quick-section section" id="quick-access">
+    <div class="container">
+        <div class="section-header section-header--center">
+            <span class="eyebrow"><?php esc_html_e( 'Quick Access', 'faithfulwitness' ); ?></span>
+            <h2><?php esc_html_e( 'What do you need to know?', 'faithfulwitness' ); ?></h2>
+            <p><?php esc_html_e( 'Select the situation that applies to you. Download and share these guides with your community.', 'faithfulwitness' ); ?></p>
+        </div>
+
+        <div class="kyr-quick-grid">
+
+            <a href="#ice-at-door" class="kyr-quick-card">
+                <div class="kyr-quick-card__number" aria-hidden="true">1</div>
+                <h3 class="kyr-quick-card__title"><?php esc_html_e( 'If ICE comes to your door', 'faithfulwitness' ); ?></h3>
+                <p class="kyr-quick-card__desc"><?php esc_html_e( 'You have rights — even if you are undocumented. Learn what to do if immigration enforcement knocks on your door or approaches you in public.', 'faithfulwitness' ); ?></p>
+                <span class="kyr-quick-card__link">
+                    <?php esc_html_e( 'Download guide', 'faithfulwitness' ); ?> →
+                </span>
+            </a>
+
+            <a href="#detained" class="kyr-quick-card">
+                <div class="kyr-quick-card__number" aria-hidden="true">2</div>
+                <h3 class="kyr-quick-card__title"><?php esc_html_e( 'If someone is detained', 'faithfulwitness' ); ?></h3>
+                <p class="kyr-quick-card__desc"><?php esc_html_e( 'When a family member or community member has been detained, every hour matters. Learn what steps to take, who to call, and how to find them.', 'faithfulwitness' ); ?></p>
+                <span class="kyr-quick-card__link">
+                    <?php esc_html_e( 'Download guide', 'faithfulwitness' ); ?> →
+                </span>
+            </a>
+
+            <a href="#congregations" class="kyr-quick-card">
+                <div class="kyr-quick-card__number" aria-hidden="true">3</div>
+                <h3 class="kyr-quick-card__title"><?php esc_html_e( 'For congregations and sanctuaries', 'faithfulwitness' ); ?></h3>
+                <p class="kyr-quick-card__desc"><?php esc_html_e( 'If your congregation is considering becoming a sanctuary space or wants to support immigrant neighbors, understand the legal landscape and your rights as a faith community.', 'faithfulwitness' ); ?></p>
+                <span class="kyr-quick-card__link">
+                    <?php esc_html_e( 'Download guide', 'faithfulwitness' ); ?> →
+                </span>
+            </a>
+
+        </div>
+
+        <!-- Download All CTA -->
+        <div style="text-align:center;margin-top:var(--space-10);">
+            <a href="<?php echo esc_url( get_theme_mod( 'fw_kyr_download_all_url', '#' ) ); ?>"
+               class="btn btn--primary btn--lg">
+                <?php esc_html_e( 'Download All Materials', 'faithfulwitness' ); ?>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Detailed sections (anchor targets) -->
+<section class="section section--alt" id="ice-at-door">
+    <div class="container container--narrow">
+        <span class="eyebrow"><?php esc_html_e( 'Section 1', 'faithfulwitness' ); ?></span>
+        <h2><?php esc_html_e( 'If ICE comes to your door', 'faithfulwitness' ); ?></h2>
+        <div class="entry-content">
+            <?php
+            $content = get_theme_mod( 'fw_kyr_ice_content', '' );
+            if ( $content ) {
+                echo wp_kses_post( $content );
+            } else : ?>
+            <p><?php esc_html_e( 'Detailed Know Your Rights guidance for this section will appear here. This content can be edited in the WordPress Customizer or directly on this page.', 'faithfulwitness' ); ?></p>
+            <ul>
+                <li><?php esc_html_e( 'You have the right to remain silent.', 'faithfulwitness' ); ?></li>
+                <li><?php esc_html_e( 'You do not have to open the door unless they have a signed judicial warrant.', 'faithfulwitness' ); ?></li>
+                <li><?php esc_html_e( 'You can ask to speak to an attorney before answering questions.', 'faithfulwitness' ); ?></li>
+                <li><?php esc_html_e( 'Do not sign any documents without speaking to an attorney.', 'faithfulwitness' ); ?></li>
+            </ul>
+            <?php endif; ?>
+        </div>
+    </div>
+</section>
+
+<section class="section" id="detained">
+    <div class="container container--narrow">
+        <span class="eyebrow"><?php esc_html_e( 'Section 2', 'faithfulwitness' ); ?></span>
+        <h2><?php esc_html_e( 'If someone is detained', 'faithfulwitness' ); ?></h2>
+        <div class="entry-content">
+            <?php
+            $content = get_theme_mod( 'fw_kyr_detained_content', '' );
+            if ( $content ) {
+                echo wp_kses_post( $content );
+            } else : ?>
+            <p><?php esc_html_e( 'Guidance for when a family member or community member has been detained. This content can be edited in the WordPress Customizer.', 'faithfulwitness' ); ?></p>
+            <ul>
+                <li><?php esc_html_e( 'Try to locate them using the ICE detainee locator at locator.ice.gov.', 'faithfulwitness' ); ?></li>
+                <li><?php esc_html_e( 'Contact a legal aid organization immediately.', 'faithfulwitness' ); ?></li>
+                <li><?php esc_html_e( 'Gather and secure important documents (passport, I-94, etc.).', 'faithfulwitness' ); ?></li>
+                <li><?php esc_html_e( 'Contact your local Faithful Witness group for court accompaniment support.', 'faithfulwitness' ); ?></li>
+            </ul>
+            <?php endif; ?>
+        </div>
+    </div>
+</section>
+
+<section class="section section--alt" id="congregations">
+    <div class="container container--narrow">
+        <span class="eyebrow"><?php esc_html_e( 'Section 3', 'faithfulwitness' ); ?></span>
+        <h2><?php esc_html_e( 'For congregations and sanctuaries', 'faithfulwitness' ); ?></h2>
+        <div class="entry-content">
+            <?php
+            $content = get_theme_mod( 'fw_kyr_sanctuary_content', '' );
+            if ( $content ) {
+                echo wp_kses_post( $content );
+            } else : ?>
+            <p><?php esc_html_e( 'Legal guidance for congregations considering sanctuary designation or supporting immigrant neighbors. This content can be edited in the WordPress Customizer.', 'faithfulwitness' ); ?></p>
+            <ul>
+                <li><?php esc_html_e( 'Understand the legal distinction between "sanctuary city" policy and a congregation offering sanctuary.', 'faithfulwitness' ); ?></li>
+                <li><?php esc_html_e( 'Consult with legal counsel before making any public declarations.', 'faithfulwitness' ); ?></li>
+                <li><?php esc_html_e( 'Connect with Faithful Witness partner organizations who can provide guidance.', 'faithfulwitness' ); ?></li>
+            </ul>
+            <?php endif; ?>
+        </div>
+    </div>
+</section>
+
+<!-- Find a KYR Training -->
+<section class="kyr-trainings-section" id="kyr-trainings">
+    <div class="container">
+        <div class="section-header">
+            <span class="eyebrow"><?php esc_html_e( 'Upcoming Trainings', 'faithfulwitness' ); ?></span>
+            <h2><?php esc_html_e( 'Find a Know Your Rights Training', 'faithfulwitness' ); ?></h2>
+            <p><?php esc_html_e( 'Faithful Witness partners regularly host Know Your Rights trainings for faith communities. Find one near you.', 'faithfulwitness' ); ?></p>
+        </div>
+
+        <ul class="kyr-trainings-list">
+            <?php
+            // Query upcoming KYR-related events if they exist
+            $kyr_events = get_posts( [
+                'post_type'      => 'fw_event',
+                'post_status'    => 'publish',
+                'posts_per_page' => 5,
+                'orderby'        => 'meta_value',
+                'meta_key'       => 'fw_event_date',
+                'order'          => 'ASC',
+            ] );
+            $kyr_events = array_filter( $kyr_events, 'fw_is_upcoming_event' );
+
+            if ( ! empty( $kyr_events ) ) :
+                foreach ( $kyr_events as $ev ) :
+                    $date     = fw_get_event_date( $ev->ID );
+                    $location = fw_get_event_location( $ev->ID );
+            ?>
+            <li class="kyr-training-item">
+                <span class="kyr-training-date"><?php echo esc_html( $date ); ?></span>
+                <div>
+                    <p class="kyr-training-title"><?php echo esc_html( get_the_title( $ev ) ); ?></p>
+                    <?php if ( $location ) : ?>
+                    <p class="kyr-training-location"><?php echo esc_html( $location ); ?></p>
+                    <?php endif; ?>
+                </div>
+                <a href="<?php echo esc_url( get_permalink( $ev ) ); ?>" class="btn btn--sm btn--outline">
+                    <?php esc_html_e( 'Details', 'faithfulwitness' ); ?>
+                </a>
+            </li>
+            <?php
+                endforeach;
+            else : ?>
+            <li class="kyr-training-item">
+                <span class="kyr-training-date"><?php esc_html_e( 'Coming Soon', 'faithfulwitness' ); ?></span>
+                <div>
+                    <p class="kyr-training-title"><?php esc_html_e( 'Know Your Rights Training — Example Placeholder', 'faithfulwitness' ); ?></p>
+                    <p class="kyr-training-location"><?php esc_html_e( 'Location and date to be announced. Check back soon.', 'faithfulwitness' ); ?></p>
+                </div>
+                <a href="<?php echo esc_url( home_url( '/events' ) ); ?>" class="btn btn--sm btn--outline">
+                    <?php esc_html_e( 'All Events', 'faithfulwitness' ); ?>
+                </a>
+            </li>
+            <?php endif; ?>
+        </ul>
+    </div>
+</section>
+
+<!-- Legal Disclaimer -->
+<section class="kyr-disclaimer" id="disclaimer">
+    <div class="container">
+        <div class="kyr-disclaimer__box">
+            <p>
+                <strong><?php esc_html_e( 'Disclaimer:', 'faithfulwitness' ); ?></strong>
+                <?php esc_html_e( 'This information is for educational purposes only. Faithful Witness partners with trusted legal professionals to provide Know Your Rights trainings. This is not legal advice. If you or someone you know has an urgent legal need, please contact a qualified immigration attorney or legal aid organization.', 'faithfulwitness' ); ?>
+            </p>
+            <a href="<?php echo esc_url( get_theme_mod( 'fw_kyr_download_all_url', '#' ) ); ?>"
+               class="btn btn--primary">
+                <?php esc_html_e( 'Download All Materials', 'faithfulwitness' ); ?>
+            </a>
+        </div>
+    </div>
+</section>
+
+<?php get_footer();

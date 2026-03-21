@@ -1,0 +1,189 @@
+<?php
+/**
+ * Template Name: Spiritual Formation
+ *
+ * "Formation before and beneath action" — Faithful Witness's unique differentiator.
+ * Inspired by World Relief's congregational resources section.
+ */
+
+get_header(); ?>
+
+<!-- Hero -->
+<section class="formation-hero" id="formation-top">
+    <div class="container">
+        <span class="hero__eyebrow" style="color:var(--color-accent-light);"><?php esc_html_e( 'Rooted in Practice', 'faithfulwitness' ); ?></span>
+        <h1><?php esc_html_e( 'Formation for the Long Haul', 'faithfulwitness' ); ?></h1>
+        <p><?php esc_html_e( 'Sustainable advocacy flows from a rooted spiritual life — not from political urgency alone.', 'faithfulwitness' ); ?></p>
+    </div>
+</section>
+
+<!-- Intro -->
+<section class="formation-intro section" id="formation-intro">
+    <div class="container">
+        <p class="formation-intro__text">
+            <?php echo esc_html( get_theme_mod( 'fw_formation_intro', __( 'The Faithful Witness Campaign integrates spiritual formation directly into local organizing work. We believe that sustainable advocacy flows from a rooted spiritual life — not from political urgency alone. Formation before and beneath action is not a slogan. It is how we sustain ourselves for the long road ahead.', 'faithfulwitness' ) ) ); ?>
+        </p>
+    </div>
+</section>
+
+<!-- Three Formation Categories -->
+<section class="formation-categories section section--alt" id="formation-resources">
+    <div class="container">
+        <div class="section-header section-header--center">
+            <span class="eyebrow"><?php esc_html_e( 'Formation Resources', 'faithfulwitness' ); ?></span>
+            <h2><?php esc_html_e( 'Three Pathways', 'faithfulwitness' ); ?></h2>
+            <p><?php esc_html_e( 'Curated resources to ground your organizing work in prayer, scripture, and pastoral wisdom.', 'faithfulwitness' ); ?></p>
+        </div>
+
+        <div class="formation-category-cards">
+
+            <!-- Prayer & Lament -->
+            <div class="formation-category-card">
+                <div class="formation-category-card__icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" width="28" height="28">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                    </svg>
+                </div>
+                <h3 class="formation-category-card__title"><?php esc_html_e( 'Prayer & Lament', 'faithfulwitness' ); ?></h3>
+                <p class="formation-category-card__desc"><?php esc_html_e( 'Prayers, liturgies, and lament practices for congregations standing at the intersection of faith and injustice. You don\'t have to be okay. You just have to keep praying.', 'faithfulwitness' ); ?></p>
+                <?php
+                // Link to resource library filtered by prayer-guide type
+                $resources_page = get_page_by_path( 'resources' );
+                $resources_url  = $resources_page ? get_permalink( $resources_page ) : home_url( '/resources' );
+                ?>
+                <a href="<?php echo esc_url( $resources_url . '#type=prayer-guide' ); ?>"
+                   class="btn btn--outline btn--sm" style="margin-top:auto;">
+                    <?php esc_html_e( 'Browse Prayer Resources', 'faithfulwitness' ); ?>
+                </a>
+            </div>
+
+            <!-- Scripture & Discernment -->
+            <div class="formation-category-card">
+                <div class="formation-category-card__icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" width="28" height="28">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                    </svg>
+                </div>
+                <h3 class="formation-category-card__title"><?php esc_html_e( 'Scripture & Discernment', 'faithfulwitness' ); ?></h3>
+                <p class="formation-category-card__desc"><?php esc_html_e( 'Bible study guides, sermon resources, and discernment frameworks for congregations wrestling with immigration through a Gospel lens. What does the text say? What does it ask of us?', 'faithfulwitness' ); ?></p>
+                <a href="<?php echo esc_url( $resources_url . '#issue=spiritual-formation' ); ?>"
+                   class="btn btn--outline btn--sm" style="margin-top:auto;">
+                    <?php esc_html_e( 'Browse Scripture Resources', 'faithfulwitness' ); ?>
+                </a>
+            </div>
+
+            <!-- Pastoral Care Resources -->
+            <div class="formation-category-card">
+                <div class="formation-category-card__icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" width="28" height="28">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                </div>
+                <h3 class="formation-category-card__title"><?php esc_html_e( 'Pastoral Care Resources', 'faithfulwitness' ); ?></h3>
+                <p class="formation-category-card__desc"><?php esc_html_e( 'Tools for pastors and church leaders caring for immigrant congregants, processing vicarious trauma, and sustaining themselves and their teams for the long work of justice.', 'faithfulwitness' ); ?></p>
+                <a href="<?php echo esc_url( $resources_url . '#audience=church-leaders' ); ?>"
+                   class="btn btn--outline btn--sm" style="margin-top:auto;">
+                    <?php esc_html_e( 'Browse Pastoral Resources', 'faithfulwitness' ); ?>
+                </a>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- Page content from WP editor (additional formation content) -->
+<?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
+<?php if ( $content = get_the_content() ) : ?>
+<section class="section">
+    <div class="container container--narrow">
+        <div class="entry-content"><?php the_content(); ?></div>
+    </div>
+</section>
+<?php endif; endwhile; endif; ?>
+
+<!-- Upcoming Formation Gatherings -->
+<section class="formation-gatherings section section--alt" id="gatherings">
+    <div class="container">
+        <div class="section-header" style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1.5rem;">
+            <div>
+                <span class="eyebrow"><?php esc_html_e( 'Upcoming', 'faithfulwitness' ); ?></span>
+                <h2><?php esc_html_e( 'Formation Gatherings', 'faithfulwitness' ); ?></h2>
+            </div>
+            <a href="<?php echo esc_url( home_url( '/events' ) ); ?>" class="btn btn--outline">
+                <?php esc_html_e( 'All Events', 'faithfulwitness' ); ?>
+            </a>
+        </div>
+
+        <?php
+        $events = get_posts( [
+            'post_type'      => 'fw_event',
+            'post_status'    => 'publish',
+            'posts_per_page' => 4,
+            'orderby'        => 'meta_value',
+            'meta_key'       => 'fw_event_date',
+            'order'          => 'ASC',
+        ] );
+        $events = array_filter( $events, 'fw_is_upcoming_event' );
+
+        if ( ! empty( $events ) ) : ?>
+        <ul class="formation-events-list">
+            <?php foreach ( $events as $ev ) :
+                $start_raw = get_post_meta( $ev->ID, 'fw_event_date', true );
+                $month     = $start_raw ? date_i18n( 'M', strtotime( $start_raw ) ) : '—';
+                $day       = $start_raw ? date_i18n( 'j', strtotime( $start_raw ) )  : '—';
+                $location  = fw_get_event_location( $ev->ID );
+            ?>
+            <li class="formation-event-item">
+                <div class="formation-event-date">
+                    <span class="formation-event-month"><?php echo esc_html( $month ); ?></span>
+                    <span class="formation-event-day"><?php echo esc_html( $day ); ?></span>
+                </div>
+                <div>
+                    <p class="formation-event-title"><?php echo esc_html( get_the_title( $ev ) ); ?></p>
+                    <p class="formation-event-details">
+                        <?php echo esc_html( $location ?: __( 'Location TBD', 'faithfulwitness' ) ); ?>
+                    </p>
+                </div>
+                <a href="<?php echo esc_url( get_permalink( $ev ) ); ?>" class="btn btn--sm btn--outline">
+                    <?php esc_html_e( 'Details', 'faithfulwitness' ); ?>
+                </a>
+            </li>
+            <?php endforeach; ?>
+        </ul>
+        <?php else : ?>
+        <ul class="formation-events-list">
+            <li class="formation-event-item">
+                <div class="formation-event-date">
+                    <span class="formation-event-month"><?php esc_html_e( 'TBD', 'faithfulwitness' ); ?></span>
+                    <span class="formation-event-day">—</span>
+                </div>
+                <div>
+                    <p class="formation-event-title"><?php esc_html_e( 'Formation Gathering — Placeholder Event', 'faithfulwitness' ); ?></p>
+                    <p class="formation-event-details"><?php esc_html_e( 'Date and location to be announced. Check back soon.', 'faithfulwitness' ); ?></p>
+                </div>
+                <a href="<?php echo esc_url( home_url( '/events' ) ); ?>" class="btn btn--sm btn--outline">
+                    <?php esc_html_e( 'All Events', 'faithfulwitness' ); ?>
+                </a>
+            </li>
+        </ul>
+        <?php endif; ?>
+    </div>
+</section>
+
+<!-- Scripture Pullquote -->
+<section class="formation-pullquote" id="formation-scripture">
+    <div class="container">
+        <p class="formation-pullquote__text">
+            <?php echo esc_html( get_theme_mod( 'fw_formation_scripture_text', __( 'We cannot help speaking about what we have seen and heard.', 'faithfulwitness' ) ) ); ?>
+        </p>
+        <span class="formation-pullquote__ref">
+            <?php echo esc_html( get_theme_mod( 'fw_formation_scripture_ref', __( 'Acts 4:20', 'faithfulwitness' ) ) ); ?>
+        </span>
+    </div>
+</section>
+
+<?php get_footer();

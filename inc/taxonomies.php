@@ -125,3 +125,61 @@ function fw_register_taxonomy_event_type() {
     ] );
 }
 add_action( 'init', 'fw_register_taxonomy_event_type' );
+
+// ============================================================
+// RESOURCE ISSUE AREA
+// Applied to: fw_resource
+// Values: immigration-due-process, sanctuary-sacred-spaces,
+//         know-your-rights, spiritual-formation, policy-advocacy
+// ============================================================
+function fw_register_taxonomy_resource_issue_area() {
+    $labels = [
+        'name'              => __( 'Issue Areas', 'faithfulwitness' ),
+        'singular_name'     => __( 'Issue Area', 'faithfulwitness' ),
+        'search_items'      => __( 'Search Issue Areas', 'faithfulwitness' ),
+        'all_items'         => __( 'All Issue Areas', 'faithfulwitness' ),
+        'edit_item'         => __( 'Edit Issue Area', 'faithfulwitness' ),
+        'add_new_item'      => __( 'Add New Issue Area', 'faithfulwitness' ),
+        'menu_name'         => __( 'Issue Areas', 'faithfulwitness' ),
+    ];
+
+    register_taxonomy( 'fw_resource_issue_area', [ 'fw_resource' ], [
+        'labels'            => $labels,
+        'hierarchical'      => false,
+        'public'            => true,
+        'show_ui'           => true,
+        'show_admin_column' => true,
+        'show_in_rest'      => true,
+        'rewrite'           => [ 'slug' => 'resource-issue' ],
+    ] );
+}
+add_action( 'init', 'fw_register_taxonomy_resource_issue_area' );
+
+// ============================================================
+// RESOURCE AUDIENCE
+// Applied to: fw_resource
+// Values: congregations, individual-christians,
+//         church-leaders, directly-affected
+// ============================================================
+function fw_register_taxonomy_resource_audience() {
+    $labels = [
+        'name'              => __( 'Audiences', 'faithfulwitness' ),
+        'singular_name'     => __( 'Audience', 'faithfulwitness' ),
+        'search_items'      => __( 'Search Audiences', 'faithfulwitness' ),
+        'all_items'         => __( 'All Audiences', 'faithfulwitness' ),
+        'edit_item'         => __( 'Edit Audience', 'faithfulwitness' ),
+        'add_new_item'      => __( 'Add New Audience', 'faithfulwitness' ),
+        'menu_name'         => __( 'Audiences', 'faithfulwitness' ),
+    ];
+
+    register_taxonomy( 'fw_resource_audience', [ 'fw_resource' ], [
+        'labels'            => $labels,
+        'hierarchical'      => false,
+        'public'            => true,
+        'show_ui'           => true,
+        'show_admin_column' => true,
+        'show_in_rest'      => true,
+        'rewrite'           => [ 'slug' => 'resource-audience' ],
+    ] );
+}
+add_action( 'init', 'fw_register_taxonomy_resource_audience' );

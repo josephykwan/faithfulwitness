@@ -1,0 +1,157 @@
+<?php
+/**
+ * Template Name: Take Action
+ *
+ * "Faithful witness starts here. Choose your path."
+ * Inspired by Moms Demand Action's Start Here + Sunrise Take Action.
+ */
+
+get_header(); ?>
+
+<!-- Bold Hero -->
+<section class="take-action-hero" id="take-action-top">
+    <div class="container">
+        <span class="hero__eyebrow" style="color:var(--color-accent-light);"><?php esc_html_e( 'Get Involved', 'faithfulwitness' ); ?></span>
+        <h1><?php esc_html_e( 'Faithful witness starts here.', 'faithfulwitness' ); ?><br><?php esc_html_e( 'Choose your path.', 'faithfulwitness' ); ?></h1>
+        <p style="font-size:var(--text-xl);opacity:.9;max-width:580px;margin:0 auto;"><?php esc_html_e( 'Whether you\'re just beginning to explore, ready to organize, or navigating the system yourself — there is a place for you here.', 'faithfulwitness' ); ?></p>
+    </div>
+</section>
+
+<!-- Three Audience Action Cards -->
+<section class="action-cards-section" id="choose-path">
+    <div class="container">
+        <div class="section-header section-header--center">
+            <span class="eyebrow"><?php esc_html_e( 'Where Do You Begin?', 'faithfulwitness' ); ?></span>
+            <h2><?php esc_html_e( 'Find Your Starting Point', 'faithfulwitness' ); ?></h2>
+        </div>
+
+        <div class="action-cards-grid">
+
+            <!-- Uncertain -->
+            <div class="action-card">
+                <div class="action-card__icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" width="28" height="28">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                        <line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                </div>
+                <span class="action-card__audience"><?php esc_html_e( 'I\'m uncertain', 'faithfulwitness' ); ?></span>
+                <h2 class="action-card__title"><?php esc_html_e( 'Start by learning', 'faithfulwitness' ); ?></h2>
+                <p class="action-card__desc"><?php esc_html_e( 'You sense something is wrong but aren\'t sure what faithful engagement looks like. Start with our resources — guides, articles, and tools to help you understand immigration through a Gospel lens.', 'faithfulwitness' ); ?></p>
+                <div class="action-card__cta">
+                    <a href="<?php echo esc_url( home_url( '/resources' ) ); ?>" class="btn btn--outline btn--lg" style="width:100%;justify-content:center;">
+                        <?php esc_html_e( 'Browse Resources', 'faithfulwitness' ); ?>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Ready to Engage -->
+            <div class="action-card" style="border-color:var(--color-primary);background:rgba(27,79,114,0.02);">
+                <div class="action-card__icon" style="background:rgba(27,79,114,0.12);" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" width="28" height="28">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                </div>
+                <span class="action-card__audience"><?php esc_html_e( 'I\'m ready to organize', 'faithfulwitness' ); ?></span>
+                <h2 class="action-card__title"><?php esc_html_e( 'Find your local group', 'faithfulwitness' ); ?></h2>
+                <p class="action-card__desc"><?php esc_html_e( 'You\'re a church leader, pastor, or congregation ready to act. Connect with other faithful witnesses in your area, access organizing toolkits, and join the national network.', 'faithfulwitness' ); ?></p>
+                <div class="action-card__cta">
+                    <a href="<?php echo esc_url( home_url( '/network' ) ); ?>" class="btn btn--primary btn--lg" style="width:100%;justify-content:center;">
+                        <?php esc_html_e( 'Find a Group Near Me', 'faithfulwitness' ); ?>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Directly Affected -->
+            <div class="action-card">
+                <div class="action-card__icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" width="28" height="28">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                    </svg>
+                </div>
+                <span class="action-card__audience"><?php esc_html_e( 'I\'m directly affected', 'faithfulwitness' ); ?></span>
+                <h2 class="action-card__title"><?php esc_html_e( 'Connect with support', 'faithfulwitness' ); ?></h2>
+                <p class="action-card__desc"><?php esc_html_e( 'You or someone you love is navigating the immigration system right now. Access practical Know Your Rights information, find a local group, and connect with a community that will stand with you.', 'faithfulwitness' ); ?></p>
+                <div class="action-card__cta">
+                    <a href="<?php echo esc_url( home_url( '/know-your-rights' ) ); ?>" class="btn btn--teal btn--lg" style="width:100%;justify-content:center;">
+                        <?php esc_html_e( 'Know Your Rights', 'faithfulwitness' ); ?>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- Email Signup Embed -->
+<section class="signup-embed-section" id="signup">
+    <div class="container">
+        <div class="signup-embed-inner">
+            <span class="eyebrow"><?php esc_html_e( 'Stay Connected', 'faithfulwitness' ); ?></span>
+            <h2><?php esc_html_e( 'Join the Campaign', 'faithfulwitness' ); ?></h2>
+            <p><?php esc_html_e( 'Get updates on our campaigns, events, and resources — and join thousands of faithful witnesses across the country.', 'faithfulwitness' ); ?></p>
+            <?php
+            // Output Mailchimp embed code from Customizer, or fallback link
+            $mc_embed = get_theme_mod( 'fw_mailchimp_embed_code', '' );
+            if ( $mc_embed ) :
+                echo wp_kses_post( $mc_embed );
+            else : ?>
+            <a href="https://mailchi.mp/ccda/join-the-faithful-witness-campaign"
+               class="btn btn--primary btn--lg"
+               target="_blank"
+               rel="noopener noreferrer">
+                <?php esc_html_e( 'Sign Up on Mailchimp', 'faithfulwitness' ); ?>
+            </a>
+            <?php endif; ?>
+        </div>
+    </div>
+</section>
+
+<!-- Current Campaigns -->
+<section class="campaigns-section" id="campaigns">
+    <div class="container">
+        <div class="section-header">
+            <span class="eyebrow"><?php esc_html_e( 'Right Now', 'faithfulwitness' ); ?></span>
+            <h2><?php esc_html_e( 'Current Campaigns', 'faithfulwitness' ); ?></h2>
+            <p><?php esc_html_e( 'These are the active campaigns where your participation makes a difference.', 'faithfulwitness' ); ?></p>
+        </div>
+
+        <?php
+        $initiatives = get_posts( [
+            'post_type'      => 'fw_initiative',
+            'post_status'    => 'publish',
+            'posts_per_page' => 6,
+            'orderby'        => 'date',
+            'order'          => 'DESC',
+        ] );
+
+        if ( ! empty( $initiatives ) ) : ?>
+        <div class="campaigns-list">
+            <?php foreach ( $initiatives as $init ) :
+                $cta_url   = get_post_meta( $init->ID, 'fw_initiative_cta_url', true );
+                $cta_label = get_post_meta( $init->ID, 'fw_initiative_cta_label', true ) ?: __( 'Take Action', 'faithfulwitness' );
+            ?>
+            <div class="campaign-item">
+                <div>
+                    <h3 class="campaign-item__title"><?php echo esc_html( get_the_title( $init ) ); ?></h3>
+                    <p class="campaign-item__desc"><?php echo esc_html( wp_trim_words( get_the_excerpt( $init ), 25, '…' ) ); ?></p>
+                </div>
+                <a href="<?php echo esc_url( $cta_url ?: get_permalink( $init ) ); ?>" class="btn btn--primary btn--sm">
+                    <?php echo esc_html( $cta_label ); ?>
+                </a>
+            </div>
+            <?php endforeach; ?>
+        </div>
+        <?php else : ?>
+        <p style="color:var(--color-text-muted);text-align:center;padding:3rem 0;">
+            <?php esc_html_e( 'Campaigns coming soon. Check back soon!', 'faithfulwitness' ); ?>
+        </p>
+        <?php endif; ?>
+    </div>
+</section>
+
+<?php get_footer();

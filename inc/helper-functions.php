@@ -212,6 +212,12 @@ function fw_render_resource_card( $post ) {
     $data_attrs .= ' data-type="' . esc_attr( $type_slug ) . '"';
     $init_ids = wp_get_post_terms( $post->ID, 'fw_initiative_category', [ 'fields' => 'ids' ] );
     $data_attrs .= ' data-initiative="' . esc_attr( implode( ',', $init_ids ) ) . '"';
+
+    $issue_slugs = wp_get_post_terms( $post->ID, 'fw_resource_issue_area', [ 'fields' => 'slugs' ] );
+    $data_attrs .= ' data-issue-area="' . esc_attr( implode( ',', is_array( $issue_slugs ) ? $issue_slugs : [] ) ) . '"';
+
+    $audience_slugs = wp_get_post_terms( $post->ID, 'fw_resource_audience', [ 'fields' => 'slugs' ] );
+    $data_attrs .= ' data-audience="' . esc_attr( implode( ',', is_array( $audience_slugs ) ? $audience_slugs : [] ) ) . '"';
     ?>
     <article class="resource-card card" <?php echo $data_attrs; // phpcs:ignore ?>>
         <?php if ( has_post_thumbnail( $post ) ) : ?>

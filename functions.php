@@ -36,10 +36,11 @@ function fw_theme_setup() {
 
     // Nav menus
     register_nav_menus( [
-        'primary'  => __( 'Primary Navigation', 'faithfulwitness' ),
-        'footer-1' => __( 'Footer Column 1',    'faithfulwitness' ),
-        'footer-2' => __( 'Footer Column 2',    'faithfulwitness' ),
-        'footer-3' => __( 'Footer Column 3',    'faithfulwitness' ),
+        'primary'      => __( 'Primary Navigation', 'faithfulwitness' ),
+        'footer-1'     => __( 'Footer Column 1 — Our Work',    'faithfulwitness' ),
+        'footer-2'     => __( 'Footer Column 2 — Get Involved','faithfulwitness' ),
+        'footer-3'     => __( 'Footer Column 3 — Resources',   'faithfulwitness' ),
+        'footer-legal' => __( 'Footer Legal Links',             'faithfulwitness' ),
     ] );
 }
 add_action( 'after_setup_theme', 'fw_theme_setup' );
@@ -76,6 +77,7 @@ require_once get_template_directory() . '/inc/meta-boxes.php';
 require_once get_template_directory() . '/inc/enqueue.php';
 require_once get_template_directory() . '/inc/helper-functions.php';
 require_once get_template_directory() . '/inc/shortcodes.php';
+require_once get_template_directory() . '/inc/page-setup.php';
 
 // ============================================================
 // CONTENT WIDTH
@@ -128,9 +130,14 @@ add_action( 'init', 'fw_register_rest_meta' );
 // CUSTOM PAGE TEMPLATES — register via filter
 // ============================================================
 function fw_register_page_templates( $templates ) {
-    $templates['page-templates/template-map.php']       = __( 'Organizing Map', 'faithfulwitness' );
-    $templates['page-templates/template-resources.php'] = __( 'Resource Library', 'faithfulwitness' );
-    $templates['page-templates/template-events.php']    = __( 'Events Page', 'faithfulwitness' );
+    $templates['page-templates/template-map.php']                = __( 'Organizing Map',       'faithfulwitness' );
+    $templates['page-templates/template-resources.php']          = __( 'Resource Library',     'faithfulwitness' );
+    $templates['page-templates/template-events.php']             = __( 'Events Page',           'faithfulwitness' );
+    $templates['page-templates/template-take-action.php']        = __( 'Take Action',           'faithfulwitness' );
+    $templates['page-templates/template-know-your-rights.php']   = __( 'Know Your Rights',      'faithfulwitness' );
+    $templates['page-templates/template-network.php']            = __( 'Find Your Network',     'faithfulwitness' );
+    $templates['page-templates/template-stories.php']            = __( 'Stories',               'faithfulwitness' );
+    $templates['page-templates/template-spiritual-formation.php']= __( 'Spiritual Formation',   'faithfulwitness' );
     return $templates;
 }
 add_filter( 'theme_page_templates', 'fw_register_page_templates' );

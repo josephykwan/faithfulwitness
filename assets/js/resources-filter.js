@@ -26,6 +26,8 @@
   const clearBtn       = document.getElementById( 'clear-filters' );
   const resetAllBtn    = document.getElementById( 'reset-all-filters' );
   const typePills      = document.querySelectorAll( '.filter-pill[data-filter-type="type"]' );
+  const issuePills     = document.querySelectorAll( '.filter-pill[data-filter-type="issue_area"]' );
+  const audiencePills  = document.querySelectorAll( '.filter-pill[data-filter-type="audience"]' );
 
   if ( ! grid ) return;
 
@@ -36,6 +38,8 @@
    * ---------------------------------------------------------------- */
   let activeType       = '';   // resource type slug
   let activeInitiative = '';   // initiative term ID (as string)
+  let activeIssueArea  = '';   // issue area slug
+  let activeAudience   = '';   // audience slug
   let searchQuery      = '';
 
   /* ----------------------------------------------------------------
@@ -46,8 +50,10 @@
     let visibleCount = 0;
 
     cards.forEach( function ( card ) {
-      const typeVal    = card.dataset.type || '';
-      const initVal    = ( card.dataset.initiative || '' ).split( ',' ).map( s => s.trim() );
+      const typeVal     = card.dataset.type || '';
+      const initVal     = ( card.dataset.initiative || '' ).split( ',' ).map( s => s.trim() );
+      const issueVal    = ( card.dataset.issueArea || '' ).split( ',' ).map( s => s.trim() );
+      const audienceVal = ( card.dataset.audience || '' ).split( ',' ).map( s => s.trim() );
       const titleEl    = card.querySelector( '.card__title' );
       const excerptEl  = card.querySelector( '.card__excerpt' );
       const titleText  = titleEl ? titleEl.textContent.toLowerCase() : '';
@@ -59,10 +65,16 @@
       // Initiative filter
       const initMatch = ! activeInitiative || initVal.includes( activeInitiative );
 
+      // Issue area filter
+      const issueMatch = ! activeIssueArea || issueVal.includes( activeIssueArea );
+
+      // Audience filter
+      const audienceMatch = ! activeAudience || audienceVal.includes( activeAudience );
+
       // Search filter
       const searchMatch = ! q || titleText.includes( q ) || excerptText.includes( q );
 
-      const visible = typeMatch && initMatch && searchMatch;
+      const visible = typeMatch && initMatch && issueMatch && audienceMatch && searchMatch;
       card.style.display = visible ? '' : 'none';
       if ( visible ) visibleCount++;
     } );
@@ -89,7 +101,7 @@
   function updateActiveFiltersBar() {
     if ( ! activeFiltersEl || ! activeTagsEl ) return;
 
-    const hasFilters = activeType || activeInitiative || searchQuery;
+    const hasFilters = activeType || activeInitiative || activeIssueArea || activeAudience || searchQuery;
     activeFiltersEl.style.display = hasFilters ? 'flex' : 'none';
 
     activeTagsEl.innerHTML = '';
@@ -109,6 +121,26 @@
       activeTagsEl.appendChild( makeFilterTag( selectedOpt.text, function () {
         activeInitiative = '';
         initiativeEl.value = '';
+        applyFilters();
+      } ) );
+    }
+
+    if ( activeIssueArea ) {
+      const activePill = document.querySelector( `.filter-pill[data-filter-type="issue_area"][data-value="${activeIssueArea}"]` );
+      const label = activePill ? activePill.textContent.trim() : activeIssueArea;
+      activeTagsEl.appendChild( makeFilterTag( label, function () {
+        activeIssueArea = '';
+        setActivePillGroup( issuePills, '' );
+        applyFilters();
+      } ) );
+    }
+
+    if ( activeAudience ) {
+      const activePill = document.querySelector( `.filter-pill[data-filter-type="audience"][data-value="${activeAudience}"]` );
+      const label = activePill ? activePill.textContent.trim() : activeAudience;
+      activeTagsEl.appendChild( makeFilterTag( label, function () {
+        activeAudience = '';
+        setActivePillGroup( audiencePills, '' );
         applyFilters();
       } ) );
     }
@@ -138,17 +170,40 @@
     pill.addEventListener( 'click', function () {
       const value = pill.dataset.value || '';
       activeType = value;
-      setActivePill( value );
+      setActivePillGroup( typePills, value );
       applyFilters();
     } );
   } );
 
-  function setActivePill( value ) {
-    typePills.forEach( function ( p ) {
+  issuePills.forEach( function ( pill ) {
+    pill.addEventListener( 'click', function () {
+      const value = pill.dataset.value || '';
+      activeIssueArea = value;
+      setActivePillGroup( issuePills, value );
+      applyFilters();
+    } );
+  } );
+
+  audiencePills.forEach( function ( pill ) {
+    pill.addEventListener( 'click', function () {
+      const value = pill.dataset.value || '';
+      activeAudience = value;
+      setActivePillGroup( audiencePills, value );
+      applyFilters();
+    } );
+  } );
+
+  function setActivePillGroup( pills, value ) {
+    pills.forEach( function ( p ) {
       const isActive = ( p.dataset.value || '' ) === value;
       p.classList.toggle( 'active', isActive );
       p.setAttribute( 'aria-pressed', isActive ? 'true' : 'false' );
     } );
+  }
+
+  // Keep backward-compat alias used by URL hash reader
+  function setActivePill( value ) {
+    setActivePillGroup( typePills, value );
   }
 
   /* ----------------------------------------------------------------
@@ -179,10 +234,14 @@
    * Clear / Reset
    * ---------------------------------------------------------------- */
   function resetAll() {
-    activeType = '';
+    activeType       = '';
     activeInitiative = '';
-    searchQuery = '';
-    setActivePill( '' );
+    activeIssueArea  = '';
+    activeAudience   = '';
+    searchQuery      = '';
+    setActivePillGroup( typePills, '' );
+    setActivePillGroup( issuePills, '' );
+    setActivePillGroup( audiencePills, '' );
     if ( initiativeEl ) initiativeEl.value = '';
     if ( searchEl )     searchEl.value = '';
     applyFilters();

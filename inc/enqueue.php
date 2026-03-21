@@ -8,9 +8,9 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 function fw_enqueue_assets() {
     $ver = wp_get_theme()->get( 'Version' );
 
-    // Google Fonts — Inter
+    // Google Fonts — Inter + Merriweather
     wp_enqueue_style( 'fw-google-fonts',
-        'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap',
+        'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:ital,wght@0,700;0,900;1,700&display=swap',
         [], null );
 
     // Main stylesheet
@@ -21,6 +21,26 @@ function fw_enqueue_assets() {
 
     // Main JS
     wp_enqueue_script( 'fw-main', get_template_directory_uri() . '/assets/js/main.js', [], $ver, true );
+
+    // Page template styles — loaded for all new page templates
+    $page_templates = [
+        'page-templates/template-take-action.php',
+        'page-templates/template-know-your-rights.php',
+        'page-templates/template-network.php',
+        'page-templates/template-stories.php',
+        'page-templates/template-spiritual-formation.php',
+    ];
+    foreach ( $page_templates as $tpl ) {
+        if ( is_page_template( $tpl ) ) {
+            wp_enqueue_style( 'fw-pages', get_template_directory_uri() . '/assets/css/pages.css', [ 'fw-style' ], $ver );
+            break;
+        }
+    }
+
+    // Also load pages.css on stories archive (uses story-card styles)
+    if ( is_home() || is_category() ) {
+        wp_enqueue_style( 'fw-pages', get_template_directory_uri() . '/assets/css/pages.css', [ 'fw-style' ], $ver );
+    }
 
     // Map page
     if ( is_page_template( 'page-templates/template-map.php' ) || is_singular( 'fw_organizing_group' ) || is_post_type_archive( 'fw_organizing_group' ) ) {

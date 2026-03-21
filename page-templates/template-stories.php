@@ -1,0 +1,171 @@
+<?php
+/**
+ * Template Name: Stories
+ *
+ * Stories of Faithful Witness — blog posts displayed as a filtered card grid.
+ * Categories: Church Stories / Immigrant Voices / Pastor Reflections / Policy & Advocacy
+ */
+
+get_header();
+
+// Get all post categories to build the filter
+$categories = get_categories( [ 'hide_empty' => false ] );
+?>
+
+<!-- Hero -->
+<section class="stories-hero" id="stories-top">
+    <div class="container">
+        <span class="hero__eyebrow" style="color:var(--color-accent-light);"><?php esc_html_e( 'From the Field', 'faithfulwitness' ); ?></span>
+        <h1><?php esc_html_e( 'Stories of Faithful Witness', 'faithfulwitness' ); ?></h1>
+        <p><?php esc_html_e( 'From churches, families, and leaders navigating this moment together.', 'faithfulwitness' ); ?></p>
+    </div>
+</section>
+
+<!-- Stories Grid -->
+<section class="section" id="stories">
+    <div class="container">
+
+        <!-- Category filters + Share CTA -->
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:var(--space-4);margin-bottom:var(--space-8);">
+            <div class="stories-filters" role="group" aria-label="<?php esc_attr_e( 'Filter stories by category', 'faithfulwitness' ); ?>" style="margin-bottom:0;border:none;padding:0;">
+                <button class="story-filter-btn active" data-category="">
+                    <?php esc_html_e( 'All Stories', 'faithfulwitness' ); ?>
+                </button>
+                <?php
+                $story_categories = [
+                    'church-stories'      => __( 'Church Stories', 'faithfulwitness' ),
+                    'immigrant-voices'    => __( 'Immigrant Voices', 'faithfulwitness' ),
+                    'pastor-reflections'  => __( 'Pastor Reflections', 'faithfulwitness' ),
+                    'policy-advocacy'     => __( 'Policy & Advocacy', 'faithfulwitness' ),
+                ];
+                foreach ( $story_categories as $slug => $name ) :
+                    $cat = get_category_by_slug( $slug );
+                    if ( $cat ) :
+                ?>
+                <button class="story-filter-btn" data-category="<?php echo esc_attr( $cat->term_id ); ?>">
+                    <?php echo esc_html( $name ); ?>
+                </button>
+                <?php
+                    endif;
+                endforeach;
+                ?>
+            </div>
+            <a href="<?php echo esc_url( get_theme_mod( 'fw_stories_share_url', home_url( '/contact' ) ) ); ?>"
+               class="btn btn--outline">
+                <?php esc_html_e( 'Share Your Story', 'faithfulwitness' ); ?>
+            </a>
+        </div>
+
+        <!-- Stories grid -->
+        <div class="grid grid--3" id="stories-grid">
+            <?php
+            $stories_query = new WP_Query( [
+                'post_type'      => 'post',
+                'post_status'    => 'publish',
+                'posts_per_page' => 12,
+                'orderby'        => 'date',
+                'order'          => 'DESC',
+            ] );
+
+            if ( $stories_query->have_posts() ) :
+                while ( $stories_query->have_posts() ) :
+                    $stories_query->the_post();
+                    $post_cats  = wp_get_post_categories( get_the_ID() );
+                    $cat_names  = get_the_category();
+                    $author     = get_the_author_meta( 'display_name' );
+                    $date       = get_the_date( 'M j, Y' );
+            ?>
+            <article class="story-card"
+                     data-categories="<?php echo esc_attr( implode( ',', $post_cats ) ); ?>">
+                <?php if ( has_post_thumbnail() ) : ?>
+                <div class="story-card__image">
+                    <a href="<?php the_permalink(); ?>" tabindex="-1">
+                        <?php the_post_thumbnail( 'fw-card', [ 'loading' => 'lazy', 'alt' => esc_attr( get_the_title() ) ] ); ?>
+                    </a>
+                </div>
+                <?php endif; ?>
+                <div class="story-card__body">
+                    <?php if ( ! empty( $cat_names ) ) : ?>
+                    <span class="story-card__category"><?php echo esc_html( $cat_names[0]->name ); ?></span>
+                    <?php endif; ?>
+                    <h3 class="story-card__title">
+                        <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+                    </h3>
+                    <p class="story-card__excerpt"><?php echo esc_html( wp_trim_words( get_the_excerpt(), 25, '…' ) ); ?></p>
+                    <div class="story-card__byline">
+                        <span class="story-card__author"><?php echo esc_html( $author ); ?></span>
+                        <a href="<?php the_permalink(); ?>" style="font-size:var(--text-xs);font-weight:700;color:var(--color-primary);text-decoration:none;">
+                            <?php esc_html_e( 'Read more →', 'faithfulwitness' ); ?>
+                        </a>
+                    </div>
+                </div>
+            </article>
+            <?php
+                endwhile;
+                wp_reset_postdata();
+            else : ?>
+            <div style="grid-column:1/-1;text-align:center;padding:3rem;">
+                <p><?php esc_html_e( 'Stories coming soon. Be the first to share yours!', 'faithfulwitness' ); ?></p>
+            </div>
+            <?php endif; ?>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination" style="margin-top:var(--space-10);">
+            <?php
+            echo paginate_links( [
+                'total'   => $stories_query->max_num_pages ?? 1,
+                'current' => max( 1, get_query_var( 'paged' ) ),
+            ] );
+            ?>
+        </div>
+
+    </div>
+</section>
+
+<!-- Share Your Story CTA -->
+<section class="stories-share-cta section" id="share-story">
+    <div class="container" style="text-align:center;">
+        <div style="max-width:560px;margin:0 auto;">
+            <span class="eyebrow"><?php esc_html_e( 'Your Voice Matters', 'faithfulwitness' ); ?></span>
+            <h2><?php esc_html_e( 'Share Your Story', 'faithfulwitness' ); ?></h2>
+            <p style="color:var(--color-text-light);font-size:var(--text-lg);margin-bottom:var(--space-8);">
+                <?php esc_html_e( 'Have you witnessed faithful action in your community? Are you navigating this moment with your congregation? We want to hear your story.', 'faithfulwitness' ); ?>
+            </p>
+            <a href="<?php echo esc_url( get_theme_mod( 'fw_stories_share_url', home_url( '/contact' ) ) ); ?>"
+               class="btn btn--primary btn--lg">
+                <?php esc_html_e( 'Submit Your Story', 'faithfulwitness' ); ?>
+            </a>
+        </div>
+    </div>
+</section>
+
+<script>
+// Category filter for stories
+( function () {
+    const filterBtns = document.querySelectorAll( '.story-filter-btn[data-category]' );
+    const cards      = document.querySelectorAll( '.story-card[data-categories]' );
+
+    if ( ! filterBtns.length ) return;
+
+    filterBtns.forEach( function ( btn ) {
+        btn.addEventListener( 'click', function () {
+            const catId = btn.dataset.category;
+
+            filterBtns.forEach( function ( b ) { b.classList.remove( 'active' ); } );
+            btn.classList.add( 'active' );
+
+            cards.forEach( function ( card ) {
+                if ( ! catId ) {
+                    card.style.display = '';
+                    return;
+                }
+                const cats = ( card.dataset.categories || '' ).split( ',' );
+                card.style.display = cats.includes( catId ) ? '' : 'none';
+            } );
+        } );
+    } );
+} )();
+</script>
+
+<?php get_footer();

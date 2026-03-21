@@ -9,13 +9,14 @@
 <body <?php body_class(); ?>>
 <?php wp_body_open(); ?>
 
+<a class="skip-link" href="#main-content"><?php esc_html_e( 'Skip to content', 'faithfulwitness' ); ?></a>
+
 <div class="site-wrapper" id="page">
 
 <?php
-// Optional notice bar — set a custom field on the front-page or via Customizer
+// Optional notice bar — configured via Customizer
 $notice = get_theme_mod( 'fw_notice_bar_text', '' );
-if ( $notice ) :
-?>
+if ( $notice ) : ?>
 <div class="notice-bar" role="banner">
     <?php echo wp_kses_post( $notice ); ?>
 </div>
@@ -42,15 +43,22 @@ if ( $notice ) :
                     'menu_class'     => 'primary-nav__menu',
                     'container'      => false,
                     'fallback_cb'    => 'fw_fallback_menu',
+                    'walker'         => class_exists( 'FW_Nav_Walker' ) ? new FW_Nav_Walker() : null,
                 ] );
                 ?>
-                <a href="<?php echo esc_url( get_theme_mod( 'fw_nav_cta_url', '#take-action' ) ); ?>" class="nav-cta">
-                    <?php echo esc_html( get_theme_mod( 'fw_nav_cta_text', __( 'Take Action', 'faithfulwitness' ) ) ); ?>
+                <a href="<?php echo esc_url( get_theme_mod( 'fw_nav_cta_url', 'https://mailchi.mp/ccda/join-the-faithful-witness-campaign' ) ); ?>"
+                   class="nav-cta"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    <?php echo esc_html( get_theme_mod( 'fw_nav_cta_text', __( 'Join the Campaign', 'faithfulwitness' ) ) ); ?>
                 </a>
             </nav>
 
             <!-- Mobile toggle -->
-            <button class="nav-toggle" id="nav-toggle" aria-controls="primary-nav" aria-expanded="false" aria-label="<?php esc_attr_e( 'Toggle menu', 'faithfulwitness' ); ?>">
+            <button class="nav-toggle" id="nav-toggle"
+                    aria-controls="primary-nav"
+                    aria-expanded="false"
+                    aria-label="<?php esc_attr_e( 'Toggle menu', 'faithfulwitness' ); ?>">
                 <span class="nav-toggle-icon" aria-hidden="true">
                     <span></span><span></span><span></span>
                 </span>
@@ -63,6 +71,22 @@ if ( $notice ) :
 <main class="site-content" id="main-content">
 
 <?php
+/**
+ * Fallback menu when no menu is assigned to 'primary'.
+ * Shows a placeholder with a link to the menus screen.
+ */
 function fw_fallback_menu() {
-    echo '<ul><li><a href="' . esc_url( admin_url( 'nav-menus.php' ) ) . '">' . esc_html__( 'Set up navigation →', 'faithfulwitness' ) . '</a></li></ul>';
+    // Build a default nav from the registered menu structure
+    $items = [
+        __( 'Our Work',   'faithfulwitness' ) => '#',
+        __( 'The Network','faithfulwitness' ) => '#',
+        __( 'Resources',  'faithfulwitness' ) => '#',
+        __( 'Stories',    'faithfulwitness' ) => '#',
+        __( 'Take Action','faithfulwitness' ) => '#',
+    ];
+    echo '<ul class="primary-nav__menu">';
+    foreach ( $items as $label => $url ) {
+        echo '<li><a href="' . esc_url( $url ) . '">' . esc_html( $label ) . '</a></li>';
+    }
+    echo '</ul>';
 }

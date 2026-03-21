@@ -2,10 +2,11 @@
 /**
  * Template Name: Resource Library
  *
- * Atlassian-playbook-style filterable resource grid.
- * Filters by resource type and initiative category.
- * Can also be called with shortcode [fw_resources type="graphic"] to embed
- * a filtered subset on any page.
+ * Filterable resource grid with three taxonomy filters:
+ *   - Resource Type (pill buttons)
+ *   - Issue Area (pill buttons)
+ *   - Audience (pill buttons)
+ * Plus a search input. All filtering is client-side.
  */
 
 get_header(); ?>
@@ -22,6 +23,8 @@ get_header(); ?>
             <h1><?php the_title(); ?></h1>
             <?php if ( $excerpt = get_the_excerpt() ) : ?>
             <p><?php echo esc_html( $excerpt ); ?></p>
+            <?php else : ?>
+            <p><?php esc_html_e( 'Guides, toolkits, articles, and prayer resources for congregations, leaders, and individuals.', 'faithfulwitness' ); ?></p>
             <?php endif; ?>
         </div>
     </div>
@@ -31,10 +34,8 @@ get_header(); ?>
 <section class="section resources-library" id="resource-library">
     <div class="container">
 
-        <!-- Toolbar -->
+        <!-- Search -->
         <div class="resources-toolbar" id="resources-toolbar">
-
-            <!-- Search -->
             <div class="resources-toolbar__search">
                 <label for="resource-search" class="sr-only"><?php esc_html_e( 'Search resources', 'faithfulwitness' ); ?></label>
                 <input
@@ -45,24 +46,33 @@ get_header(); ?>
                     autocomplete="off"
                 >
             </div>
+        </div>
 
-            <!-- Filter pills: by resource type -->
+        <!-- Filter: Resource Type -->
+        <div class="filter-group" style="margin-bottom:var(--space-4);">
+            <p class="filter-group__label"><?php esc_html_e( 'Type', 'faithfulwitness' ); ?></p>
             <div class="resources-toolbar__filters" role="group" aria-label="<?php esc_attr_e( 'Filter by resource type', 'faithfulwitness' ); ?>">
                 <button class="filter-pill active" data-filter-type="type" data-value="" aria-pressed="true">
                     <?php esc_html_e( 'All Types', 'faithfulwitness' ); ?>
                 </button>
                 <?php
-                $resource_types = get_terms( [ 'taxonomy' => 'fw_resource_type', 'hide_empty' => true ] );
+                $resource_types = get_terms( [ 'taxonomy' => 'fw_resource_type', 'hide_empty' => false ] );
                 if ( $resource_types && ! is_wp_error( $resource_types ) ) :
                     foreach ( $resource_types as $type ) :
                         $pill_class = [
                             'article'      => 'filter-pill--article',
+                            'pdf-guide'    => 'filter-pill--guide',
+                            'toolkit'      => 'filter-pill--graphic',
+                            'prayer-guide' => 'filter-pill--social',
                             'daily-guide'  => 'filter-pill--guide',
                             'graphic'      => 'filter-pill--graphic',
                             'social-media' => 'filter-pill--social',
                         ][ $type->slug ] ?? '';
                 ?>
-                    <button class="filter-pill <?php echo esc_attr( $pill_class ); ?>" data-filter-type="type" data-value="<?php echo esc_attr( $type->slug ); ?>" aria-pressed="false">
+                    <button class="filter-pill <?php echo esc_attr( $pill_class ); ?>"
+                            data-filter-type="type"
+                            data-value="<?php echo esc_attr( $type->slug ); ?>"
+                            aria-pressed="false">
                         <?php echo esc_html( $type->name ); ?>
                         <span class="filter-pill__count"><?php echo esc_html( $type->count ); ?></span>
                     </button>
@@ -71,28 +81,55 @@ get_header(); ?>
                 endif;
                 ?>
             </div>
+        </div>
 
-            <!-- Filter by initiative -->
-            <div class="resources-toolbar__initiative-filter">
-                <label for="initiative-filter" class="sr-only"><?php esc_html_e( 'Filter by initiative', 'faithfulwitness' ); ?></label>
-                <select id="initiative-filter" class="form-control" data-filter-type="initiative">
-                    <option value=""><?php esc_html_e( 'All Initiatives', 'faithfulwitness' ); ?></option>
-                    <?php
-                    $initiatives = get_terms( [ 'taxonomy' => 'fw_initiative_category', 'hide_empty' => true ] );
-                    if ( $initiatives && ! is_wp_error( $initiatives ) ) :
-                        foreach ( $initiatives as $init ) :
-                    ?>
-                        <option value="<?php echo esc_attr( $init->term_id ); ?>"><?php echo esc_html( $init->name ); ?></option>
-                    <?php
-                        endforeach;
-                    endif;
-                    ?>
-                </select>
+        <!-- Filter: Issue Area -->
+        <?php
+        $issue_areas = get_terms( [ 'taxonomy' => 'fw_resource_issue_area', 'hide_empty' => false ] );
+        if ( $issue_areas && ! is_wp_error( $issue_areas ) && ! empty( $issue_areas ) ) : ?>
+        <div class="filter-group" style="margin-bottom:var(--space-4);">
+            <p class="filter-group__label"><?php esc_html_e( 'Issue Area', 'faithfulwitness' ); ?></p>
+            <div class="resources-toolbar__filters" role="group" aria-label="<?php esc_attr_e( 'Filter by issue area', 'faithfulwitness' ); ?>">
+                <button class="filter-pill active" data-filter-type="issue_area" data-value="" aria-pressed="true">
+                    <?php esc_html_e( 'All Issues', 'faithfulwitness' ); ?>
+                </button>
+                <?php foreach ( $issue_areas as $issue ) : ?>
+                <button class="filter-pill"
+                        data-filter-type="issue_area"
+                        data-value="<?php echo esc_attr( $issue->slug ); ?>"
+                        aria-pressed="false">
+                    <?php echo esc_html( $issue->name ); ?>
+                    <span class="filter-pill__count"><?php echo esc_html( $issue->count ); ?></span>
+                </button>
+                <?php endforeach; ?>
             </div>
+        </div>
+        <?php endif; ?>
 
-        </div><!-- .resources-toolbar -->
+        <!-- Filter: Audience -->
+        <?php
+        $audiences = get_terms( [ 'taxonomy' => 'fw_resource_audience', 'hide_empty' => false ] );
+        if ( $audiences && ! is_wp_error( $audiences ) && ! empty( $audiences ) ) : ?>
+        <div class="filter-group" style="margin-bottom:var(--space-6);padding-bottom:var(--space-6);border-bottom:1px solid var(--color-border);">
+            <p class="filter-group__label"><?php esc_html_e( 'For', 'faithfulwitness' ); ?></p>
+            <div class="resources-toolbar__filters" role="group" aria-label="<?php esc_attr_e( 'Filter by audience', 'faithfulwitness' ); ?>">
+                <button class="filter-pill active" data-filter-type="audience" data-value="" aria-pressed="true">
+                    <?php esc_html_e( 'Everyone', 'faithfulwitness' ); ?>
+                </button>
+                <?php foreach ( $audiences as $aud ) : ?>
+                <button class="filter-pill"
+                        data-filter-type="audience"
+                        data-value="<?php echo esc_attr( $aud->slug ); ?>"
+                        aria-pressed="false">
+                    <?php echo esc_html( $aud->name ); ?>
+                    <span class="filter-pill__count"><?php echo esc_html( $aud->count ); ?></span>
+                </button>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <?php endif; ?>
 
-        <!-- Active filter indicator -->
+        <!-- Active filters bar -->
         <div class="resources-active-filters" id="active-filters" aria-live="polite" style="display:none;">
             <span class="resources-active-filters__label"><?php esc_html_e( 'Filtering by:', 'faithfulwitness' ); ?></span>
             <span id="active-filter-tags"></span>
@@ -102,10 +139,13 @@ get_header(); ?>
         </div>
 
         <!-- Count -->
-        <p class="resources-count" id="resource-count" aria-live="polite" style="margin-bottom: 1.5rem; color: var(--color-text-muted); font-size: var(--text-sm);">
+        <p class="resources-count" id="resource-count" aria-live="polite" style="margin-bottom:var(--space-6);color:var(--color-text-muted);font-size:var(--text-sm);">
             <?php
             $total = wp_count_posts( 'fw_resource' )->publish;
-            printf( esc_html( _n( 'Showing %d resource', 'Showing %d resources', $total, 'faithfulwitness' ) ), esc_html( $total ) );
+            printf(
+                esc_html( _n( 'Showing %d resource', 'Showing %d resources', $total, 'faithfulwitness' ) ),
+                esc_html( $total )
+            );
             ?>
         </p>
 
@@ -125,15 +165,15 @@ get_header(); ?>
                 endwhile;
                 wp_reset_postdata();
             else : ?>
-            <div class="resources-empty" style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+            <div style="grid-column:1/-1;text-align:center;padding:3rem;">
                 <p><?php esc_html_e( 'No resources have been added yet. Check back soon!', 'faithfulwitness' ); ?></p>
             </div>
             <?php endif; ?>
-        </div><!-- #resources-grid -->
+        </div>
 
-        <!-- No results message (hidden by default, shown by JS) -->
-        <div class="resources-no-results" id="resources-no-results" style="display:none; text-align:center; padding:3rem 0;">
-            <p style="font-size: var(--text-xl); color: var(--color-text-muted);">
+        <!-- No results message -->
+        <div class="resources-no-results" id="resources-no-results" style="display:none;text-align:center;padding:3rem 0;">
+            <p style="font-size:var(--text-xl);color:var(--color-text-muted);">
                 <?php esc_html_e( 'No resources match your search. Try different filters.', 'faithfulwitness' ); ?>
             </p>
             <button id="reset-all-filters" class="btn btn--outline" style="margin-top:1rem;">
@@ -141,16 +181,13 @@ get_header(); ?>
             </button>
         </div>
 
-    </div><!-- .container -->
+    </div>
 </section>
 
-<!-- Optional page content below resources -->
 <?php if ( $content = apply_filters( 'the_content', get_the_content() ) ) : ?>
 <section class="section section--alt">
     <div class="container container--narrow">
-        <div class="entry-content">
-            <?php echo $content; // phpcs:ignore ?>
-        </div>
+        <div class="entry-content"><?php echo $content; // phpcs:ignore ?></div>
     </div>
 </section>
 <?php endif; ?>

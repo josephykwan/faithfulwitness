@@ -2,234 +2,326 @@
 /**
  * Front Page / Homepage
  *
- * Sections (all editable via WP Customizer or page content):
+ * Sections:
  * 1. Hero
- * 2. Impact stats bar
- * 3. Initiatives grid
- * 4. Map teaser
- * 5. Latest blog posts
- * 6. Events preview
- * 7. Newsletter signup
+ * 2. "We Choose" values strip
+ * 3. Three Commitments
+ * 4. Who Is This For (audience entry points)
+ * 5. Network Map teaser
+ * 6. Campaign Highlight
+ * 7. Scripture Anchor (Acts 4:20)
+ * 8. Partner Logos
  */
 get_header(); ?>
 
-<!-- 1. Hero -->
+<!-- ============================================================
+     1. HERO
+     ============================================================ -->
+<?php
+$hero_image = get_theme_mod(
+    'fw_hero_bg_url',
+    'https://faithfulwitness.us/wp-content/uploads/2026/03/Faithful-Witness-Campaign-Header-3.png'
+);
+?>
 <section class="hero">
-    <?php if ( has_post_thumbnail() ) : ?>
-    <div class="hero__bg" style="background-image: url('<?php echo esc_url( get_the_post_thumbnail_url( null, 'fw-hero' ) ); ?>');"></div>
-    <?php else : ?>
-    <div class="hero__bg" style="background: linear-gradient(135deg, #1B4F72, #2980B9);"></div>
-    <?php endif; ?>
+    <div class="hero__bg" style="background-image: url('<?php echo esc_url( $hero_image ); ?>');"></div>
     <div class="hero__overlay"></div>
     <div class="container">
         <div class="hero__content">
-            <span class="hero__eyebrow"><?php echo esc_html( get_theme_mod( 'fw_hero_eyebrow', __( 'Immigrant Justice', 'faithfulwitness' ) ) ); ?></span>
-            <h1><?php echo esc_html( get_theme_mod( 'fw_hero_title', get_bloginfo( 'name' ) ) ); ?></h1>
-            <p><?php echo esc_html( get_theme_mod( 'fw_hero_subtitle', get_bloginfo( 'description' ) ) ); ?></p>
+            <span class="hero__eyebrow"><?php echo esc_html( get_theme_mod( 'fw_hero_eyebrow', __( 'A Gospel-Centered Campaign', 'faithfulwitness' ) ) ); ?></span>
+            <h1><?php echo esc_html( get_theme_mod( 'fw_hero_title', __( 'A Gospel-Centered Response for a Divided Time', 'faithfulwitness' ) ) ); ?></h1>
+            <p><?php echo esc_html( get_theme_mod( 'fw_hero_subtitle', __( 'Forming the Church for courageous, nonviolent, Gospel-rooted engagement around immigration.', 'faithfulwitness' ) ) ); ?></p>
             <div class="hero__actions">
-                <?php
-                $cta1_url   = get_theme_mod( 'fw_hero_cta1_url', '#initiatives' );
-                $cta1_label = get_theme_mod( 'fw_hero_cta1_label', __( 'Our Initiatives', 'faithfulwitness' ) );
-                $cta2_url   = get_theme_mod( 'fw_hero_cta2_url', '#map' );
-                $cta2_label = get_theme_mod( 'fw_hero_cta2_label', __( 'Find a Local Group', 'faithfulwitness' ) );
-                if ( $cta1_url ) : ?>
-                <a href="<?php echo esc_url( $cta1_url ); ?>" class="btn btn--accent btn--lg"><?php echo esc_html( $cta1_label ); ?></a>
-                <?php endif; ?>
-                <?php if ( $cta2_url ) : ?>
-                <a href="<?php echo esc_url( $cta2_url ); ?>" class="btn btn--outline-white btn--lg"><?php echo esc_html( $cta2_label ); ?></a>
-                <?php endif; ?>
+                <a href="<?php echo esc_url( get_theme_mod( 'fw_hero_cta1_url', 'https://mailchi.mp/ccda/join-the-faithful-witness-campaign' ) ); ?>"
+                   class="btn btn--accent btn--lg"
+                   target="_blank" rel="noopener noreferrer">
+                    <?php echo esc_html( get_theme_mod( 'fw_hero_cta1_label', __( 'Join the Campaign', 'faithfulwitness' ) ) ); ?>
+                </a>
+                <a href="<?php echo esc_url( get_theme_mod( 'fw_hero_cta2_url', home_url( '/network' ) ) ); ?>"
+                   class="btn btn--outline-white btn--lg">
+                    <?php echo esc_html( get_theme_mod( 'fw_hero_cta2_label', __( 'Find Your Network', 'faithfulwitness' ) ) ); ?>
+                </a>
             </div>
         </div>
     </div>
 </section>
 
-<!-- 2. Impact Stats -->
-<?php
-$stats = [
-    [ 'number' => get_theme_mod( 'fw_stat1_num', '50+' ),  'label' => get_theme_mod( 'fw_stat1_label', __( 'Cities organized', 'faithfulwitness' ) ) ],
-    [ 'number' => get_theme_mod( 'fw_stat2_num', '10K+' ), 'label' => get_theme_mod( 'fw_stat2_label', __( 'Community members', 'faithfulwitness' ) ) ],
-    [ 'number' => get_theme_mod( 'fw_stat3_num', '25+' ),  'label' => get_theme_mod( 'fw_stat3_label', __( 'Active initiatives', 'faithfulwitness' ) ) ],
-    [ 'number' => get_theme_mod( 'fw_stat4_num', '5' ),    'label' => get_theme_mod( 'fw_stat4_label', __( 'Years of advocacy', 'faithfulwitness' ) ) ],
-];
-$show_stats = array_filter( $stats, fn( $s ) => $s['number'] );
-if ( ! empty( $show_stats ) ) : ?>
-<div class="stats-bar">
+<!-- ============================================================
+     2. WE CHOOSE — Values Strip
+     ============================================================ -->
+<section class="values-strip" id="values" aria-label="<?php esc_attr_e( 'Our values', 'faithfulwitness' ); ?>">
     <div class="container">
-        <div class="stats-bar__grid">
-            <?php foreach ( $show_stats as $stat ) : ?>
-            <div class="stat-item">
-                <span class="stat-item__number"><?php echo esc_html( $stat['number'] ); ?></span>
-                <span class="stat-item__label"><?php echo esc_html( $stat['label'] ); ?></span>
-            </div>
-            <?php endforeach; ?>
+        <p class="values-strip__heading"><?php esc_html_e( 'We Choose', 'faithfulwitness' ); ?></p>
+    </div>
+    <div class="values-grid">
+        <div class="value-card">
+            <span class="value-card__word"><?php esc_html_e( 'Hope', 'faithfulwitness' ); ?></span>
+            <span class="value-card__over"><?php esc_html_e( 'over despair', 'faithfulwitness' ); ?></span>
+        </div>
+        <div class="value-card">
+            <span class="value-card__word"><?php esc_html_e( 'Courage', 'faithfulwitness' ); ?></span>
+            <span class="value-card__over"><?php esc_html_e( 'over silence', 'faithfulwitness' ); ?></span>
+        </div>
+        <div class="value-card">
+            <span class="value-card__word"><?php esc_html_e( 'Nonviolence', 'faithfulwitness' ); ?></span>
+            <span class="value-card__over"><?php esc_html_e( 'over fear', 'faithfulwitness' ); ?></span>
+        </div>
+        <div class="value-card">
+            <span class="value-card__word"><?php esc_html_e( 'Love', 'faithfulwitness' ); ?></span>
+            <span class="value-card__over"><?php esc_html_e( 'over division', 'faithfulwitness' ); ?></span>
         </div>
     </div>
-</div>
-<?php endif; ?>
+</section>
 
-<!-- 3. Current Initiatives -->
-<section class="section" id="initiatives">
+<!-- ============================================================
+     3. THREE COMMITMENTS
+     ============================================================ -->
+<section class="commitments-section section" id="commitments">
     <div class="container">
         <div class="section-header section-header--center">
-            <span class="eyebrow"><?php esc_html_e( 'Our Work', 'faithfulwitness' ); ?></span>
-            <h2><?php esc_html_e( 'Current Initiatives', 'faithfulwitness' ); ?></h2>
-            <p><?php esc_html_e( 'Active campaigns and organizing efforts for immigrant justice.', 'faithfulwitness' ); ?></p>
+            <span class="eyebrow"><?php esc_html_e( 'How We Show Up', 'faithfulwitness' ); ?></span>
+            <h2><?php esc_html_e( 'Three Commitments', 'faithfulwitness' ); ?></h2>
+            <p><?php esc_html_e( 'Our organizing work is rooted in three interlocking practices — not just strategies, but postures of faith.', 'faithfulwitness' ); ?></p>
         </div>
 
-        <?php
-        $initiatives = get_posts( [
-            'post_type'      => 'fw_initiative',
-            'post_status'    => 'publish',
-            'posts_per_page' => 6,
-            'meta_query'     => [
-                'relation' => 'OR',
-                [ 'key' => 'fw_initiative_status', 'value' => 'active', 'compare' => '=' ],
-                [ 'key' => 'fw_initiative_status', 'value' => 'ongoing', 'compare' => '=' ],
-                [ 'key' => 'fw_initiative_status', 'compare' => 'NOT EXISTS' ],
-            ],
-        ] );
-        if ( ! empty( $initiatives ) ) : ?>
-        <div class="grid grid--3">
-            <?php foreach ( $initiatives as $init ) :
-                $cta_url   = get_post_meta( $init->ID, 'fw_initiative_cta_url', true );
-                $cta_label = get_post_meta( $init->ID, 'fw_initiative_cta_label', true );
-            ?>
-            <article <?php post_class( 'card initiative-card', $init ); ?>>
-                <?php if ( has_post_thumbnail( $init ) ) : ?>
-                <div class="card__image">
-                    <a href="<?php echo esc_url( get_permalink( $init ) ); ?>" tabindex="-1">
-                        <?php echo get_the_post_thumbnail( $init, 'fw-card', [ 'loading' => 'lazy' ] ); ?>
-                    </a>
+        <div class="commitment-cards">
+
+            <!-- Commitment 1: Formation -->
+            <article class="commitment-card">
+                <div class="commitment-card__icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" width="28" height="28">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
                 </div>
-                <?php endif; ?>
-                <div class="card__body">
-                    <div class="card__meta"><?php echo fw_get_initiative_tags( $init->ID ); // phpcs:ignore ?></div>
-                    <h3 class="card__title"><a href="<?php echo esc_url( get_permalink( $init ) ); ?>"><?php echo esc_html( get_the_title( $init ) ); ?></a></h3>
-                    <p class="card__excerpt"><?php echo esc_html( wp_trim_words( get_the_excerpt( $init ), 20, '…' ) ); ?></p>
-                    <div class="card__footer">
-                        <a href="<?php echo esc_url( get_permalink( $init ) ); ?>" class="btn btn--sm btn--outline"><?php esc_html_e( 'Learn More', 'faithfulwitness' ); ?></a>
-                        <?php if ( $cta_url ) : ?>
-                        <a href="<?php echo esc_url( $cta_url ); ?>" class="btn btn--sm btn--accent"><?php echo esc_html( $cta_label ?: __( 'Act Now', 'faithfulwitness' ) ); ?></a>
-                        <?php endif; ?>
-                    </div>
-                </div>
+                <span class="commitment-card__number"><?php esc_html_e( '01', 'faithfulwitness' ); ?></span>
+                <h3 class="commitment-card__title"><?php esc_html_e( 'Local Grassroots Movements & Formation', 'faithfulwitness' ); ?></h3>
+                <p class="commitment-card__desc"><?php esc_html_e( 'Cultivating faithful leadership in local communities — rooting people in Gospel values before, during, and after action.', 'faithfulwitness' ); ?></p>
+                <a href="<?php echo esc_url( home_url( '/spiritual-formation' ) ); ?>" class="commitment-card__link">
+                    <?php esc_html_e( 'Learn more', 'faithfulwitness' ); ?> →
+                </a>
             </article>
-            <?php endforeach; ?>
-        </div>
 
-        <div style="text-align:center;margin-top:var(--space-8);">
-            <a href="<?php echo esc_url( get_post_type_archive_link( 'fw_initiative' ) ); ?>" class="btn btn--outline btn--lg">
-                <?php esc_html_e( 'View All Initiatives', 'faithfulwitness' ); ?>
-            </a>
+            <!-- Commitment 2: Accompaniment -->
+            <article class="commitment-card">
+                <div class="commitment-card__icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" width="28" height="28">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                    </svg>
+                </div>
+                <span class="commitment-card__number"><?php esc_html_e( '02', 'faithfulwitness' ); ?></span>
+                <h3 class="commitment-card__title"><?php esc_html_e( 'Presence & Accompaniment', 'faithfulwitness' ); ?></h3>
+                <p class="commitment-card__desc"><?php esc_html_e( 'Walking with those navigating fear and uncertainty — court accompaniment, Know Your Rights trainings, food and transportation assistance, and pastoral care.', 'faithfulwitness' ); ?></p>
+                <a href="<?php echo esc_url( home_url( '/know-your-rights' ) ); ?>" class="commitment-card__link">
+                    <?php esc_html_e( 'Learn more', 'faithfulwitness' ); ?> →
+                </a>
+            </article>
+
+            <!-- Commitment 3: Public Witness -->
+            <article class="commitment-card">
+                <div class="commitment-card__icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" width="28" height="28">
+                        <polyline points="22 8 22 16"/>
+                        <path d="M2 12v-2a2 2 0 0 1 2-2h10l6-4v16l-6-4H4a2 2 0 0 1-2-2v-2z"/>
+                    </svg>
+                </div>
+                <span class="commitment-card__number"><?php esc_html_e( '03', 'faithfulwitness' ); ?></span>
+                <h3 class="commitment-card__title"><?php esc_html_e( 'Public Witness in the Public Square', 'faithfulwitness' ); ?></h3>
+                <p class="commitment-card__desc"><?php esc_html_e( 'Speaking with one moral voice on policy that upholds human dignity, due process, humanitarian protections, and nonviolence.', 'faithfulwitness' ); ?></p>
+                <a href="<?php echo esc_url( home_url( '/take-action' ) ); ?>" class="commitment-card__link">
+                    <?php esc_html_e( 'Learn more', 'faithfulwitness' ); ?> →
+                </a>
+            </article>
+
         </div>
-        <?php endif; ?>
     </div>
 </section>
 
-<!-- 4. Map Teaser -->
-<section class="section section--dark" id="map">
+<!-- ============================================================
+     4. WHO IS THIS FOR — Audience Entry Points
+     ============================================================ -->
+<section class="audience-section section section--alt" id="who-is-this-for">
     <div class="container">
         <div class="section-header section-header--center">
-            <span class="eyebrow" style="color:var(--color-accent-light);"><?php esc_html_e( 'Community Network', 'faithfulwitness' ); ?></span>
-            <h2><?php esc_html_e( 'Find Organizing Groups Near You', 'faithfulwitness' ); ?></h2>
-            <p><?php esc_html_e( 'Local groups are organizing across the country. Connect with your community.', 'faithfulwitness' ); ?></p>
+            <span class="eyebrow"><?php esc_html_e( 'Who Is This For', 'faithfulwitness' ); ?></span>
+            <h2><?php esc_html_e( 'Wherever You Are, You Belong Here', 'faithfulwitness' ); ?></h2>
         </div>
-        <?php
-        $map_page = get_posts( [ 'post_type' => 'page', 'meta_key' => '_wp_page_template', 'meta_value' => 'page-templates/template-map.php', 'posts_per_page' => 1 ] );
-        $map_url  = ! empty( $map_page ) ? get_permalink( $map_page[0] ) : get_post_type_archive_link( 'fw_organizing_group' );
-        ?>
-        <div style="text-align:center;">
-            <a href="<?php echo esc_url( $map_url ); ?>" class="btn btn--accent btn--lg">
-                <?php esc_html_e( 'Explore the Map', 'faithfulwitness' ); ?>
-            </a>
-        </div>
-    </div>
-</section>
 
-<!-- 5. Latest Stories -->
-<section class="section">
-    <div class="container">
-        <div class="section-header" style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
-            <div>
-                <span class="eyebrow"><?php esc_html_e( 'Blog', 'faithfulwitness' ); ?></span>
-                <h2><?php esc_html_e( 'Latest Stories', 'faithfulwitness' ); ?></h2>
+        <div class="audience-cards">
+
+            <div class="audience-card">
+                <span class="audience-card__label"><?php esc_html_e( 'Starting Point', 'faithfulwitness' ); ?></span>
+                <h3 class="audience-card__title"><?php esc_html_e( 'For those who are uncertain', 'faithfulwitness' ); ?></h3>
+                <p class="audience-card__desc"><?php esc_html_e( 'You sense something is wrong but aren\'t sure what faithful engagement looks like. You want to understand the issues through a Gospel lens before acting. This is a safe place to learn, ask hard questions, and be formed.', 'faithfulwitness' ); ?></p>
+                <a href="<?php echo esc_url( home_url( '/resources' ) ); ?>" class="btn btn--outline" style="margin-top:auto;">
+                    <?php esc_html_e( 'Start by learning', 'faithfulwitness' ); ?>
+                </a>
             </div>
-            <a href="<?php echo esc_url( get_permalink( get_option( 'page_for_posts' ) ) ); ?>" class="btn btn--outline">
-                <?php esc_html_e( 'All Stories', 'faithfulwitness' ); ?>
-            </a>
-        </div>
-        <?php
-        $posts = get_posts( [ 'posts_per_page' => 3 ] );
-        if ( ! empty( $posts ) ) : ?>
-        <div class="grid grid--3">
-            <?php foreach ( $posts as $p ) :
-                setup_postdata( $p );
-                get_template_part( 'template-parts/content', 'post' );
-            endforeach;
-            wp_reset_postdata(); ?>
-        </div>
-        <?php endif; ?>
-    </div>
-</section>
 
-<!-- 6. Upcoming Events Preview -->
-<?php
-$upcoming = get_posts( [
-    'post_type'      => 'fw_event',
-    'post_status'    => 'publish',
-    'posts_per_page' => 3,
-    'meta_key'       => 'fw_event_date',
-    'orderby'        => 'meta_value',
-    'order'          => 'ASC',
-] );
-$upcoming = array_filter( $upcoming, fn( $ev ) => fw_is_upcoming_event( $ev->ID ) );
-if ( ! empty( $upcoming ) ) : ?>
-<section class="section section--alt">
-    <div class="container">
-        <div class="section-header" style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
-            <div>
-                <span class="eyebrow"><?php esc_html_e( 'Events', 'faithfulwitness' ); ?></span>
-                <h2><?php esc_html_e( 'Upcoming Events', 'faithfulwitness' ); ?></h2>
+            <div class="audience-card" style="border-color: var(--color-primary);">
+                <span class="audience-card__label"><?php esc_html_e( 'Ready to Organize', 'faithfulwitness' ); ?></span>
+                <h3 class="audience-card__title"><?php esc_html_e( 'For those ready to engage', 'faithfulwitness' ); ?></h3>
+                <p class="audience-card__desc"><?php esc_html_e( 'You\'re a church leader, pastor, or congregation ready to move from concern to action. You want practical tools, community support, and a network of faithful witnesses who will walk alongside you.', 'faithfulwitness' ); ?></p>
+                <a href="<?php echo esc_url( home_url( '/network' ) ); ?>" class="btn btn--primary" style="margin-top:auto;">
+                    <?php esc_html_e( 'Find your local group', 'faithfulwitness' ); ?>
+                </a>
             </div>
-            <?php
-            $events_page = get_posts( [ 'post_type' => 'page', 'meta_key' => '_wp_page_template', 'meta_value' => 'page-templates/template-events.php', 'posts_per_page' => 1 ] );
-            $events_url  = ! empty( $events_page ) ? get_permalink( $events_page[0] ) : get_post_type_archive_link( 'fw_event' );
-            ?>
-            <a href="<?php echo esc_url( $events_url ); ?>" class="btn btn--outline"><?php esc_html_e( 'All Events', 'faithfulwitness' ); ?></a>
-        </div>
-        <div class="grid grid--3">
-            <?php foreach ( $upcoming as $ev ) :
-                get_template_part( 'template-parts/content', 'event-card', [ 'post' => $ev ] );
-            endforeach; ?>
+
+            <div class="audience-card">
+                <span class="audience-card__label"><?php esc_html_e( 'Direct Support', 'faithfulwitness' ); ?></span>
+                <h3 class="audience-card__title"><?php esc_html_e( 'For those directly affected', 'faithfulwitness' ); ?></h3>
+                <p class="audience-card__desc"><?php esc_html_e( 'You or someone you love is navigating the immigration system right now. You need practical help, legal information, and a community that will stand with you without judgment or fear.', 'faithfulwitness' ); ?></p>
+                <a href="<?php echo esc_url( home_url( '/know-your-rights' ) ); ?>" class="btn btn--outline" style="margin-top:auto;">
+                    <?php esc_html_e( 'Connect with support', 'faithfulwitness' ); ?>
+                </a>
+            </div>
+
         </div>
     </div>
 </section>
-<?php endif; ?>
 
-<!-- 7. Page content (WP editor blocks for flexibility) -->
-<?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
-<?php if ( $content = get_the_content() ) : ?>
-<section class="section">
+<!-- ============================================================
+     5. NETWORK MAP TEASER
+     ============================================================ -->
+<section class="map-teaser-section" id="network">
     <div class="container">
-        <div class="entry-content"><?php the_content(); ?></div>
-    </div>
-</section>
-<?php endif; endwhile; endif; ?>
-
-<!-- Newsletter / CTA -->
-<section class="section section--dark">
-    <div class="container">
-        <div style="text-align:center;max-width:560px;margin:0 auto;">
-            <span class="eyebrow" style="color:var(--color-accent-light);"><?php esc_html_e( 'Stay Connected', 'faithfulwitness' ); ?></span>
-            <h2 style="color:#fff;"><?php echo esc_html( get_theme_mod( 'fw_newsletter_title', __( 'Join Our Community', 'faithfulwitness' ) ) ); ?></h2>
-            <p style="opacity:.9;"><?php echo esc_html( get_theme_mod( 'fw_newsletter_text', __( 'Get updates on our campaigns, resources, and ways to take action.', 'faithfulwitness' ) ) ); ?></p>
-            <?php
-            $form_url = get_theme_mod( 'fw_newsletter_url', '' );
-            if ( $form_url ) : ?>
-            <a href="<?php echo esc_url( $form_url ); ?>" class="btn btn--accent btn--lg" style="margin-top:var(--space-6);">
-                <?php esc_html_e( 'Sign Up', 'faithfulwitness' ); ?>
+        <div class="section-header" style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1.5rem;">
+            <div>
+                <span class="eyebrow"><?php esc_html_e( 'Local Network', 'faithfulwitness' ); ?></span>
+                <h2><?php esc_html_e( 'Find your local network', 'faithfulwitness' ); ?></h2>
+                <p style="color:var(--color-text-light);font-size:var(--text-lg);max-width:560px;">
+                    <?php esc_html_e( 'Faithful witnesses are organizing in communities across the country. Find a group near you.', 'faithfulwitness' ); ?>
+                </p>
+            </div>
+            <a href="<?php echo esc_url( home_url( '/network' ) ); ?>" class="btn btn--primary">
+                <?php esc_html_e( 'Browse all local groups →', 'faithfulwitness' ); ?>
             </a>
+        </div>
+
+        <div class="map-embed-placeholder">
+            <?php
+            $map_embed = get_theme_mod( 'fw_homepage_map_embed', '' );
+            if ( $map_embed ) :
+                echo wp_kses( $map_embed, [ 'iframe' => [ 'src' => [], 'width' => [], 'height' => [], 'allowfullscreen' => [], 'loading' => [], 'referrerpolicy' => [] ] ] );
+            else : ?>
+            <iframe
+                src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d13166019.636825098!2d-95.71289!3d37.09024!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sus!4v1710000000000!5m2!1sen!2sus"
+                allowfullscreen=""
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                title="<?php esc_attr_e( 'Faithful Witness organizing groups map', 'faithfulwitness' ); ?>">
+            </iframe>
             <?php endif; ?>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================
+     6. CAMPAIGN HIGHLIGHT
+     ============================================================ -->
+<?php
+$featured_campaign = get_posts( [
+    'post_type'      => 'fw_initiative',
+    'post_status'    => 'publish',
+    'posts_per_page' => 1,
+    'orderby'        => 'date',
+    'order'          => 'DESC',
+] );
+$campaign = ! empty( $featured_campaign ) ? $featured_campaign[0] : null;
+?>
+<section class="campaign-highlight" id="campaign">
+    <div class="container">
+        <div class="campaign-highlight__inner">
+            <div class="campaign-highlight__text">
+                <span class="campaign-highlight__label"><?php esc_html_e( 'Current Campaign', 'faithfulwitness' ); ?></span>
+                <h2 class="campaign-highlight__title">
+                    <?php if ( $campaign ) :
+                        echo esc_html( get_the_title( $campaign ) );
+                    else :
+                        echo esc_html( get_theme_mod( 'fw_campaign_title', __( 'Stand With Immigrant Families', 'faithfulwitness' ) ) );
+                    endif; ?>
+                </h2>
+                <p class="campaign-highlight__desc">
+                    <?php if ( $campaign ) :
+                        echo esc_html( wp_trim_words( get_the_excerpt( $campaign ), 30, '…' ) );
+                    else :
+                        echo esc_html( get_theme_mod( 'fw_campaign_desc', __( 'The moment calls for faithful witnesses to speak and act with courage. Join churches across the country in this critical campaign.', 'faithfulwitness' ) ) );
+                    endif; ?>
+                </p>
+            </div>
+            <div class="campaign-highlight__cta">
+                <a href="<?php echo esc_url( $campaign ? get_permalink( $campaign ) : home_url( '/take-action' ) ); ?>"
+                   class="btn btn--accent btn--lg">
+                    <?php esc_html_e( 'Take Action', 'faithfulwitness' ); ?>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================
+     7. SCRIPTURE ANCHOR — Acts 4:20
+     ============================================================ -->
+<section class="scripture-section" id="scripture">
+    <div class="container">
+        <div class="scripture-quote">
+            <p class="scripture-quote__text">
+                <?php echo esc_html( get_theme_mod( 'fw_scripture_text', __( 'As for us, we cannot help speaking about what we have seen and heard.', 'faithfulwitness' ) ) ); ?>
+            </p>
+            <span class="scripture-quote__ref">
+                <?php echo esc_html( get_theme_mod( 'fw_scripture_ref', __( 'Acts 4:20', 'faithfulwitness' ) ) ); ?>
+            </span>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================
+     8. PARTNER LOGOS
+     ============================================================ -->
+<section class="partners-section" id="partners">
+    <div class="container">
+        <p class="partners-label"><?php esc_html_e( 'In partnership with:', 'faithfulwitness' ); ?></p>
+        <div class="partner-logos">
+            <?php
+            $partners = [
+                [
+                    'name' => 'NaLEC',
+                    'url'  => 'https://nalec.org',
+                    'logo' => get_theme_mod( 'fw_partner_nalec_logo', '' ),
+                ],
+                [
+                    'name' => 'CCDA',
+                    'url'  => 'https://ccda.org',
+                    'logo' => get_theme_mod( 'fw_partner_ccda_logo', '' ),
+                ],
+                [
+                    'name' => 'World Relief',
+                    'url'  => 'https://worldrelief.org',
+                    'logo' => get_theme_mod( 'fw_partner_worldrelief_logo', '' ),
+                ],
+                [
+                    'name' => 'Undivided',
+                    'url'  => 'https://undivided.us',
+                    'logo' => get_theme_mod( 'fw_partner_undivided_logo', '' ),
+                ],
+            ];
+            foreach ( $partners as $partner ) : ?>
+            <a href="<?php echo esc_url( $partner['url'] ); ?>"
+               class="partner-logo-link"
+               target="_blank"
+               rel="noopener noreferrer"
+               aria-label="<?php echo esc_attr( $partner['name'] ); ?>">
+                <?php if ( $partner['logo'] ) : ?>
+                <img src="<?php echo esc_url( $partner['logo'] ); ?>"
+                     alt="<?php echo esc_attr( $partner['name'] ); ?>"
+                     loading="lazy">
+                <?php else : ?>
+                <?php echo esc_html( $partner['name'] ); ?>
+                <?php endif; ?>
+            </a>
+            <?php endforeach; ?>
         </div>
     </div>
 </section>

@@ -17,19 +17,21 @@ Tags: nonprofit, immigration, organizing, map, resources
   --color-primary:        #1B4F72;   /* Deep navy blue */
   --color-primary-dark:   #154060;
   --color-primary-light:  #2980B9;
-  --color-accent:         #E67E22;   /* Warm orange */
-  --color-accent-dark:    #CA6F1E;
+  --color-accent:         #D4750A;   /* Warm amber/gold */
+  --color-accent-dark:    #B8620A;
   --color-accent-light:   #F0A050;
+  --color-teal:           #1A5A6A;   /* Deep teal — campaign sections */
+  --color-teal-dark:      #134858;
 
   /* Neutral Colors */
-  --color-bg:             #FFFFFF;
-  --color-bg-alt:         #F5F7FA;
-  --color-bg-dark:        #1A1A2E;
-  --color-text:           #2C3E50;
-  --color-text-light:     #5D6D7E;
-  --color-text-muted:     #95A5A6;
+  --color-bg:             #FAFAF8;   /* Warm off-white */
+  --color-bg-alt:         #F2F0EC;
+  --color-bg-dark:        #141824;
+  --color-text:           #1A1A1A;   /* Near-black */
+  --color-text-light:     #4A5568;
+  --color-text-muted:     #718096;
   --color-border:         #DDE3EA;
-  --color-border-dark:    #BDC3C7;
+  --color-border-dark:    #B8C0CC;
 
   /* Status / Tag Colors */
   --color-tag-article:    #2ECC71;
@@ -40,7 +42,7 @@ Tags: nonprofit, immigration, organizing, map, resources
   --color-tag-local:      #27AE60;
 
   /* Typography */
-  --font-heading:         'Georgia', 'Times New Roman', serif;
+  --font-heading:         'Merriweather', 'Georgia', 'Times New Roman', serif;
   --font-body:            'Inter', 'Helvetica Neue', Arial, sans-serif;
   --font-mono:            'Courier New', monospace;
 
@@ -70,12 +72,14 @@ Tags: nonprofit, immigration, organizing, map, resources
   --space-24: 6rem;
 
   /* Layout */
-  --container-max:   1200px;
-  --container-wide:  1400px;
+  --container-max:    1200px;
+  --container-wide:   1400px;
   --container-narrow: 760px;
-  --border-radius:   8px;
-  --border-radius-lg: 16px;
+  --border-radius:    10px;
+  --border-radius-lg: 18px;
   --border-radius-full: 9999px;
+  --section-pad:      5rem;      /* 80px — desktop section padding */
+  --section-pad-sm:   3rem;      /* 48px — mobile section padding */
 
   /* Shadows */
   --shadow-sm:  0 1px 3px rgba(0,0,0,0.08);
@@ -168,18 +172,32 @@ p:last-child { margin-bottom: 0; }
 .site-content { flex: 1; }
 
 .section {
-  padding: var(--space-16) 0;
+  padding: var(--section-pad) 0;
 }
-.section--sm { padding: var(--space-10) 0; }
-.section--lg { padding: var(--space-24) 0; }
+.section--sm  { padding: var(--space-10) 0; }
+.section--lg  { padding: calc(var(--section-pad) * 1.5) 0; }
 .section--alt { background: var(--color-bg-alt); }
 .section--dark {
   background: var(--color-bg-dark);
   color: #fff;
 }
+.section--teal {
+  background: var(--color-teal);
+  color: #fff;
+}
+.section--amber {
+  background: var(--color-accent);
+  color: #fff;
+}
 .section--dark h1,
 .section--dark h2,
-.section--dark h3 { color: #fff; }
+.section--dark h3,
+.section--teal h1,
+.section--teal h2,
+.section--teal h3,
+.section--amber h1,
+.section--amber h2,
+.section--amber h3 { color: #fff; }
 
 /* ============================================================
    HEADER / NAVIGATION
@@ -272,20 +290,22 @@ p:last-child { margin-bottom: 0; }
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  padding: var(--space-2) var(--space-5);
-  background: var(--color-accent);
+  padding: var(--space-2) var(--space-6);
+  background: var(--color-primary);
   color: #fff !important;
   border-radius: var(--border-radius-full);
   font-size: var(--text-sm);
   font-weight: 700;
   text-decoration: none;
   transition: var(--transition);
-  margin-left: var(--space-3);
+  margin-left: var(--space-4);
+  letter-spacing: 0.01em;
 }
 .nav-cta:hover {
-  background: var(--color-accent-dark);
+  background: var(--color-primary-dark);
   color: #fff !important;
   transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(27,79,114,0.35);
 }
 
 /* Mobile hamburger */
@@ -370,24 +390,25 @@ p:last-child { margin-bottom: 0; }
 }
 
 /* ============================================================
-   BUTTONS
+   BUTTONS — Pill-shaped per design system
    ============================================================ */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
-  padding: var(--space-3) var(--space-6);
+  padding: var(--space-3) var(--space-7, 1.75rem);
   font-family: var(--font-body);
   font-size: var(--text-base);
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1;
   border: 2px solid transparent;
-  border-radius: var(--border-radius);
+  border-radius: var(--border-radius-full);   /* Pill shape */
   cursor: pointer;
   text-decoration: none;
   transition: var(--transition);
   white-space: nowrap;
+  letter-spacing: 0.01em;
 }
 .btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
 
@@ -405,6 +426,13 @@ p:last-child { margin-bottom: 0; }
 }
 .btn--accent:hover { background: var(--color-accent-dark); color: #fff; }
 
+.btn--teal {
+  background: var(--color-teal);
+  color: #fff;
+  border-color: var(--color-teal);
+}
+.btn--teal:hover { background: var(--color-teal-dark); color: #fff; }
+
 .btn--outline {
   background: transparent;
   color: var(--color-primary);
@@ -415,19 +443,24 @@ p:last-child { margin-bottom: 0; }
 .btn--outline-white {
   background: transparent;
   color: #fff;
-  border-color: rgba(255,255,255,0.7);
+  border-color: rgba(255,255,255,0.65);
 }
-.btn--outline-white:hover { background: rgba(255,255,255,0.15); color: #fff; }
+.btn--outline-white:hover {
+  background: rgba(255,255,255,0.15);
+  border-color: #fff;
+  color: #fff;
+}
 
-.btn--lg { padding: var(--space-4) var(--space-8); font-size: var(--text-lg); }
-.btn--sm { padding: var(--space-2) var(--space-4); font-size: var(--text-sm); }
+.btn--lg { padding: var(--space-4) var(--space-10, 2.5rem); font-size: var(--text-lg); }
+.btn--sm { padding: var(--space-2) var(--space-5); font-size: var(--text-sm); }
+.btn--xl { padding: var(--space-5) var(--space-12, 3rem); font-size: var(--text-xl); }
 
 /* ============================================================
    CARDS (generic)
    ============================================================ */
 .card {
   background: var(--color-bg);
-  border: 1px solid var(--color-border);
+  border: 0.5px solid var(--color-border);
   border-radius: var(--border-radius-lg);
   overflow: hidden;
   transition: var(--transition);
@@ -436,7 +469,7 @@ p:last-child { margin-bottom: 0; }
 }
 .card:hover {
   box-shadow: var(--shadow-lg);
-  transform: translateY(-2px);
+  transform: translateY(-3px);
   border-color: var(--color-primary-light);
 }
 .card__image {
@@ -755,7 +788,7 @@ p:last-child { margin-bottom: 0; }
 @media (max-width: 768px) {
   h1 { font-size: var(--text-3xl); }
   h2 { font-size: var(--text-2xl); }
-  .section { padding: var(--space-10) 0; }
+  .section { padding: var(--section-pad-sm) 0; }
   .container { padding: 0 var(--space-4); }
 
   .primary-nav { display: none; }
