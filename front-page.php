@@ -63,38 +63,118 @@ $hero_image = fw_hp_option( 'fw_hero_bg', 'fw_hero_bg_url', 'https://faithfulwit
 </section>
 
 <!-- ============================================================
-     2. WE CHOOSE — Values Strip
+     2. SCRIPTURE BAND — Acts 4:20 (moved up, after hero)
      ============================================================ -->
-<section class="values-strip" id="values" aria-label="<?php esc_attr_e( 'Our values', 'faithfulwitness' ); ?>">
+<section class="scripture-section" id="scripture">
     <div class="container">
-        <p class="values-strip__heading"><?php esc_html_e( 'We Choose', 'faithfulwitness' ); ?></p>
-    </div>
-    <div class="values-grid">
-        <?php
-        $values = [
-            [ fw_hp_option( 'fw_value1_word', '', 'Hope' ),        fw_hp_option( 'fw_value1_over', '', 'over despair' ) ],
-            [ fw_hp_option( 'fw_value2_word', '', 'Courage' ),     fw_hp_option( 'fw_value2_over', '', 'over silence' ) ],
-            [ fw_hp_option( 'fw_value3_word', '', 'Nonviolence' ), fw_hp_option( 'fw_value3_over', '', 'over fear' ) ],
-            [ fw_hp_option( 'fw_value4_word', '', 'Love' ),        fw_hp_option( 'fw_value4_over', '', 'over division' ) ],
-        ];
-        foreach ( $values as $v ) : ?>
-        <div class="value-card">
-            <span class="value-card__word"><?php echo esc_html( $v[0] ); ?></span>
-            <span class="value-card__over"><?php echo esc_html( $v[1] ); ?></span>
+        <div class="scripture-quote">
+            <p class="scripture-quote__text">
+                "<?php echo esc_html( fw_hp_option( 'fw_scripture_text', 'fw_scripture_text', __( 'As for us, we cannot help speaking about what we have seen and heard.', 'faithfulwitness' ) ) ); ?>"
+            </p>
+            <span class="scripture-quote__ref">
+                — <?php echo esc_html( fw_hp_option( 'fw_scripture_ref', 'fw_scripture_ref', __( 'Acts 4:20', 'faithfulwitness' ) ) ); ?>
+            </span>
         </div>
-        <?php endforeach; ?>
     </div>
 </section>
 
 <!-- ============================================================
-     3. THREE COMMITMENTS
+     3. AUDIENCE — Where are you in this?
      ============================================================ -->
-<section class="commitments-section section" id="commitments">
+<section class="audience-section section section--alt" id="who-is-this-for">
     <div class="container">
-        <div class="section-header section-header--center">
-            <span class="eyebrow"><?php esc_html_e( 'How We Show Up', 'faithfulwitness' ); ?></span>
-            <h2><?php esc_html_e( 'Three Commitments', 'faithfulwitness' ); ?></h2>
-            <p><?php esc_html_e( 'Our organizing work is rooted in three interlocking practices — not just strategies, but postures of faith.', 'faithfulwitness' ); ?></p>
+        <div class="section-header">
+            <span class="eyebrow"><?php esc_html_e( 'Where are you in this?', 'faithfulwitness' ); ?></span>
+            <h2><?php esc_html_e( 'There is a place for you here.', 'faithfulwitness' ); ?></h2>
+            <p><?php esc_html_e( 'The Faithful Witness Campaign meets you wherever you are — whether you\'re still discerning, ready to act, or navigating this reality yourself.', 'faithfulwitness' ); ?></p>
+        </div>
+
+        <?php
+        $audience_cards = [
+            [
+                'label'     => fw_hp_option( 'fw_audience1_label',     '', __( 'Still discerning', 'faithfulwitness' ) ),
+                'title'     => fw_hp_option( 'fw_audience1_title',     '', __( 'Still forming your views?', 'faithfulwitness' ) ),
+                'desc'      => fw_hp_option( 'fw_audience1_desc',      '', __( 'This campaign offers formation and space to learn, pray, and engage thoughtfully — without pressure.', 'faithfulwitness' ) ),
+                'btn_label' => fw_hp_option( 'fw_audience1_btn_label', '', __( 'Start with resources →', 'faithfulwitness' ) ),
+                'btn_url'   => fw_hp_option( 'fw_audience1_btn_url',   '', home_url( '/resources' ) ),
+            ],
+            [
+                'label'     => fw_hp_option( 'fw_audience2_label',     '', __( 'Ready to act', 'faithfulwitness' ) ),
+                'title'     => fw_hp_option( 'fw_audience2_title',     '', __( 'Your congregation is ready.', 'faithfulwitness' ) ),
+                'desc'      => fw_hp_option( 'fw_audience2_desc',      '', __( 'Find a local movement, get equipped, and join congregations across the country taking faithful action.', 'faithfulwitness' ) ),
+                'btn_label' => fw_hp_option( 'fw_audience2_btn_label', '', __( 'Find your local movement →', 'faithfulwitness' ) ),
+                'btn_url'   => fw_hp_option( 'fw_audience2_btn_url',   '', home_url( '/network' ) ),
+            ],
+            [
+                'label'     => fw_hp_option( 'fw_audience3_label',     '', __( 'Directly affected', 'faithfulwitness' ) ),
+                'title'     => fw_hp_option( 'fw_audience3_title',     '', __( 'You are not alone.', 'faithfulwitness' ) ),
+                'desc'      => fw_hp_option( 'fw_audience3_desc',      '', __( 'You are our neighbors, our brothers and sisters in Christ. Find legal, pastoral, and practical support near you.', 'faithfulwitness' ) ),
+                'btn_label' => fw_hp_option( 'fw_audience3_btn_label', '', __( 'Find support near you →', 'faithfulwitness' ) ),
+                'btn_url'   => fw_hp_option( 'fw_audience3_btn_url',   '', home_url( '/find-support' ) ),
+            ],
+        ];
+        ?>
+        <div class="audience-cards">
+            <?php foreach ( $audience_cards as $ac ) : ?>
+            <div class="audience-card">
+                <div class="audience-card__label"><?php echo esc_html( $ac['label'] ); ?></div>
+                <h3 class="audience-card__title"><?php echo esc_html( $ac['title'] ); ?></h3>
+                <p class="audience-card__desc"><?php echo esc_html( $ac['desc'] ); ?></p>
+                <a href="<?php echo esc_url( $ac['btn_url'] ); ?>" style="font-size:12px;color:var(--color-text);">
+                    <?php echo esc_html( $ac['btn_label'] ); ?>
+                </a>
+            </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================
+     4. RIGHT NOW — Featured initiative / moment card
+     ============================================================ -->
+<?php
+$featured_initiative = get_posts( [
+    'post_type'      => 'fw_initiative',
+    'post_status'    => 'publish',
+    'posts_per_page' => 1,
+    'orderby'        => 'date',
+    'order'          => 'DESC',
+] );
+$fi = ! empty( $featured_initiative ) ? $featured_initiative[0] : null;
+$moment_headline = $fi ? get_the_title( $fi ) : fw_hp_option( 'fw_campaign_headline', 'fw_campaign_title', __( 'Pentecost Action — May 15–24', 'faithfulwitness' ) );
+$moment_desc     = $fi ? wp_trim_words( get_the_excerpt( $fi ), 35, '…' ) : fw_hp_option( 'fw_campaign_description', 'fw_campaign_desc', __( 'We are called to wait, yet actively engage in prophetic witness that proclaims and demonstrates the goodness of God. Join congregations across the country during these 10 days.', 'faithfulwitness' ) );
+$moment_url      = $fi ? get_permalink( $fi ) : home_url( '/initiatives' );
+?>
+<section class="section" id="right-now">
+    <div class="container">
+        <div class="section-header">
+            <span class="eyebrow"><?php esc_html_e( 'Right now', 'faithfulwitness' ); ?></span>
+            <h2><?php esc_html_e( 'A moment that calls for faithful witness.', 'faithfulwitness' ); ?></h2>
+            <p><?php esc_html_e( 'In a season marked by fear, polarization, and deep uncertainty around immigration, many Christians are asking: How do we follow Jesus faithfully when the stakes feel personal and complex?', 'faithfulwitness' ); ?></p>
+        </div>
+        <div class="moment-card">
+            <span class="moment-card__label"><?php esc_html_e( 'Current initiative', 'faithfulwitness' ); ?></span>
+            <h3><?php echo esc_html( $moment_headline ); ?></h3>
+            <p><?php echo esc_html( $moment_desc ); ?></p>
+            <a href="<?php echo esc_url( $moment_url ); ?>" style="font-size:12px;color:var(--color-accent-dark);">
+                <?php esc_html_e( 'Learn how to participate →', 'faithfulwitness' ); ?>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================
+     5. THREE COMMITMENTS — how we show up
+     ============================================================ -->
+
+<!-- ============================================================
+     5. THREE COMMITMENTS — how we show up
+     ============================================================ -->
+<section class="commitments-section section section--alt" id="commitments">
+    <div class="container">
+        <div class="section-header">
+            <span class="eyebrow"><?php esc_html_e( 'Our three commitments', 'faithfulwitness' ); ?></span>
+            <h2><?php esc_html_e( 'How we show up together.', 'faithfulwitness' ); ?></h2>
         </div>
 
         <div class="commitment-cards">
@@ -140,55 +220,36 @@ $hero_image = fw_hp_option( 'fw_hero_bg', 'fw_hero_bg_url', 'https://faithfulwit
 </section>
 
 <!-- ============================================================
-     4. WHO IS THIS FOR — Audience Entry Points
+     6. WE CHOOSE — Values Grid (2 × 2 boxes)
      ============================================================ -->
-<section class="audience-section section section--alt" id="who-is-this-for">
+<section class="values-strip section" id="values">
     <div class="container">
-        <div class="section-header section-header--center">
-            <span class="eyebrow"><?php esc_html_e( 'Who Is This For', 'faithfulwitness' ); ?></span>
-            <h2><?php esc_html_e( 'Wherever You Are, You Belong Here', 'faithfulwitness' ); ?></h2>
-        </div>
-
-        <?php
-        $audience_cards = [
-            [
-                'label'     => fw_hp_option( 'fw_audience1_label',     '', __( 'Starting Point', 'faithfulwitness' ) ),
-                'title'     => fw_hp_option( 'fw_audience1_title',     '', __( 'For those who are uncertain', 'faithfulwitness' ) ),
-                'desc'      => fw_hp_option( 'fw_audience1_desc',      '', __( "You sense something is wrong but aren't sure what faithful engagement looks like. You want to understand the issues through a Gospel lens before acting. This is a safe place to learn, ask hard questions, and be formed.", 'faithfulwitness' ) ),
-                'btn_label' => fw_hp_option( 'fw_audience1_btn_label', '', __( 'Start by learning', 'faithfulwitness' ) ),
-                'btn_url'   => fw_hp_option( 'fw_audience1_btn_url',   '', home_url( '/resources' ) ),
-                'style'     => '',
-                'btn_class' => 'btn--outline',
-            ],
-            [
-                'label'     => fw_hp_option( 'fw_audience2_label',     '', __( 'Ready to Organize', 'faithfulwitness' ) ),
-                'title'     => fw_hp_option( 'fw_audience2_title',     '', __( 'For those ready to engage', 'faithfulwitness' ) ),
-                'desc'      => fw_hp_option( 'fw_audience2_desc',      '', __( "You're a church leader, pastor, or congregation ready to move from concern to action. You want practical tools, community support, and a network of faithful witnesses who will walk alongside you.", 'faithfulwitness' ) ),
-                'btn_label' => fw_hp_option( 'fw_audience2_btn_label', '', __( 'Find your local group', 'faithfulwitness' ) ),
-                'btn_url'   => fw_hp_option( 'fw_audience2_btn_url',   '', home_url( '/network' ) ),
-                'style'     => 'border-color: var(--color-primary);',
-                'btn_class' => 'btn--primary',
-            ],
-            [
-                'label'     => fw_hp_option( 'fw_audience3_label',     '', __( 'Direct Support', 'faithfulwitness' ) ),
-                'title'     => fw_hp_option( 'fw_audience3_title',     '', __( 'For those directly affected', 'faithfulwitness' ) ),
-                'desc'      => fw_hp_option( 'fw_audience3_desc',      '', __( 'You or someone you love is navigating the immigration system right now. You need practical help, legal information, and a community that will stand with you without judgment or fear.', 'faithfulwitness' ) ),
-                'btn_label' => fw_hp_option( 'fw_audience3_btn_label', '', __( 'Connect with support', 'faithfulwitness' ) ),
-                'btn_url'   => fw_hp_option( 'fw_audience3_btn_url',   '', home_url( '/know-your-rights' ) ),
-                'style'     => '',
-                'btn_class' => 'btn--outline',
-            ],
-        ];
-        ?>
-        <div class="audience-cards">
-            <?php foreach ( $audience_cards as $ac ) : ?>
-            <div class="audience-card"<?php echo $ac['style'] ? ' style="' . esc_attr( $ac['style'] ) . '"' : ''; ?>>
-                <span class="audience-card__label"><?php echo esc_html( $ac['label'] ); ?></span>
-                <h3 class="audience-card__title"><?php echo esc_html( $ac['title'] ); ?></h3>
-                <p class="audience-card__desc"><?php echo esc_html( $ac['desc'] ); ?></p>
-                <a href="<?php echo esc_url( $ac['btn_url'] ); ?>" class="btn <?php echo esc_attr( $ac['btn_class'] ); ?>" style="margin-top:auto;">
-                    <?php echo esc_html( $ac['btn_label'] ); ?>
-                </a>
+        <p class="values-strip__heading"><?php esc_html_e( 'We choose', 'faithfulwitness' ); ?></p>
+        <h2 style="margin-bottom:var(--space-4);"><?php esc_html_e( 'Something different is possible.', 'faithfulwitness' ); ?></h2>
+        <div class="values-grid">
+            <?php
+            $values = [
+                [
+                    'label' => fw_hp_option( 'fw_value1_over', '', __( 'Instead of despair —', 'faithfulwitness' ) ),
+                    'word'  => fw_hp_option( 'fw_value1_word', '', __( 'Hope', 'faithfulwitness' ) ),
+                ],
+                [
+                    'label' => fw_hp_option( 'fw_value2_over', '', __( 'Instead of silence —', 'faithfulwitness' ) ),
+                    'word'  => fw_hp_option( 'fw_value2_word', '', __( 'Courage', 'faithfulwitness' ) ),
+                ],
+                [
+                    'label' => fw_hp_option( 'fw_value3_over', '', __( 'Instead of fear —', 'faithfulwitness' ) ),
+                    'word'  => fw_hp_option( 'fw_value3_word', '', __( 'Nonviolence', 'faithfulwitness' ) ),
+                ],
+                [
+                    'label' => fw_hp_option( 'fw_value4_over', '', __( 'Instead of division —', 'faithfulwitness' ) ),
+                    'word'  => fw_hp_option( 'fw_value4_word', '', __( 'Love', 'faithfulwitness' ) ),
+                ],
+            ];
+            foreach ( $values as $v ) : ?>
+            <div class="value-card">
+                <span class="value-card__label"><?php echo esc_html( $v['label'] ); ?></span>
+                <span class="value-card__word"><?php echo esc_html( $v['word'] ); ?></span>
             </div>
             <?php endforeach; ?>
         </div>
@@ -196,12 +257,74 @@ $hero_image = fw_hp_option( 'fw_hero_bg', 'fw_hero_bg_url', 'https://faithfulwit
 </section>
 
 <!-- ============================================================
-     5. MAILCHIMP SIGNUP — Stay Connected
+     7. RESOURCE PREVIEW
+     ============================================================ -->
+<section class="section section--alt" id="resource-preview">
+    <div class="container">
+        <div class="section-header">
+            <span class="eyebrow"><?php esc_html_e( 'Resources', 'faithfulwitness' ); ?></span>
+            <h2><?php esc_html_e( 'Everything your congregation needs.', 'faithfulwitness' ); ?></h2>
+            <p><?php esc_html_e( 'From Know Your Rights guides to sermon outlines to pastoral care manuals. All resources are free.', 'faithfulwitness' ); ?></p>
+        </div>
+        <div class="feat-strip">
+            <p class="feat-strip__eyebrow"><?php esc_html_e( 'Start here — curated for this moment', 'faithfulwitness' ); ?></p>
+            <div class="feat-strip__grid">
+                <?php
+                $featured_resources = get_posts( [
+                    'post_type'      => 'fw_resource',
+                    'post_status'    => 'publish',
+                    'posts_per_page' => 4,
+                    'orderby'        => 'date',
+                    'order'          => 'DESC',
+                ] );
+                if ( ! empty( $featured_resources ) ) :
+                    foreach ( $featured_resources as $fr ) :
+                        $types  = wp_get_post_terms( $fr->ID, 'fw_resource_type', [ 'fields' => 'names' ] );
+                        $r_url  = get_post_meta( $fr->ID, 'fw_resource_url', true );
+                        $link   = $r_url ?: get_permalink( $fr );
+                        $f_type = ! empty( $types ) && ! is_wp_error( $types ) ? $types[0] : __( 'Resource', 'faithfulwitness' );
+                ?>
+                <a href="<?php echo esc_url( $link ); ?>" class="feat-card" <?php echo $r_url ? 'target="_blank" rel="noopener noreferrer"' : ''; ?>>
+                    <span class="feat-card__type"><?php echo esc_html( $f_type ); ?></span>
+                    <h4><?php echo esc_html( get_the_title( $fr ) ); ?></h4>
+                    <p><?php echo esc_html( wp_trim_words( get_the_excerpt( $fr ), 12, '…' ) ); ?></p>
+                    <span class="feat-card__link"><?php esc_html_e( 'Read online →', 'faithfulwitness' ); ?></span>
+                </a>
+                <?php endforeach; else : ?>
+                <div class="feat-card">
+                    <span class="feat-card__type"><?php esc_html_e( 'Tool · Know Your Rights', 'faithfulwitness' ); ?></span>
+                    <h4><?php esc_html_e( 'Know Your Rights: Congregation Guide', 'faithfulwitness' ); ?></h4>
+                    <p><?php esc_html_e( 'Essential legal info for churches supporting immigrant neighbors.', 'faithfulwitness' ); ?></p>
+                    <span class="feat-card__link"><?php esc_html_e( 'Read online →', 'faithfulwitness' ); ?></span>
+                </div>
+                <div class="feat-card">
+                    <span class="feat-card__type"><?php esc_html_e( 'Toolkit · Court Accompaniment', 'faithfulwitness' ); ?></span>
+                    <h4><?php esc_html_e( 'Court Accompaniment Checklist', 'faithfulwitness' ); ?></h4>
+                    <p><?php esc_html_e( 'Step-by-step prep for accompanying families to hearings.', 'faithfulwitness' ); ?></p>
+                    <span class="feat-card__link"><?php esc_html_e( 'Read online →', 'faithfulwitness' ); ?></span>
+                </div>
+                <div class="feat-card">
+                    <span class="feat-card__type"><?php esc_html_e( 'Prayer Guide · Formation', 'faithfulwitness' ); ?></span>
+                    <h4><?php esc_html_e( 'Prayer for Uncertain Times', 'faithfulwitness' ); ?></h4>
+                    <p><?php esc_html_e( 'Liturgy and practices for congregations navigating fear.', 'faithfulwitness' ); ?></p>
+                    <span class="feat-card__link"><?php esc_html_e( 'Read online →', 'faithfulwitness' ); ?></span>
+                </div>
+                <?php endif; ?>
+            </div>
+        </div>
+        <a href="<?php echo esc_url( home_url( '/resources' ) ); ?>" class="btn btn--primary btn--sm">
+            <?php esc_html_e( 'Explore all resources →', 'faithfulwitness' ); ?>
+        </a>
+    </div>
+</section>
+
+<!-- ============================================================
+     8. MAILCHIMP SIGNUP — Stay Connected
      ============================================================ -->
 <?php fw_render_mailchimp_signup_section(); ?>
 
 <!-- ============================================================
-     6. NETWORK MAP TEASER
+     9. NETWORK MAP TEASER
      ============================================================ -->
 <section class="map-teaser-section" id="network">
     <div class="container">
@@ -232,49 +355,6 @@ $hero_image = fw_hp_option( 'fw_hero_bg', 'fw_hero_bg_url', 'https://faithfulwit
                 title="<?php esc_attr_e( 'Faithful Witness organizing groups map', 'faithfulwitness' ); ?>">
             </iframe>
             <?php endif; ?>
-        </div>
-    </div>
-</section>
-
-<!-- ============================================================
-     7. CAMPAIGN HIGHLIGHT
-     ============================================================ -->
-<?php
-$featured_campaign = get_posts( [
-    'post_type'      => 'fw_initiative',
-    'post_status'    => 'publish',
-    'posts_per_page' => 1,
-    'orderby'        => 'date',
-    'order'          => 'DESC',
-] );
-$campaign = ! empty( $featured_campaign ) ? $featured_campaign[0] : null;
-?>
-<section class="campaign-highlight" id="campaign">
-    <div class="container">
-        <div class="campaign-highlight__inner">
-            <div class="campaign-highlight__text">
-                <span class="campaign-highlight__label"><?php esc_html_e( 'Current Campaign', 'faithfulwitness' ); ?></span>
-                <h2 class="campaign-highlight__title">
-                    <?php if ( $campaign ) :
-                        echo esc_html( get_the_title( $campaign ) );
-                    else :
-                        echo esc_html( fw_hp_option( 'fw_campaign_headline', 'fw_campaign_title', __( 'Stand With Immigrant Families', 'faithfulwitness' ) ) );
-                    endif; ?>
-                </h2>
-                <p class="campaign-highlight__desc">
-                    <?php if ( $campaign ) :
-                        echo esc_html( wp_trim_words( get_the_excerpt( $campaign ), 30, '…' ) );
-                    else :
-                        echo esc_html( fw_hp_option( 'fw_campaign_description', 'fw_campaign_desc', __( 'The moment calls for faithful witnesses to speak and act with courage. Join churches across the country in this critical campaign.', 'faithfulwitness' ) ) );
-                    endif; ?>
-                </p>
-            </div>
-            <div class="campaign-highlight__cta">
-                <a href="<?php echo esc_url( $campaign ? get_permalink( $campaign ) : home_url( '/take-action' ) ); ?>"
-                   class="btn btn--accent btn--lg">
-                    <?php esc_html_e( 'Take Action', 'faithfulwitness' ); ?>
-                </a>
-            </div>
         </div>
     </div>
 </section>
@@ -353,23 +433,7 @@ if ( ! empty( $next_events ) ) : ?>
 <?php endif; ?>
 
 <!-- ============================================================
-     8. SCRIPTURE ANCHOR — Acts 4:20
-     ============================================================ -->
-<section class="scripture-section" id="scripture">
-    <div class="container">
-        <div class="scripture-quote">
-            <p class="scripture-quote__text">
-                <?php echo esc_html( fw_hp_option( 'fw_scripture_text', 'fw_scripture_text', __( 'As for us, we cannot help speaking about what we have seen and heard.', 'faithfulwitness' ) ) ); ?>
-            </p>
-            <span class="scripture-quote__ref">
-                <?php echo esc_html( fw_hp_option( 'fw_scripture_ref', 'fw_scripture_ref', __( 'Acts 4:20', 'faithfulwitness' ) ) ); ?>
-            </span>
-        </div>
-    </div>
-</section>
-
-<!-- ============================================================
-     9. PARTNER LOGOS
+     10. PARTNER LOGOS
      ============================================================ -->
 <section class="partners-section" id="partners">
     <div class="container">

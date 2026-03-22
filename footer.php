@@ -2,6 +2,10 @@
 
 <footer class="site-footer" id="site-footer" role="contentinfo">
     <div class="container">
+
+        <!-- Italic quote strip -->
+        <p class="footer-quote"><?php esc_html_e( '"For the flourishing of our neighbors and the integrity of our witness."', 'faithfulwitness' ); ?></p>
+
         <div class="footer-grid">
 
             <!-- Brand column -->

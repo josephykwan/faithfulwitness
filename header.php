@@ -31,7 +31,8 @@ if ( $notice ) : ?>
                 <?php if ( has_custom_logo() ) : ?>
                     <?php the_custom_logo(); ?>
                 <?php else : ?>
-                    <?php bloginfo( 'name' ); ?>
+                    <span class="logo-mark" aria-hidden="true">FW</span>
+                    <span><?php bloginfo( 'name' ); ?></span>
                 <?php endif; ?>
             </a>
 
