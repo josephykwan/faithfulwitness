@@ -1,0 +1,1404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Faithful Witness Campaign — Interactive Prototype</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  /* ── PRIMARY BRAND — logo colors ── */
+  --fw-navy:    #333858;   /* logo dark  — nav, hero, footer bg */
+  --fw-gold:    #cc9966;   /* logo gold  — CTAs, links, active states */
+  --fw-gold-mid:#d4aa78;   /* hover gold */
+  --fw-gold-dk: #9a6e40;   /* dark gold  — text on light-gold bg */
+  --fw-gold-lt: #f5ede0;   /* light gold — tinted backgrounds */
+  --fw-navy-lt: #ededf3;   /* light navy — tags, chip bg */
+  --fw-navy-mid:#4a4f78;   /* mid navy   — borders on dark */
+
+  /* ── NEUTRAL WARM ── */
+  --fw-cream:   #F9F8F6;
+  --fw-sand:    #f0ede6;
+  --fw-coral:   #c47a4a;
+  --fw-coral-lt:#f8eae0;
+
+  /* ── BACKWARD-COMPAT aliases (all legacy vars point to navy/gold) ── */
+  --fw-forest:     var(--fw-navy);
+  --fw-blue:       var(--fw-gold);   /* was blue — now gold for CTAs/links */
+  --fw-green:      var(--fw-gold);   /* was green — now gold */
+  --fw-mid:        var(--fw-gold-mid);
+  --fw-light:      var(--fw-gold-lt);
+  --fw-amber:      var(--fw-gold);
+  --fw-amber-lt:   var(--fw-gold-lt);
+  --fw-purple:     var(--fw-navy);
+  --fw-purple-lt:  var(--fw-navy-lt);
+  --fw-blue-lt:    var(--fw-navy-lt);
+
+  /* ── NEUTRALS ── */
+  --border:        #e2e0db;
+  --border-light:  #eeece8;
+  --text:   #1f2130;
+  --text-2: #4a4d5e;
+  --text-3: #8a8d9e;
+  --bg:     #ffffff;
+  --bg2:    #F9F8F6;
+  --bg3:    #f0ede6;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;color:var(--text);background:var(--bg);line-height:1.6}
+a{cursor:pointer;text-decoration:none}
+img{display:block}
+
+/* ── PROTO BANNER ── */
+.proto-banner{background:#1a1a18;color:#9c9a92;font-size:11px;padding:7px 20px;display:flex;gap:20px;align-items:center;justify-content:center;flex-wrap:wrap}
+.proto-banner strong{color:#e1e0d8}
+
+/* ── STICKY NAV ── */
+.site-header{background:var(--fw-navy);display:flex;justify-content:space-between;align-items:center;padding:11px 24px;position:sticky;top:0;z-index:200;gap:16px}
+.logo{display:flex;align-items:center;gap:8px;cursor:pointer;text-decoration:none}
+.logo-mark{width:22px;height:22px;background:var(--fw-gold);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;flex-shrink:0}
+.logo-text{font-size:13px;font-weight:500;color:#fff;white-space:nowrap}
+.nav-row{display:flex;gap:2px;align-items:center;flex-wrap:wrap}
+.nav-a{font-size:11.5px;color:rgba(255,255,255,.6);cursor:pointer;padding:5px 10px;border-radius:6px;white-space:nowrap;transition:background .15s}
+.nav-a:hover{background:rgba(255,255,255,.07)}
+.nav-a.active{color:#fff;background:rgba(255,255,255,.12)}
+.nav-cta{background:var(--fw-gold-btn);color:#fff;font-size:11.5px;padding:6px 16px;border-radius:22px;cursor:pointer;white-space:nowrap;font-weight:500;transition:opacity .15s;margin-left:4px}
+.nav-cta:hover{opacity:.88}
+.nav-cta.active{background:var(--fw-gold-dk)}
+
+/* ── SUBNAV ── */
+.subnav{background:#fff;padding:0 24px;display:flex;gap:0;border-bottom:1px solid var(--border);overflow-x:auto}
+.sna{font-size:12px;color:var(--text-2);cursor:pointer;padding:10px 14px;border-bottom:2px solid transparent;white-space:nowrap;transition:color .15s}
+.sna:hover{color:var(--fw-navy);}
+.sna.on{color:var(--fw-navy);border-bottom-color:var(--fw-gold);font-weight:500}
+
+/* ── PAGE ── */
+.page{display:none;min-height:100vh}
+.page.on{display:block}
+
+/* ── HERO ── */
+.hero{background:var(--fw-navy);padding:52px 28px 44px}
+.hero-eye{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:10px}
+.hero h1{font-size:30px;font-weight:500;color:#fff;line-height:1.2;margin-bottom:10px;max-width:540px;font-style:italic}
+.hero p.lead{font-size:14px;color:rgba(255,255,255,.72);line-height:1.8;max-width:520px;margin-bottom:22px}
+.hero-btns{display:flex;gap:10px;flex-wrap:wrap}
+.hero-photo{background:#22253a;border-radius:10px;height:200px;display:flex;align-items:center;justify-content:center;margin-top:24px;border:0.5px solid #4a4f78}
+.hero-photo span{font-size:11px;color:var(--fw-navy-mid);font-style:italic}
+
+/* ── SECTION ── */
+.sec{padding:36px 28px}
+.sec.cream{background:var(--fw-cream)}
+.sec.lt{background:var(--fw-light)}
+.eye{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);margin-bottom:6px}
+.sec-title{font-size:22px;font-weight:500;color:var(--text);margin-bottom:6px;line-height:1.25;font-style:italic}
+.sec-sub{font-size:13px;color:var(--text-2);line-height:1.8;margin-bottom:20px;max-width:580px}
+
+/* ── BTNS ── */
+.btn{display:inline-block;font-size:12px;padding:9px 20px;border-radius:22px;cursor:pointer;transition:opacity .15s}
+.btn:hover{opacity:.88}
+.btn-p{background:var(--fw-blue);color:#fff}
+.btn-o{border:1px solid rgba(255,255,255,.35);color:rgba(255,255,255,.85)}
+.btn-sm{font-size:11px;padding:6px 15px}
+.btn-ghost{border:1px solid var(--border);color:var(--text-2);background:var(--bg)}
+.btn-amber{background:var(--fw-gold);color:#fff}
+.btn-purple{background:#4a4f78;color:#fff}
+
+/* ── TAGS ── */
+.tag{display:inline-block;font-size:10px;padding:2px 8px;border-radius:10px;margin:0 3px 4px 0}
+.tg{background:var(--fw-light);color:var(--fw-navy)}
+.ta{background:var(--fw-coral-lt);color:#1f2130}
+.tp{background:var(--fw-light);color:#333858}
+.tc{background:var(--bg3);color:var(--text-2)}
+.tb{background:var(--fw-light);color:#333858}
+.tr{background:#faeae4;color:#1f2130}
+
+/* ── CARDS ── */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px}
+.card{border:1px solid var(--border);border-radius:10px;padding:15px 16px;background:var(--bg);cursor:pointer;transition:border-color .15s}
+.card:hover{border-color:var(--fw-gold)}
+.card h3{font-size:13px;font-weight:500;color:var(--text);margin-bottom:5px;line-height:1.45}
+.card p{font-size:12px;color:var(--text-2);line-height:1.65;margin-bottom:10px}
+.card-link{font-size:12px;color:var(--fw-navy)}
+
+/* ── RESOURCE CARDS ── */
+.res-card{border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--bg);display:flex;flex-direction:column;cursor:pointer;transition:border-color .15s}
+.res-card:hover{border-color:var(--fw-gold)}
+.res-top{height:4px}
+.res-body{padding:13px 15px;flex:1;display:flex;flex-direction:column}
+.res-body h3{font-size:13px;font-weight:500;color:var(--text);margin-bottom:5px;line-height:1.4}
+.res-body p{font-size:12px;color:var(--text-2);line-height:1.65;flex:1;margin-bottom:8px}
+.res-footer{display:flex;align-items:center;justify-content:space-between;padding-top:9px;border-top:1px solid var(--border-light)}
+.res-meta{font-size:10px;color:var(--text-3)}
+.res-read{font-size:12px;color:var(--fw-navy);}
+
+/* ── CALLOUTS ── */
+.callout{border-left:3px solid var(--fw-navy);background:var(--fw-light);border-radius:0 8px 8px 0;padding:13px 16px;margin:16px 0;font-size:13px;color:var(--fw-navy);line-height:1.8}
+.callout-amber{border-left-color:var(--fw-coral);background:var(--fw-coral-lt);color:#1f2130}
+.callout-purple{border-left-color:var(--fw-blue);background:var(--fw-light);color:#333858}
+.disclaimer{border-left:3px solid var(--fw-coral);background:var(--fw-coral-lt);border-radius:0 8px 8px 0;padding:11px 14px;font-size:12px;color:#1f2130;line-height:1.75;margin:18px 0}
+.toc a{font-size:12px;color:var(--fw-navy);display:block;line-height:2.2}
+.download-bar{display:flex;align-items:center;gap:12px;background:var(--fw-light);border:1px solid var(--fw-gold);border-radius:8px;padding:11px 15px;margin:14px 0}
+.download-bar p{font-size:12px;color:#22253a;flex:1}
+
+/* ── FILTERS ── */
+.filter-bar{background:var(--bg2);border-radius:10px;padding:14px 16px;margin-bottom:16px;border:1px solid var(--border-light)}
+.filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;align-items:center}
+.filter-row:last-child{margin-bottom:0}
+.flbl{font-size:11px;color:var(--text-3);min-width:64px}
+.chip{font-size:11px;padding:4px 12px;border-radius:16px;border:1px solid var(--border);color:var(--text-2);cursor:pointer;background:var(--bg);transition:all .15s}
+.chip:hover{border-color:var(--fw-gold);color:var(--fw-navy)}
+.chip.on{background:var(--fw-light);color:var(--fw-navy);border-color:var(--fw-navy);}
+
+/* ── FEATURED STRIP ── */
+.feat-strip{background:var(--fw-navy);border-radius:12px;padding:18px;margin-bottom:18px}
+.feat-eye{font-size:10px;color:rgba(255,255,255,.6);letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px}
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px}
+.feat-card{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:13px;cursor:pointer;transition:background .15s}
+.feat-card:hover{background:rgba(255,255,255,.12)}
+.feat-type{font-size:10px;color:rgba(255,255,255,.6);margin-bottom:5px;display:block}
+.feat-card h4{font-size:12px;font-weight:500;color:#fff;margin-bottom:4px;line-height:1.4}
+.feat-card p{font-size:11px;color:rgba(255,255,255,.75);line-height:1.6;margin-bottom:7px}
+.feat-dl{font-size:11px;color:rgba(255,255,255,.6)}
+
+/* ── EVENTS ── */
+.view-toggle{display:inline-flex;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.vtbtn{font-size:12px;padding:7px 16px;cursor:pointer;color:var(--text-2);background:var(--bg);transition:all .15s;border:none}
+.vtbtn:hover{background:var(--bg2)}
+.vtbtn.on{background:var(--fw-navy);color:#ffffff}
+.event-card{border:1px solid var(--border);border-radius:10px;padding:14px 15px;background:var(--bg);cursor:pointer;transition:border-color .15s}
+.event-card:hover{border-color:var(--fw-gold)}
+.event-card h3{font-size:13px;font-weight:500;color:var(--text);margin-bottom:4px;line-height:1.4}
+.event-info{font-size:12px;color:var(--text-2);line-height:1.9;margin-bottom:10px}
+.ebadges{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px}
+.ebadge{font-size:10px;padding:2px 8px;border-radius:10px}
+.ebtns{display:flex;gap:7px}
+.ebtn{font-size:11px;padding:5px 13px;border-radius:12px;cursor:pointer;border:none;transition:opacity .15s}
+.ebtn:hover{opacity:.85}
+.ebtn-s{border:1px solid var(--border);color:var(--text-2);background:var(--bg)}
+.ebtn-p{background:var(--fw-navy);color:#fff}
+
+/* ── CALENDAR ── */
+.cal-wrap{border:1px solid var(--border);border-radius:10px;padding:16px;background:var(--bg)}
+.cal-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.cal-hdr span{font-size:14px;font-weight:500;color:var(--text)}
+.cal-nav-btn{font-size:12px;color:var(--fw-navy);cursor:pointer;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal-dh{font-size:10px;color:var(--text-3);text-align:center;padding:5px 0;font-weight:500}
+.cal-day{min-height:38px;border:1px solid var(--border-light);border-radius:6px;padding:5px 6px;background:var(--bg)}
+.cal-day.has{border-color:var(--fw-gold);background:var(--bg);cursor:pointer;min-height:auto}
+.cal-day.has:hover{background:var(--fw-gold-lt)}
+.cal-day.empty{border:none;background:transparent;cursor:default}
+.cal-day .dn{font-size:11px;font-weight:500;color:var(--text);margin-bottom:4px}
+.cal-day.has .dn{color:#333858}
+.cal-event-pill{font-size:10px;border-radius:4px;padding:3px 6px;margin-top:2px;line-height:1.4;display:block}
+
+/* ── DETAIL PAGES ── */
+.detail-wrap{max-width:780px;padding:26px 28px}
+.back-link{font-size:12px;color:var(--fw-navy);cursor:pointer;margin-bottom:16px;display:inline-block}
+.back-link:hover{text-decoration:underline}
+.detail-h1{font-size:26px;font-weight:500;color:var(--text);line-height:1.25;margin-bottom:8px;font-style:italic}
+.meta-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin:14px 0 20px}
+.meta-cell{background:var(--bg2);border-radius:8px;padding:11px 13px}
+.meta-lbl{font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px}
+.meta-val{font-size:12px;color:var(--text);line-height:1.5}
+.reg-banner{background:var(--fw-light);border:1px solid #cc9966;border-radius:10px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:20px;flex-wrap:wrap}
+.reg-banner p{font-size:12px;color:#333858;flex:1}
+.map-ph{background:var(--bg2);border-radius:8px;height:130px;display:flex;align-items:center;justify-content:center;margin:14px 0;border:1px solid var(--border)}
+.map-ph span{font-size:11px;color:var(--text-3);font-style:italic}
+.article-body p{font-size:13.5px;color:var(--text-2);line-height:1.9;margin-bottom:14px}
+.article-body h2{font-size:17px;font-weight:500;color:var(--text);margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--border-light)}
+.article-body ul{margin:8px 0 12px 20px}
+.article-body li{font-size:13px;color:var(--text-2);line-height:1.9}
+.callout{border-left:3px solid var(--fw-gold);background:var(--fw-light);border-radius:0 8px 8px 0;padding:13px 16px;margin:16px 0;font-size:13px;color:#333858;line-height:1.8}
+.callout-amber{border-left-color:var(--fw-amber);background:var(--fw-amber-lt);color:#4a4d5e}
+.callout-purple{border-left-color:var(--fw-navy);background:var(--fw-purple-lt);color:#333858}
+.disclaimer{border-left:3px solid var(--fw-amber);background:var(--fw-amber-lt);border-radius:0 8px 8px 0;padding:11px 14px;font-size:12px;color:#4a4d5e;line-height:1.75;margin:18px 0}
+.toc{background:var(--bg2);border-radius:8px;padding:13px 16px;margin-bottom:20px}
+.toc-lbl{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);margin-bottom:8px}
+.toc a{font-size:12px;color:var(--fw-navy);display:block;line-height:2.2}
+.download-bar{display:flex;align-items:center;gap:12px;background:var(--fw-light);border:1px solid #cc9966;border-radius:8px;padding:11px 15px;margin:14px 0}
+.download-bar p{font-size:12px;color:#333858;flex:1}
+.img-ph{background:var(--bg2);border-radius:8px;height:110px;display:flex;align-items:center;justify-content:center;margin:16px 0;border:1px solid var(--border)}
+.img-ph span{font-size:10px;color:var(--text-3);font-style:italic}
+
+/* ── INITIATIVE PAGES ── */
+.init-featured{background:var(--fw-navy);border-radius:12px;padding:24px;display:flex;gap:20px;margin-bottom:24px;flex-wrap:wrap}
+.init-feat-body{flex:1;min-width:220px}
+.init-feat-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:8px}
+.init-feat-body h2{font-size:22px;font-weight:500;color:#ffffff;line-height:1.2;margin-bottom:8px;font-style:italic}
+.init-feat-body p{font-size:13px;color:rgba(255,255,255,.72);line-height:1.75;margin-bottom:14px}
+.init-feat-meta{font-size:11px;color:rgba(255,255,255,.6);margin-bottom:14px}
+.init-card{border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--bg);cursor:pointer;transition:border-color .15s}
+.init-card:hover{border-color:var(--fw-gold)}
+.init-top{height:4px}
+.init-body{padding:14px 16px}
+.init-tag{font-size:10px;color:var(--text-3);margin-bottom:5px;letter-spacing:.06em;text-transform:uppercase}
+.init-body h3{font-size:13px;font-weight:500;color:var(--text);margin-bottom:5px;line-height:1.4}
+.init-body p{font-size:12px;color:var(--text-2);line-height:1.65;margin-bottom:10px}
+.init-footer{display:flex;align-items:center;justify-content:space-between;padding-top:8px;border-top:1px solid var(--border-light)}
+.init-types{font-size:10px;color:var(--text-3)}
+.init-link{font-size:12px;color:var(--fw-navy)}
+.init-detail-hero{background:var(--fw-navy);padding:44px 28px 36px}
+.init-detail-hero .label{font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:9px}
+.init-detail-hero h1{font-size:32px;font-weight:500;color:#ffffff;line-height:1.15;margin-bottom:10px;max-width:560px;font-style:italic}
+.init-detail-hero p.lead{font-size:14px;color:rgba(255,255,255,.72);line-height:1.8;max-width:520px;margin-bottom:20px}
+.how-card{border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:10px;background:var(--bg);display:flex;gap:12px;align-items:flex-start}
+.how-num{width:26px;height:26px;border-radius:50%;background:var(--fw-light);color:#333858;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.how-body h4{font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px}
+.how-body p{font-size:12px;color:var(--text-2);line-height:1.65}
+
+/* ── MOVEMENTS ── */
+.partner-card{border:1px solid var(--border);border-radius:10px;padding:14px 17px;margin-bottom:10px;background:var(--bg)}
+.partner-card h3{font-size:14px;font-weight:500;color:var(--text);margin-bottom:4px}
+.partner-card p{font-size:12px;color:var(--text-2);line-height:1.65}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+.info-cell{background:var(--bg2);border-radius:8px;padding:11px 13px}
+.info-lbl{font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px}
+.info-val{font-size:12px;color:var(--text);line-height:1.5}
+.legend-row{display:flex;gap:16px;margin-bottom:12px;flex-wrap:wrap}
+.ld{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-2)}
+.ld-dot{width:9px;height:9px;border-radius:50%}
+
+/* ── JOIN US ── */
+.path-card{border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--bg);margin-bottom:12px}
+.path-top{padding:18px 20px;border-bottom:1px solid var(--border-light)}
+.path-num{font-size:10px;color:var(--text-3);letter-spacing:.08em;margin-bottom:6px}
+.path-top h3{font-size:17px;font-weight:500;color:var(--text);margin-bottom:4px;font-style:italic}
+.path-desc{font-size:13px;color:var(--text-2);line-height:1.75}
+.path-actions{padding:16px 20px}
+.action-item{display:flex;gap:12px;align-items:flex-start;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--border-light)}
+.action-item:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none}
+.action-icon{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;margin-top:1px}
+.aib h4{font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px}
+.aib p{font-size:12px;color:var(--text-2);line-height:1.65;margin-bottom:7px}
+.policy-item{border:1px solid var(--border);border-radius:8px;padding:13px 15px;margin-bottom:9px;background:var(--bg)}
+.policy-item h4{font-size:13px;font-weight:500;color:var(--text);margin-bottom:4px}
+.policy-item p{font-size:12px;color:var(--text-2);line-height:1.7}
+.adv-step{display:flex;gap:13px;align-items:flex-start;margin-bottom:10px;padding:14px 16px;border:1px solid var(--border);border-radius:10px;background:var(--bg)}
+.adv-n{width:28px;height:28px;border-radius:50%;background:var(--fw-light);color:#333858;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.adv-b h4{font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px}
+.adv-b p{font-size:12px;color:var(--text-2);line-height:1.65;margin-bottom:8px}
+
+/* ── NEWS / STORIES ── */
+.story-card{border:1px solid var(--border);border-radius:10px;padding:15px 16px;background:var(--bg);cursor:pointer;transition:border-color .15s}
+.story-card:hover{border-color:var(--fw-gold)}
+.story-type{font-size:10px;color:var(--text-3);margin-bottom:5px;letter-spacing:.07em;text-transform:uppercase}
+.story-card h3{font-size:13px;font-weight:500;color:var(--text);margin-bottom:5px;line-height:1.45}
+.story-card p{font-size:12px;color:var(--text-2);line-height:1.65;margin-bottom:10px}
+.story-meta{display:flex;align-items:center;justify-content:space-between}
+.story-author{font-size:11px;color:var(--text-3)}
+.story-lnk{font-size:12px;color:var(--fw-navy)}
+.media-card{border:1px solid var(--border);border-radius:10px;padding:13px 15px;background:var(--bg);display:flex;gap:13px;align-items:flex-start;cursor:pointer;transition:border-color .15s;margin-bottom:8px}
+.media-card:hover{border-color:var(--fw-gold)}
+.media-logo{width:38px;height:38px;border-radius:6px;background:var(--bg2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--text-3);text-align:center;line-height:1.2;font-weight:600;border:1px solid var(--border)}
+.media-pub{font-size:10px;color:var(--text-3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em}
+.media-card h3{font-size:13px;font-weight:500;color:var(--text);margin-bottom:4px;line-height:1.4}
+.media-card p{font-size:12px;color:var(--text-2);line-height:1.6}
+.share-cta{background:var(--fw-light);border-radius:10px;padding:18px;margin-top:8px;border:1px solid #cc9966}
+.share-cta h4{font-size:14px;font-weight:500;color:#333858;margin-bottom:5px}
+.share-cta p{font-size:12px;color:#4a4f78;line-height:1.75;margin-bottom:12px}
+
+/* ── ABOUT ── */
+.about-section{margin-bottom:28px}
+.about-section h2{font-size:18px;font-weight:500;color:var(--text);margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border-light);font-style:italic}
+.about-section p{font-size:13.5px;color:var(--text-2);line-height:1.9;margin-bottom:12px}
+.distinctive{border-left:3px solid var(--fw-gold);padding:12px 16px;margin-bottom:10px;background:var(--bg);border-radius:0 8px 8px 0}
+.distinctive h4{font-size:13px;font-weight:500;color:var(--text);margin-bottom:4px}
+.distinctive p{font-size:12px;color:var(--text-2);line-height:1.65}
+
+/* ── MOMENT CARD (no icon) ── */
+.moment-card{background:var(--fw-gold-lt);border:1px solid var(--fw-gold);border-radius:10px;padding:18px 20px}
+.moment-label{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--fw-gold-dk);margin-bottom:7px}
+.moment-card h3{font-size:16px;font-weight:500;color:#1f2130;margin-bottom:6px;line-height:1.35;font-style:italic}
+.moment-card p{font-size:13px;color:#4a4d5e;line-height:1.75;margin-bottom:11px}
+.moment-card a{font-size:12px;color:var(--fw-gold-dk)}
+
+/* ── SIGNUP ── */
+.signup-band{background:var(--fw-navy);padding:36px 28px}
+.signup-band h3{font-size:20px;font-weight:500;color:#fff;margin-bottom:6px;font-style:italic}
+.signup-band p{font-size:13px;color:rgba(255,255,255,.75);margin-bottom:16px}
+.signup-form{display:grid;grid-template-columns:1fr 1fr;gap:8px;max-width:460px}
+.signup-form input,.signup-form select{background:rgba(255,255,255,.09);border:1px solid #4a4f78;border-radius:6px;padding:9px 13px;font-size:13px;color:#fff;outline:none}
+.signup-form input::placeholder{color:rgba(255,255,255,.45)}
+.signup-form .full{grid-column:1/-1}
+.signup-btn{grid-column:1/-1;background:var(--fw-gold-btn);color:#fff;font-size:13px;padding:10px;border-radius:22px;border:none;cursor:pointer;font-weight:500;transition:opacity .15s}
+.signup-btn:hover{opacity:.88}
+
+/* ── FOOTER ── */
+.footer{background:var(--fw-navy);padding:32px 28px}
+.footer-quote{font-size:13px;font-style:italic;color:rgba(255,255,255,.75);text-align:center;margin-bottom:22px;padding-bottom:20px;border-bottom:1px solid rgba(255,255,255,.1)}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:24px;margin-bottom:20px}
+.footer-col h5{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:9px}
+.footer-col p{font-size:12px;color:#6668a8;line-height:1.75}
+.footer-col a{font-size:12px;color:#6668a8;display:block;line-height:2.2;cursor:pointer}
+.footer-col a:hover{color:rgba(255,255,255,.72)}
+.footer-legal{font-size:10px;color:var(--fw-navy-mid);line-height:1.75;border-top:1px solid rgba(255,255,255,.08);padding-top:12px}
+
+/* ── SCRIPTURE BAND ── */
+.scripture-band{background:var(--fw-gold-lt);padding:28px 28px;text-align:center;border-top:1px solid var(--fw-gold);border-bottom:1px solid var(--fw-gold)}
+.scripture-band blockquote{font-size:17px;font-style:italic;color:#333858;line-height:1.65;margin-bottom:8px;max-width:560px;margin-left:auto;margin-right:auto}
+.scripture-band cite{font-size:12px;color:var(--fw-navy)}
+
+/* ── FIND SUPPORT ── */
+.support-card{border:1px solid var(--border);border-radius:10px;padding:16px;background:var(--bg);margin-bottom:10px}
+.support-card h3{font-size:14px;font-weight:500;color:var(--text);margin-bottom:4px}
+.support-card p{font-size:12px;color:var(--text-2);line-height:1.65;margin-bottom:8px}
+.support-contact{font-size:12px;color:var(--fw-navy)}
+
+@media(max-width:640px){
+  .hero h1{font-size:24px}
+  .footer-grid{grid-template-columns:1fr}
+  .signup-form{grid-template-columns:1fr}
+  .signup-form .full{grid-column:1}
+  .signup-btn{grid-column:1}
+  .meta-grid{grid-template-columns:1fr 1fr}
+  .info-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="proto-banner">
+  <span><strong>Faithful Witness Campaign</strong> — Interactive UX Prototype</span>
+  <span>Click any link or button to navigate · All pages are wired up</span>
+</div>
+
+<!-- ═══════════════════════════════════
+     GLOBAL NAV (injected by JS)
+════════════════════════════════════ -->
+<div id="global-nav"></div>
+
+<!-- ═══════════════════════════════════
+     HOME
+════════════════════════════════════ -->
+<div class="page on" id="page-home">
+  <div class="hero">
+    <div class="hero-eye">A shared evangelical initiative</div>
+    <h1>A Gospel-Centered Response for a Divided Time</h1>
+    <p class="lead">Forming the Church for courageous, nonviolent, Gospel-rooted engagement around immigration — right now.</p>
+    <div class="hero-btns">
+      <span class="btn btn-p" onclick="go('movements')">Find your local movement →</span>
+      <span class="btn btn-o" onclick="go('resources')">Explore resources</span>
+    </div>
+    <div class="hero-photo"><span>[Photo — real community, accompaniment, presence]</span></div>
+  </div>
+
+  <div class="scripture-band">
+    <blockquote>"As for us, we cannot help speaking about what we have seen and heard."</blockquote>
+    <cite>— Acts 4:20 NIV</cite>
+  </div>
+
+  <!-- Audience -->
+  <div class="sec cream">
+    <div class="eye">Where are you in this?</div>
+    <div class="sec-title">There is a place for you here.</div>
+    <p class="sec-sub">The Faithful Witness Campaign meets you wherever you are — whether you're still discerning, ready to act, or navigating this reality yourself.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">
+      <div style="background:var(--fw-light);border:1px solid #cc9966;border-radius:10px;padding:18px;cursor:pointer" onclick="go('resources')">
+        <div style="font-size:10px;color:#4a4f78;margin-bottom:7px;letter-spacing:.05em">Still discerning</div>
+        <div style="font-size:14px;font-weight:500;color:#333858;margin-bottom:6px;font-style:italic">Still forming your views?</div>
+        <p style="font-size:12px;color:#4a4f78;line-height:1.7;margin-bottom:9px">This campaign offers formation and space to learn, pray, and engage thoughtfully — without pressure.</p>
+        <span style="font-size:12px;color:#333858">Start with resources →</span>
+      </div>
+      <div style="background:var(--fw-gold-lt);border:1px solid var(--fw-gold);border-radius:10px;padding:18px;cursor:pointer" onclick="go('movements')">
+        <div style="font-size:10px;color:var(--fw-navy);margin-bottom:7px;letter-spacing:.05em">Ready to act</div>
+        <div style="font-size:14px;font-weight:500;color:#333858;margin-bottom:6px;font-style:italic">Your congregation is ready.</div>
+        <p style="font-size:12px;color:#333858;line-height:1.7;margin-bottom:9px">Find a local movement, get equipped, and join congregations across the country taking faithful action.</p>
+        <span style="font-size:12px;color:#333858">Find your local movement →</span>
+      </div>
+      <div style="background:var(--fw-gold-lt);border:1px solid var(--fw-gold);border-radius:10px;padding:18px;cursor:pointer" onclick="go('support')">
+        <div style="font-size:10px;color:var(--fw-gold-dk);margin-bottom:7px;letter-spacing:.05em">Directly affected</div>
+        <div style="font-size:14px;font-weight:500;color:#1f2130;margin-bottom:6px;font-style:italic">You are not alone.</div>
+        <p style="font-size:12px;color:#4a4d5e;line-height:1.7;margin-bottom:9px">You are our neighbors, our brothers and sisters in Christ. Find legal, pastoral, and practical support near you.</p>
+        <span style="font-size:12px;color:#4a4d5e">Find support near you →</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Now -->
+  <div class="sec">
+    <div class="eye">Right now</div>
+    <div class="sec-title">A moment that calls for faithful witness.</div>
+    <p class="sec-sub">In a season marked by fear, polarization, and deep uncertainty around immigration, many Christians are asking: How do we follow Jesus faithfully when the stakes feel personal and complex?</p>
+    <div class="moment-card">
+      <div class="moment-label">Current initiative</div>
+      <h3>Pentecost Action — May 15–24</h3>
+      <p>We are called to wait, yet actively engage in prophetic witness that proclaims and demonstrates the goodness of God. Join congregations across the country during these 10 days.</p>
+      <a onclick="go('initiative-detail')">Learn how to participate →</a>
+    </div>
+  </div>
+
+  <!-- Commitments -->
+  <div class="sec cream">
+    <div class="eye">Our three commitments</div>
+    <div class="sec-title">How we show up together.</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">
+      <div style="border-left:3px solid var(--fw-gold);padding:14px 16px;background:var(--bg);border-radius:0 8px 8px 0;border-top:1px solid var(--border);border-right:1px solid var(--border);border-bottom:1px solid var(--border)"><h3 style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:5px">Local Grassroots Movements & Formation</h3><p style="font-size:12px;color:var(--text-2);line-height:1.65">Cultivating faithful leadership in local communities — because transformation starts in congregations, not campaigns.</p></div>
+      <div style="border-left:3px solid var(--fw-gold);padding:14px 16px;background:var(--bg);border-radius:0 8px 8px 0;border-top:1px solid var(--border);border-right:1px solid var(--border);border-bottom:1px solid var(--border)"><h3 style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:5px">Presence & Accompaniment</h3><p style="font-size:12px;color:var(--text-2);line-height:1.65">Walking with those navigating fear and uncertainty — court accompaniment, Know Your Rights, food, transportation, and spiritual care.</p></div>
+      <div style="border-left:3px solid var(--fw-gold);padding:14px 16px;background:var(--bg);border-radius:0 8px 8px 0;border-top:1px solid var(--border);border-right:1px solid var(--border);border-bottom:1px solid var(--border)"><h3 style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:5px">Public Witness in the Public Square</h3><p style="font-size:12px;color:var(--text-2);line-height:1.65">Speaking with one moral voice — nonpartisan but not neutral, because the Gospel makes moral demands.</p></div>
+    </div>
+  </div>
+
+  <!-- We Choose -->
+  <div class="sec">
+    <div class="eye">We choose</div>
+    <div class="sec-title">Something different is possible.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px">
+      <div style="background:var(--fw-light);border:1px solid #cc9966;border-radius:10px;padding:16px 18px"><div style="font-size:10px;color:#4a4f78;margin-bottom:3px">Instead of despair —</div><div style="font-size:20px;font-weight:500;color:#333858;font-style:italic">Hope</div></div>
+      <div style="background:var(--fw-gold-lt);border:1px solid var(--fw-gold);border-radius:10px;padding:16px 18px"><div style="font-size:10px;color:var(--fw-navy);margin-bottom:3px">Instead of silence —</div><div style="font-size:20px;font-weight:500;color:#333858;font-style:italic">Courage</div></div>
+      <div style="background:var(--fw-coral-lt);border:1px solid var(--fw-coral);border-radius:10px;padding:16px 18px"><div style="font-size:10px;color:#9a6e40;margin-bottom:3px">Instead of fear —</div><div style="font-size:20px;font-weight:500;color:#1f2130;font-style:italic">Nonviolence</div></div>
+      <div style="background:var(--fw-gold-lt);border:1px solid var(--fw-gold);border-radius:10px;padding:16px 18px"><div style="font-size:10px;color:#9a6e40;margin-bottom:3px">Instead of division —</div><div style="font-size:20px;font-weight:500;color:#1f2130;font-style:italic">Love</div></div>
+    </div>
+  </div>
+
+  <!-- Resource preview -->
+  <div class="sec cream">
+    <div class="eye">Resources</div>
+    <div class="sec-title">Everything your congregation needs.</div>
+    <p class="sec-sub">From Know Your Rights guides to sermon outlines to pastoral care manuals. All resources are free and available to read online or download.</p>
+    <div class="feat-strip">
+      <div class="feat-eye">Start here — curated for this moment</div>
+      <div class="feat-grid">
+        <div class="feat-card" onclick="go('resource-detail')"><span class="feat-type">Tool · Know Your Rights</span><h4>Know Your Rights: Congregation Guide</h4><p>Legal rights during enforcement encounters — written for non-lawyers.</p><a class="feat-dl">Read online →</a></div>
+        <div class="feat-card" onclick="go('resources')"><span class="feat-type">Toolkit · Court Accompaniment</span><h4>Court Accompaniment Checklist</h4><p>Step-by-step prep for accompanying families to hearings.</p><a class="feat-dl">Read online →</a></div>
+        <div class="feat-card" onclick="go('initiative-detail')"><span class="feat-type">Sermon Outline · Pentecost</span><h4>Pentecost Action Sermon Outline</h4><p>For pastors preaching faithful witness May 15–24.</p><a class="feat-dl">Read online →</a></div>
+      </div>
+    </div>
+    <span class="btn btn-p btn-sm" onclick="go('resources')">Explore all resources →</span>
+  </div>
+
+  <!-- Map teaser -->
+  <div class="sec">
+    <div class="eye">The network</div>
+    <div class="sec-title">Find faithful witnesses near you.</div>
+    <p class="sec-sub">Local organizing groups and partner organizations are working across the country. Connect, learn, and build together.</p>
+    <div class="map-ph" style="height:180px"><span>[Interactive Leaflet map — click to go to Movements page]</span></div>
+    <span class="btn btn-p btn-sm" style="margin-top:12px;display:inline-block" onclick="go('movements')">Explore the full network →</span>
+  </div>
+
+  <div class="signup-band">
+    <h3>Stay connected to the movement.</h3>
+    <p>Updates on initiatives, resources, and ways your congregation can take faithful action.</p>
+    <div class="signup-form">
+      <input class="full" placeholder="First name"/>
+      <input class="full" placeholder="Email address"/>
+      <select class="full"><option>I am a pastor or church leader</option><option>I am a congregation member</option><option>I am directly affected</option><option>I am a community organizer</option><option>I am still discerning</option></select>
+      <button class="signup-btn">Join the Faithful Witness Campaign</button>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-quote">"For the flourishing of our neighbors and the integrity of our witness."</div>
+    <div class="footer-grid">
+      <div class="footer-col"><h5>Faithful Witness Campaign</h5><p>A Gospel-centered initiative equipping evangelical churches for courageous, nonviolent witness alongside immigrant neighbors. A project of CCDA in partnership with NaLEC, World Relief, and Undivided.</p></div>
+      <div class="footer-col"><h5>Navigate</h5><a onclick="go('movements')">Movements</a><a onclick="go('initiatives')">Initiatives</a><a onclick="go('resources')">Resources</a><a onclick="go('events')">Events</a><a onclick="go('stories')">News & Stories</a><a onclick="go('join')">Join Us</a><a onclick="go('about')">About</a></div>
+      <div class="footer-col"><h5>Connect</h5><a onclick="go('join')">Join the campaign</a><a onclick="go('support')">Find support</a><a onclick="go('stories')">Share your story</a><a onclick="go('stories')">Media inquiries</a><a onclick="go('about')">Contact us</a></div>
+    </div>
+    <div class="footer-legal">This is not legal advice and does not establish an attorney-client relationship. · Automated translation is provided for convenience — accuracy is not guaranteed. · © 2025 Faithful Witness Campaign</div>
+  </footer>
+</div>
+
+<!-- ═══════════════════════════════════
+     INITIATIVES OVERVIEW
+════════════════════════════════════ -->
+<div class="page" id="page-initiatives">
+  <div class="hero">
+    <div class="hero-eye">Initiatives</div>
+    <h1>Learn, Act, Do, Teach.</h1>
+    <p class="lead">These are the current initiatives where your participation makes a difference. Each one offers concrete ways for your congregation to get involved — wherever you are in your journey.</p>
+  </div>
+  <div class="sec">
+    <!-- FEATURED INITIATIVE -->
+    <div class="eye" style="margin-bottom:12px">Featured initiative</div>
+    <div class="init-featured" style="cursor:pointer" onclick="go('initiative-detail')">
+      <div class="init-feat-body">
+        <div class="init-feat-label">Active now · May 15–24, 2025</div>
+        <h2>Pentecost Action</h2>
+        <p>We are called to wait, yet actively engage in prophetic witness. During the 10 days between Ascension and Pentecost, join congregations across the country in prayer, accompaniment, and public witness on immigration.</p>
+        <div class="init-feat-meta">Prayer · Gatherings · Training · Mobilization</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <span class="btn btn-p btn-sm" onclick="event.stopPropagation();go('initiative-detail')">Learn how to participate →</span>
+          <span class="btn btn-o btn-sm" onclick="event.stopPropagation();go('events')">Find events near me</span>
+        </div>
+      </div>
+      <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:16px;min-width:180px;flex:0 0 auto">
+        <div style="font-size:10px;color:rgba(255,255,255,.6);margin-bottom:10px;letter-spacing:.1em;text-transform:uppercase">5 ways to participate</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.72);line-height:2.1">
+          <div>1. Pray</div><div>2. Gather</div><div>3. Accompany</div><div>4. Speak</div><div>5. Mobilize on Pentecost Sunday</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ONGOING -->
+    <div class="eye" style="margin-bottom:12px">Ongoing initiatives</div>
+    <div class="card-grid" style="grid-template-columns:repeat(auto-fill,minmax(210px,1fr));margin-bottom:28px">
+      <div class="init-card" onclick="go('resources')">
+        <div class="init-top" style="background:var(--fw-navy-mid)"></div>
+        <div class="init-body">
+          <div class="init-tag">Ongoing</div>
+          <h3>Court Accompaniment</h3>
+          <p>Train your congregation to accompany immigrant families to immigration hearings. Your presence says: you are not alone.</p>
+          <div class="init-footer"><span class="init-types">Training · Presence</span><span class="init-link">Learn more →</span></div>
+        </div>
+      </div>
+      <div class="init-card" onclick="go('resources')">
+        <div class="init-top" style="background:var(--fw-navy)"></div>
+        <div class="init-body">
+          <div class="init-tag">Ongoing</div>
+          <h3>Know Your Rights Trainings</h3>
+          <p>Host a Know Your Rights training in your congregation in partnership with legal organizations. Equip your neighbors before a crisis hits.</p>
+          <div class="init-footer"><span class="init-types">Training · Civic Engagement</span><span class="init-link">Learn more →</span></div>
+        </div>
+      </div>
+      <div class="init-card" onclick="go('resources')">
+        <div class="init-top" style="background:#9a6e40"></div>
+        <div class="init-body">
+          <div class="init-tag">Ongoing</div>
+          <h3>Pastoral Care Under Pressure</h3>
+          <p>Equip your pastoral team to provide care to families and leaders navigating fear and trauma related to immigration enforcement.</p>
+          <div class="init-footer"><span class="init-types">Spiritual Formation · Care</span><span class="init-link">Learn more →</span></div>
+        </div>
+      </div>
+      <div class="init-card" onclick="go('join')">
+        <div class="init-top" style="background:var(--fw-navy)"></div>
+        <div class="init-body">
+          <div class="init-tag">Ongoing</div>
+          <h3>Policy Advocacy</h3>
+          <p>Add your name. Write your representative. Speak with one moral voice on immigration policy — as a person of faith, not a partisan.</p>
+          <div class="init-footer"><span class="init-types">Civic Engagement · Policy</span><span class="init-link">Learn more →</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- UPCOMING EVENTS BY INITIATIVE -->
+    <div class="eye" style="margin-bottom:12px">Upcoming initiative events</div>
+    <div class="card-grid">
+      <div class="event-card" onclick="go('event-detail')"><div class="ebadges"><span class="ebadge" style="background:var(--fw-amber-lt);color:#4a4d5e">Pentecost Action</span><span class="ebadge" style="background:var(--fw-purple-lt);color:#333858">Prayer</span></div><h3>Pentecost Prayer Vigil — Houston</h3><div class="event-info">May 20 · 6:00 PM CT · In Person</div><div class="ebtns"><span class="ebtn ebtn-s">Details</span><span class="ebtn ebtn-p">Register</span></div></div>
+      <div class="event-card" onclick="go('events')"><div class="ebadges"><span class="ebadge" style="background:var(--fw-light);color:#333858">Court Accompaniment</span><span class="ebadge" style="background:var(--fw-navy-lt);color:#333858">Training</span></div><h3>Court Accompaniment Training Webinar</h3><div class="event-info">May 28 · 1:00 PM CT · Virtual</div><div class="ebtns"><span class="ebtn ebtn-s">Details</span><span class="ebtn ebtn-p">Register</span></div></div>
+      <div class="event-card" onclick="go('events')"><div class="ebadges"><span class="ebadge" style="background:var(--fw-amber-lt);color:#4a4d5e">Pentecost Action</span><span class="ebadge" style="background:var(--fw-coral-lt);color:#1f2130">Mobilization</span></div><h3>Pentecost Action Public Witness — Atlanta</h3><div class="event-info">May 24 · 10:00 AM ET · In Person</div><div class="ebtns"><span class="ebtn ebtn-s">Details</span><span class="ebtn ebtn-p">Register</span></div></div>
+    </div>
+  </div>
+  <footer class="footer"><div class="footer-quote">"For the flourishing of our neighbors and the integrity of our witness."</div><div class="footer-legal">Not legal advice. © 2025 Faithful Witness Campaign</div></footer>
+</div>
+
+<!-- ═══════════════════════════════════
+     INITIATIVE DETAIL — PENTECOST ACTION
+════════════════════════════════════ -->
+<div class="page" id="page-initiative-detail">
+  <div class="subnav"><span class="sna" onclick="go('initiatives')">All Initiatives</span><span class="sna on">Pentecost Action</span></div>
+  <div class="init-detail-hero">
+    <a class="back-link" onclick="go('initiatives')">← Back to Initiatives</a>
+    <div class="label">Initiative · May 15–24, 2025</div>
+    <h1>Pentecost Action</h1>
+    <p class="lead">We are called to wait, yet actively engage in prophetic witness that proclaims and demonstrates the goodness of God. During the 10 days between Ascension and Pentecost, congregations across the country are gathering to pray, lament, and commit themselves to public witness on immigration.</p>
+    <div class="hero-btns"><span class="btn btn-p" onclick="go('events')">Find an event near me →</span><span class="btn btn-o" onclick="go('resources')">Download resources</span></div>
+  </div>
+  <div class="scripture-band" style="background:rgba(204,153,102,.1);border-color:rgba(204,153,102,.4)">
+    <blockquote style="color:rgba(255,255,255,.7)">"But you will receive power when the Holy Spirit comes on you; and you will be my witnesses in Jerusalem, and in all Judea and Samaria, and to the ends of the earth."</blockquote>
+    <cite style="color:#8888a8">— Acts 1:8 NIV</cite>
+  </div>
+  <div class="sec">
+    <div class="eye">About this initiative</div>
+    <div class="sec-title">Ten days of prophetic presence.</div>
+    <p class="sec-sub">The Church has always understood the days between Ascension and Pentecost as a time of waiting — but not passive waiting. We wait with our hands open and our eyes on our neighbors.</p>
+    <div class="callout">Pentecost Action is not a campaign. It is a posture. It is the Church saying: in this moment, we will not look away. We will pray. We will show up. We will speak.</div>
+    <p style="font-size:13px;color:var(--text-2);line-height:1.9;margin-top:12px">From May 15 to May 24, the Faithful Witness Campaign is inviting congregations to observe these 10 days together — through prayer gatherings, court accompaniment, public witness, and a national mobilization event on Pentecost Sunday.</p>
+  </div>
+  <div class="sec cream">
+    <div class="eye">How to participate</div>
+    <div class="sec-title">There is a way in for every congregation.</div>
+    <p class="sec-sub">Whether your congregation is just beginning to engage or has been organizing for years, there is a way to participate in Pentecost Action.</p>
+    <div class="how-card"><div class="how-num">1</div><div class="how-body"><h4>Pray</h4><p>Use the Pentecost Action prayer guide in your Sunday service, small groups, or personal devotions during May 15–24. Pray for immigrant families, for your congregation's courage, and for your community.</p></div></div>
+    <div class="how-card"><div class="how-num">2</div><div class="how-body"><h4>Gather</h4><p>Host or attend a prayer gathering or vigil in your city during the 10 days. Find one near you on our events page — or register your own gathering on the network map.</p></div></div>
+    <div class="how-card"><div class="how-num">3</div><div class="how-body"><h4>Accompany</h4><p>Sign up to accompany an immigrant family to an immigration hearing during Pentecost Action week. No legal training required — just your presence and your willingness to show up.</p></div></div>
+    <div class="how-card"><div class="how-num">4</div><div class="how-body"><h4>Speak</h4><p>Contact your representative during Pentecost Action week. Add your name to the open letter. Use our letter-to-the-editor template to share your voice in your local paper.</p></div></div>
+    <div class="how-card"><div class="how-num">5</div><div class="how-body"><h4>Mobilize on Pentecost Sunday</h4><p>On May 24 — Pentecost Sunday — join public witness actions happening in cities across the country. Find a mobilization event near you or organize one in your community.</p></div></div>
+  </div>
+  <div class="sec">
+    <div class="eye">Resources for Pentecost Action</div>
+    <div class="sec-title">Everything you need to participate.</div>
+    <div class="feat-strip"><div class="feat-eye">Download and use freely</div><div class="feat-grid">
+      <div class="feat-card" onclick="go('resource-detail')"><span class="feat-type">Prayer Guide</span><h4>Pentecost Action Prayer Guide</h4><p>10-day guided prayer resource for individuals and congregations.</p><a class="feat-dl">Read online →</a></div>
+      <div class="feat-card" onclick="go('resource-detail')"><span class="feat-type">Sermon Outline</span><h4>Pentecost Action Sermon Outline</h4><p>For pastors preaching on faithful witness May 15–24.</p><a class="feat-dl">Read online →</a></div>
+      <div class="feat-card" onclick="go('resource-detail')"><span class="feat-type">Promo Material</span><h4>Bulletin Insert</h4><p>Print-ready insert for your congregation. English & Spanish.</p><a class="feat-dl">Download PDF →</a></div>
+      <div class="feat-card" onclick="go('resource-detail')"><span class="feat-type">Toolkit</span><h4>Court Accompaniment Checklist</h4><p>Step-by-step guide for accompanying families to hearings.</p><a class="feat-dl">Read online →</a></div>
+    </div></div>
+    <span class="btn btn-p btn-sm" onclick="go('resources')">See all related resources →</span>
+  </div>
+  <div class="sec cream">
+    <div class="eye">Events during Pentecost Action</div>
+    <div class="sec-title">Find an event near you.</div>
+    <div class="card-grid">
+      <div class="event-card" onclick="go('event-detail')"><div class="ebadges"><span class="ebadge" style="background:var(--fw-navy-lt);color:#333858">National</span><span class="ebadge" style="background:var(--fw-light);color:#333858">Gathering</span></div><h3>Pentecost Action National Gathering</h3><div class="event-info">May 18 · 7:00 PM CT · Online</div><div class="ebtns"><span class="ebtn ebtn-s" onclick="event.stopPropagation();go('event-detail')">Details</span><span class="ebtn ebtn-p">Register</span></div></div>
+      <div class="event-card" onclick="go('event-detail')"><div class="ebadges"><span class="ebadge" style="background:var(--fw-navy-lt);color:#333858">Local</span><span class="ebadge" style="background:var(--fw-purple-lt);color:#333858">Prayer</span></div><h3>Pentecost Prayer Vigil — Houston</h3><div class="event-info">May 20 · 6:00 PM CT · In Person</div><div class="ebtns"><span class="ebtn ebtn-s" onclick="event.stopPropagation();go('event-detail')">Details</span><span class="ebtn ebtn-p">Register</span></div></div>
+      <div class="event-card" onclick="go('events')"><div class="ebadges"><span class="ebadge" style="background:var(--fw-navy-lt);color:#333858">Local</span><span class="ebadge" style="background:var(--fw-coral-lt);color:#1f2130">Mobilization</span></div><h3>Pentecost Action Public Witness — Atlanta</h3><div class="event-info">May 24 · 10:00 AM ET · In Person</div><div class="ebtns"><span class="ebtn ebtn-s" onclick="event.stopPropagation();go('events')">Details</span><span class="ebtn ebtn-p">Register</span></div></div>
+    </div>
+    <div style="margin-top:14px"><span class="btn btn-p btn-sm" onclick="go('events')">See all Pentecost Action events →</span></div>
+  </div>
+  <div class="signup-band"><h3>Stay connected during Pentecost Action.</h3><p>We'll send you updates, event reminders, and daily prayer prompts throughout the 10 days.</p><div class="signup-form"><input class="full" placeholder="First name"/><input class="full" placeholder="Email address"/><button class="signup-btn">Join the Faithful Witness Campaign</button></div></div>
+  <footer class="footer"><div class="footer-quote">"For the flourishing of our neighbors and the integrity of our witness."</div><div class="footer-legal">Not legal advice. © 2025 Faithful Witness Campaign</div></footer>
+</div>
+
+<!-- ═══════════════════════════════════
+     RESOURCES
+════════════════════════════════════ -->
+<div class="page" id="page-resources">
+  <div class="subnav">
+    <span class="sna on" onclick="filterRes('all',this)">All Resources</span>
+    <span class="sna" onclick="filterRes('spiritual',this)">Spiritual Formation</span>
+    <span class="sna" onclick="filterRes('civic',this)">Civic Engagement</span>
+  </div>
+  <div class="hero" style="padding:40px 28px 32px">
+    <div class="hero-eye">Resource hub</div>
+    <h1>Read, learn, and act faithfully.</h1>
+    <p class="lead">All resources are free and available to read online. Download the PDF to print or share with your congregation.</p>
+  </div>
+  <div class="sec">
+    <div class="feat-strip"><div class="feat-eye">Start here — curated for this moment</div><div class="feat-grid">
+      <div class="feat-card" onclick="go('resource-detail')"><span class="feat-type">Tool · Know Your Rights</span><h4>Know Your Rights: Congregation Guide</h4><p>Essential legal information for churches supporting immigrant neighbors.</p><a class="feat-dl">Read online →</a></div>
+      <div class="feat-card" onclick="go('resource-detail')"><span class="feat-type">Toolkit · Accompaniment</span><h4>Court Accompaniment Checklist</h4><p>Prepare your congregation to accompany families to hearings.</p><a class="feat-dl">Read online →</a></div>
+      <div class="feat-card" onclick="go('initiative-detail')"><span class="feat-type">Sermon Outline · Pentecost</span><h4>Pentecost Action Sermon Outline</h4><p>For pastors preaching faithful witness May 15–24.</p><a class="feat-dl">Read online →</a></div>
+      <div class="feat-card" onclick="go('resource-detail')"><span class="feat-type">Prayer Guide · Formation</span><h4>Prayer for Uncertain Times</h4><p>Liturgy and practices for congregations navigating fear.</p><a class="feat-dl">Read online →</a></div>
+    </div></div>
+    <div class="filter-bar">
+      <div class="filter-row"><span class="flbl">Type:</span><span class="chip on" onclick="chipToggle(this)">All</span><span class="chip" onclick="chipToggle(this)">Tool</span><span class="chip" onclick="chipToggle(this)">Toolkit</span><span class="chip" onclick="chipToggle(this)">Article</span><span class="chip" onclick="chipToggle(this)">Manual</span><span class="chip" onclick="chipToggle(this)">Prayer guide</span><span class="chip" onclick="chipToggle(this)">Sermon outline</span><span class="chip" onclick="chipToggle(this)">Promo material</span></div>
+      <div class="filter-row" id="res-cat-row"><span class="flbl">Category:</span><span class="chip on" onclick="filterResCat('all',this)">All</span><span class="chip" id="chip-spiritual" onclick="filterResCat('spiritual',this)">Spiritual Formation</span><span class="chip" id="chip-civic" onclick="filterResCat('civic',this)">Civic Engagement</span></div>
+      <div class="filter-row"><span class="flbl">Role:</span><span class="chip on" onclick="chipToggle(this)">All</span><span class="chip" onclick="chipToggle(this)">Pastors</span><span class="chip" onclick="chipToggle(this)">Church leaders</span><span class="chip" onclick="chipToggle(this)">Congregation members</span><span class="chip" onclick="chipToggle(this)">Organizers</span></div>
+      <div class="filter-row"><span class="flbl">Initiative:</span><span class="chip on" onclick="chipToggle(this)">All</span><span class="chip" onclick="chipToggle(this)">Pentecost Action</span><span class="chip" onclick="chipToggle(this)">Court Accompaniment</span><span class="chip" onclick="chipToggle(this)">Know Your Rights</span><span class="chip" onclick="chipToggle(this)">Pastoral Care</span><span class="chip" onclick="chipToggle(this)">Policy Advocacy</span></div>
+    </div>
+    <div class="card-grid" id="res-grid">
+      <div class="res-card" data-cat="civic" onclick="go('resource-detail')"><div class="res-top" style="background:var(--fw-navy)"></div><div class="res-body"><div><span class="tag tg">Tool</span><span class="tag tc">Know Your Rights</span><span class="tag tb">Church Leaders</span></div><h3>Know Your Rights: Congregation Guide</h3><p>Essential legal information for churches walking alongside immigrant neighbors. Written for non-lawyers.</p><div class="res-footer"><span class="res-meta">PDF · 12 min read · EN/ES</span><span class="res-read">Read online →</span></div></div></div>
+      <div class="res-card" data-cat="civic" onclick="go('resource-detail')"><div class="res-top" style="background:var(--fw-navy-mid)"></div><div class="res-body"><div><span class="tag tp">Toolkit</span><span class="tag tc">Court Accompaniment</span></div><h3>Court Accompaniment Checklist</h3><p>Step-by-step preparation guide for congregants accompanying families to immigration hearings.</p><div class="res-footer"><span class="res-meta">PDF · 8 min read</span><span class="res-read">Read online →</span></div></div></div>
+      <div class="res-card" data-cat="spiritual" onclick="go('resource-detail')"><div class="res-top" style="background:#cc9966"></div><div class="res-body"><div><span class="tag ta">Prayer Guide</span><span class="tag tc">Spiritual Formation</span></div><h3>Prayer for Uncertain Times</h3><p>A guided prayer resource for congregations navigating fear and discernment around immigration.</p><div class="res-footer"><span class="res-meta">PDF · 15 min</span><span class="res-read">Read online →</span></div></div></div>
+      <div class="res-card" data-cat="spiritual" onclick="go('resource-detail')"><div class="res-top" style="background:var(--fw-navy-mid)"></div><div class="res-body"><div><span class="tag tc">Sermon Outline</span><span class="tag ta">Pentecost Action</span><span class="tag tb">Pastors</span></div><h3>Pentecost Action Sermon Outline</h3><p>A full sermon outline for pastors preaching faithful witness during Pentecost Action week, May 15–24.</p><div class="res-footer"><span class="res-meta">PDF · 10 min prep</span><span class="res-read">Read online →</span></div></div></div>
+      <div class="res-card" data-cat="civic" onclick="go('resource-detail')"><div class="res-top" style="background:var(--fw-navy)"></div><div class="res-body"><div><span class="tag tg">Article</span><span class="tag tc">Civic Engagement</span></div><h3>Understanding Due Process and Why It Matters</h3><p>A plain-language guide to due process rights and why they matter for immigrant families.</p><div class="res-footer"><span class="res-meta">Web · 7 min read</span><span class="res-read">Read →</span></div></div></div>
+      <div class="res-card" data-cat="spiritual" onclick="go('resource-detail')"><div class="res-top" style="background:#9a6e40"></div><div class="res-body"><div><span class="tag tr">Manual</span><span class="tag tc">Spiritual Formation</span><span class="tag tb">Pastors</span></div><h3>Pastoral Care Under Pressure</h3><p>A manual for pastors providing care to families experiencing stress related to immigration enforcement.</p><div class="res-footer"><span class="res-meta">PDF · 25 min read</span><span class="res-read">Read online →</span></div></div></div>
+      <div class="res-card" data-cat="civic" onclick="go('resource-detail')"><div class="res-top" style="background:#cc9966"></div><div class="res-body"><div><span class="tag ta">Promo Material</span><span class="tag ta">Pentecost Action</span></div><h3>Pentecost Action Bulletin Insert</h3><p>Ready-to-print bulletin insert introducing Pentecost Action to your congregation. English and Spanish.</p><div class="res-footer"><span class="res-meta">PDF · Print-ready</span><span class="res-read">Download →</span></div></div></div>
+      <div class="res-card" data-cat="civic" onclick="go('resource-detail')"><div class="res-top" style="background:var(--fw-navy)"></div><div class="res-body"><div><span class="tag tb">External Link</span><span class="tag tc">Know Your Rights</span></div><h3>ACLU Know Your Rights (English/Spanish)</h3><p>The ACLU's comprehensive Know Your Rights resource — recommended for directly affected neighbors.</p><div class="res-footer"><span class="res-meta">Web · External</span><span class="res-read">Visit →</span></div></div></div>
+    </div>
+  </div>
+  <footer class="footer"><div class="footer-quote">"For the flourishing of our neighbors and the integrity of our witness."</div><div class="footer-legal">Not legal advice. Automated translation provided for convenience — accuracy not guaranteed. © 2025 Faithful Witness Campaign</div></footer>
+</div>
+
+<!-- ═══════════════════════════════════
+     RESOURCE DETAIL
+════════════════════════════════════ -->
+<div class="page" id="page-resource-detail">
+  <div class="detail-wrap">
+    <a class="back-link" onclick="go('resources')">← Back to Resources</a>
+    <div style="margin-bottom:10px"><span class="tag tg">Tool</span><span class="tag tc">Know Your Rights</span><span class="tag tc">Civic Engagement</span><span class="tag tb">Church Leaders</span><span class="tag tb">Pastors</span></div>
+    <h1 class="detail-h1">Know Your Rights: A Congregation Guide</h1>
+    <div style="display:flex;align-items:center;gap:12px;margin:8px 0 14px;flex-wrap:wrap">
+      <span style="font-size:12px;color:var(--text-3)">12 min read</span><span style="color:var(--text-3)">·</span>
+      <span style="font-size:12px;color:var(--text-3)">English & Spanish</span><span style="color:var(--text-3)">·</span>
+      <span style="font-size:12px;color:var(--text-3)">Updated March 2025</span>
+    </div>
+    <p style="font-size:13.5px;color:var(--text-2);line-height:1.85;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border-light)">Essential legal information for churches walking alongside immigrant neighbors — covering rights during enforcement encounters, how to support detained individuals, and how congregations can be a source of safety and accurate information. Written for non-lawyers.</p>
+    <div class="download-bar"><p>Prefer to print or share? Download this resource as a formatted PDF — available in English and Spanish.</p><span class="btn btn-p btn-sm" style="white-space:nowrap;flex-shrink:0">Download PDF ↓</span></div>
+    <div class="toc">
+      <div class="toc-lbl">Contents</div>
+      <a>What are your rights?</a>
+      <a>If ICE comes to your door</a>
+      <a>Judicial vs. administrative warrants</a>
+      <a>If someone in your congregation is detained</a>
+      <a>How your congregation can help</a>
+      <a>Legal resources and referrals</a>
+    </div>
+    <div class="article-body">
+      <h2>What are your rights?</h2>
+      <p>Every person in the United States — regardless of immigration status — has constitutional rights. These include the right to remain silent, the right to refuse entry without a judicial warrant, and the right to speak with an attorney.</p>
+      <p>Understanding these rights is not about resisting law enforcement. It is about knowing the law so you and your neighbors can respond calmly, wisely, and without panic.</p>
+      <div class="callout">Key principle: Rights belong to people, not to their status. Every person made in the image of God has dignity, and that dignity is recognized in the law — even when our political moment suggests otherwise.</div>
+
+      <h2>If ICE comes to your door</h2>
+      <p>You have the right to remain silent. You do not have to open the door unless officers present a judicial warrant signed by a judge.</p>
+      <ul>
+        <li>Ask to see the warrant through the window or under the door before opening</li>
+        <li>An ICE administrative warrant (Form I-200 or I-205) does not give officers the right to enter your home</li>
+        <li>A judicial warrant, signed by a judge, does — know the difference</li>
+        <li>You can say: "I am exercising my right to remain silent and do not consent to a search."</li>
+      </ul>
+      <div class="img-ph"><span>[Infographic — "Judicial Warrant vs. Administrative Warrant: Know the Difference"]</span></div>
+
+      <h2>If someone in your congregation is detained</h2>
+      <p>The Church does not abandon its members at the gate of a detention center. Here is how your congregation can respond when someone is detained:</p>
+      <ul>
+        <li>Contact an immigration attorney or legal aid organization immediately</li>
+        <li>Accompany the family — do not let them navigate this alone</li>
+        <li>Document everything: time, date, what was said, badge numbers if visible</li>
+        <li>Alert your local organizing group or Faithful Witness contact</li>
+      </ul>
+
+      <h2>How your congregation can help</h2>
+      <p>Your church does not need to be a legal sanctuary to be a place of safety. Churches can be centers of accurate, calm, and reliable information.</p>
+      <ul>
+        <li>Host a Know Your Rights training with a legal partner — see our <a style="color:var(--fw-gold-dk)" onclick="go('initiatives')">Initiatives page</a></li>
+        <li>Keep a family preparedness card in your church bulletin</li>
+        <li>Train small group leaders to answer basic questions with confidence</li>
+        <li>Connect affected families with legal resources before a crisis happens</li>
+      </ul>
+    </div>
+    <div class="disclaimer"><strong>Legal disclaimer:</strong> This is not legal advice and does not establish an attorney-client relationship. For legal representation, contact one of the organizations in our resource directory or call your local immigration legal aid office.</div>
+    <div style="margin-top:24px">
+      <div class="eye" style="margin-bottom:12px">Related resources</div>
+      <div class="card-grid">
+        <div class="res-card" onclick="go('resource-detail')"><div class="res-top" style="background:var(--fw-navy-mid)"></div><div class="res-body"><div><span class="tag tp">Toolkit</span></div><h3>Court Accompaniment Checklist</h3><p>Step-by-step guide for accompanying families to hearings.</p><div class="res-footer"><span class="res-meta">PDF · 8 min</span><span class="res-read">Read →</span></div></div></div>
+        <div class="res-card" onclick="go('resource-detail')"><div class="res-top" style="background:#cc9966"></div><div class="res-body"><div><span class="tag ta">Prayer Guide</span></div><h3>Prayer for Uncertain Times</h3><p>Liturgy and practices for congregations navigating fear.</p><div class="res-footer"><span class="res-meta">PDF · 15 min</span><span class="res-read">Read →</span></div></div></div>
+        <div class="res-card" onclick="go('initiative-detail')"><div class="res-top" style="background:#cc9966"></div><div class="res-body"><div><span class="tag tc">Sermon Outline</span></div><h3>Pentecost Action Sermon Outline</h3><p>For pastors preaching faithful witness May 15–24.</p><div class="res-footer"><span class="res-meta">PDF · 10 min</span><span class="res-read">Read →</span></div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     MOVEMENTS
+════════════════════════════════════ -->
+<div class="page" id="page-movements">
+  <div class="hero">
+    <div class="hero-eye">The network</div>
+    <h1>You are not alone. Find faithful witnesses near you.</h1>
+    <p class="lead">Local organizing groups and partner organizations are working across the country. Connect, learn, and build together.</p>
+  </div>
+  <div class="sec">
+    <div class="eye">Local movement</div>
+    <div class="sec-title">Groups near you</div>
+    <p class="sec-sub">The map below shows local organizing groups in the Faithful Witness network. Click a pin for contact info and a link to their page.</p>
+    <div class="legend-row">
+      <div class="ld"><div class="ld-dot" style="background:#333858"></div>Local Church</div>
+      <div class="ld"><div class="ld-dot" style="background:var(--fw-gold)"></div>Organizing Group</div>
+    </div>
+    <div class="map-ph" style="height:200px"><span>[Interactive Leaflet.js map — color-coded pins, click for popup]</span></div>
+    <p style="font-size:12px;color:var(--text-3);margin-bottom:16px">Click a pin to learn more. Click a card to highlight it on the map.</p>
+    <div class="card-grid">
+      <div class="card" onclick="go('movement-detail')"><span class="tag tg">Local Church</span><h3>Lakeview Community Church — Chicago, IL</h3><p>Court accompaniment, Know Your Rights trainings, and food assistance in Chicago's Lakeview and Uptown neighborhoods.</p><a class="card-link">View page →</a></div>
+      <div class="card" onclick="go('movement-detail')"><span class="tag tp">Organizing Group</span><h3>Atlanta Faithful Witness — Atlanta, GA</h3><p>Organizing group coordinating church mobilization and public witness events across the Atlanta metro area.</p><a class="card-link">View page →</a></div>
+      <div class="card" onclick="go('movement-detail')"><span class="tag tg">Local Church</span><h3>Houston Northwest Church — Houston, TX</h3><p>Know Your Rights trainings, pastoral care, and hosting Pentecost Action events in Houston's northwest corridor.</p><a class="card-link">View page →</a></div>
+    </div>
+  </div>
+  <div class="sec cream">
+    <div class="eye">National movement</div>
+    <div class="sec-title">Partner organizations</div>
+    <p class="sec-sub">The national organizations leading the Faithful Witness network.</p>
+    <div class="partner-card"><h3><a href="https://ccda.org/" target="_blank" style="color:var(--text)">CCDA — Christian Community Development Association ↗</a></h3><p>A national network supporting community development, immigrant support, and church-based organizing across the country.</p></div>
+    <div class="partner-card"><h3><a href="https://www.nalec.org/" target="_blank" style="color:var(--text)">NaLEC — National Latino Evangelical Coalition ↗</a></h3><p>A national network of Latino evangelical leaders advancing immigration justice and church formation.</p></div>
+    <div class="partner-card"><h3><a href="https://undivided.us/" target="_blank" style="color:var(--text)">Undivided ↗</a></h3><p>A curriculum and movement helping churches navigate racial reconciliation and immigration — together, not divided.</p></div>
+    <div class="partner-card"><h3><a href="https://worldrelief.org/" target="_blank" style="color:var(--text)">World Relief ↗</a></h3><p>Refugee resettlement, immigrant integration, and church mobilization around immigration justice for over 80 years.</p></div>
+  </div>
+  <div class="sec">
+    <div class="sec-title">Add your group to the network</div>
+    <p class="sec-sub">Add your church or organizing group to the network map.</p>
+    <div style="border:1px solid var(--border);border-radius:10px;padding:18px">
+      <p style="font-size:13px;color:var(--text-2);margin-bottom:14px">Fill out the form below to register your church or group. We'll review your submission and add you to the network within 5 business days.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <input style="grid-column:1/-1;padding:9px 13px;border:1px solid var(--border);border-radius:6px;font-size:13px" placeholder="Organization name"/>
+        <input style="padding:9px 13px;border:1px solid var(--border);border-radius:6px;font-size:13px" placeholder="Contact person"/>
+        <input style="padding:9px 13px;border:1px solid var(--border);border-radius:6px;font-size:13px" placeholder="Email address"/>
+        <input style="padding:9px 13px;border:1px solid var(--border);border-radius:6px;font-size:13px" placeholder="City, State"/>
+        <select style="grid-column:1/-1;padding:9px 13px;border:1px solid var(--border);border-radius:6px;font-size:13px;color:var(--text-2)"><option>Organization type...</option><option>Local Church</option><option>Organizing Group</option></select>
+        <button class="btn btn-p" style="grid-column:1/-1;border:none;font-size:13px">Submit registration</button>
+      </div>
+    </div>
+  </div>
+  <footer class="footer"><div class="footer-quote">"For the flourishing of our neighbors and the integrity of our witness."</div><div class="footer-legal">Not legal advice. © 2025 Faithful Witness Campaign</div></footer>
+</div>
+
+<!-- ═══════════════════════════════════
+     MOVEMENT DETAIL
+════════════════════════════════════ -->
+<div class="page" id="page-movement-detail">
+  <div style="background:var(--fw-navy);padding:28px">
+    <a class="back-link" style="color:#8888a8" onclick="go('movements')">← Back to Movements</a>
+    <div style="margin-bottom:10px"><span class="tag tg">Local Church</span><span class="tag tc">Chicago, IL</span></div>
+    <h1 style="font-size:22px;font-weight:500;color:#ffffff;margin-bottom:6px;font-style:italic">Lakeview Community Church</h1>
+    <p style="font-size:13px;color:rgba(255,255,255,.72);line-height:1.7">A congregation in the Faithful Witness network — walking alongside immigrant neighbors in Chicago's Lakeview and Uptown neighborhoods.</p>
+  </div>
+  <div class="sec">
+    <div class="info-grid">
+      <div class="info-cell"><div class="info-lbl">Type</div><div class="info-val">Local Church</div></div>
+      <div class="info-cell"><div class="info-lbl">Location</div><div class="info-val">Chicago, IL</div></div>
+      <div class="info-cell"><div class="info-lbl">Contact</div><div class="info-val" style="color:var(--fw-navy)">pastor@lakeviewcc.org</div></div>
+      <div class="info-cell"><div class="info-lbl">Website</div><div class="info-val" style="color:var(--fw-navy)">lakeviewcc.org</div></div>
+    </div>
+    <div class="eye" style="margin-bottom:8px">Focus areas</div>
+    <div style="margin-bottom:18px"><span class="tag tg">Court Accompaniment</span><span class="tag tg">Know Your Rights</span><span class="tag ta">Food Assistance</span><span class="tag tp">Spiritual Formation</span></div>
+    <p style="font-size:13px;color:var(--text-2);line-height:1.85;margin-bottom:20px">Lakeview Community Church has been walking alongside immigrant neighbors in Chicago for over a decade. In 2025, they joined the Faithful Witness network to formalize their commitment to court accompaniment and Know Your Rights training. Their congregation includes first- and second-generation immigrants from Central America and East Africa, and their pastoral team is fluent in Spanish and Amharic.</p>
+    <div class="eye" style="margin-bottom:10px">Upcoming events at this location</div>
+    <div class="event-card" style="margin-bottom:16px" onclick="go('event-detail')">
+      <div class="ebadges"><span class="ebadge" style="background:var(--fw-amber-lt);color:#4a4d5e">In Person</span><span class="ebadge" style="background:var(--fw-navy-lt);color:#333858">Training</span></div>
+      <h3>Know Your Rights Training — Chicago</h3>
+      <div class="event-info">May 22, 2025 · 6:30 PM CT · Lakeview Community Church</div>
+      <div class="ebtns"><span class="ebtn ebtn-s" onclick="event.stopPropagation();go('event-detail')">Details</span><span class="ebtn ebtn-p">Register</span></div>
+    </div>
+    <div style="display:flex;gap:10px">
+      <span class="btn btn-p btn-sm">Contact this group</span>
+      <span class="btn btn-ghost btn-sm" onclick="go('movements')">View on map →</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     EVENTS
+════════════════════════════════════ -->
+<div class="page" id="page-events">
+  <div class="subnav">
+    <span class="sna on" onclick="filterEvt('all',this)">All Events</span>
+    <span class="sna" onclick="filterEvt('prayer',this)">Prayer</span>
+    <span class="sna" onclick="filterEvt('gathering',this)">Gatherings</span>
+    <span class="sna" onclick="filterEvt('training',this)">Training</span>
+    <span class="sna" onclick="filterEvt('meeting',this)">Meetings</span>
+    <span class="sna" onclick="filterEvt('mobilization',this)">Mobilization</span>
+  </div>
+  <div class="hero" style="padding:40px 28px 32px">
+    <div class="hero-eye">Events</div>
+    <h1>Come together. Learn, pray, and act.</h1>
+    <p class="lead">From prayer vigils to Know Your Rights trainings — find an event near you or join online.</p>
+  </div>
+  <div class="sec">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+      <div class="view-toggle"><button class="vtbtn on" onclick="toggleCal('list',this)">List view</button><button class="vtbtn" onclick="toggleCal('cal',this)">Calendar view</button></div>
+      <span style="font-size:12px;color:var(--text-3)">Showing May–June 2025</span>
+    </div>
+    <div class="filter-bar">
+      <div class="filter-row"><span class="flbl">Scale:</span><span class="chip on" onclick="chipToggle(this)">All</span><span class="chip" onclick="chipToggle(this)">National</span><span class="chip" onclick="chipToggle(this)">Local</span></div>
+      <div class="filter-row"><span class="flbl">Format:</span><span class="chip on" onclick="chipToggle(this)">All</span><span class="chip" onclick="chipToggle(this)">Virtual</span><span class="chip" onclick="chipToggle(this)">In Person</span></div>
+      <div class="filter-row"><span class="flbl">Type:</span><span class="chip on" id="evt-chip-all" onclick="filterEvtChip('all',this)">All</span><span class="chip" onclick="filterEvtChip('prayer',this)">Prayer</span><span class="chip" onclick="filterEvtChip('gathering',this)">Gatherings</span><span class="chip" onclick="filterEvtChip('training',this)">Training</span><span class="chip" onclick="filterEvtChip('meeting',this)">Meetings</span><span class="chip" onclick="filterEvtChip('mobilization',this)">Mobilization</span></div>
+    </div>
+
+    <!-- LIST -->
+    <div id="evt-list">
+      <div class="card-grid" id="evt-grid">
+        <div class="event-card" data-type="prayer" onclick="go('event-detail')"><div class="ebadges"><span class="ebadge" style="background:var(--fw-navy-lt);color:#333858">Local</span><span class="ebadge" style="background:var(--fw-amber-lt);color:#4a4d5e">In Person</span><span class="ebadge" style="background:var(--fw-purple-lt);color:#333858">Prayer</span></div><h3>Pentecost Prayer Vigil — Houston</h3><div class="event-info">May 20, 2025 · 6:00 PM CT<br>Houston Northwest Church</div><div class="ebtns"><span class="ebtn ebtn-s" onclick="event.stopPropagation();go('event-detail')">Details</span><span class="ebtn ebtn-p">Register</span></div></div>
+        <div class="event-card" data-type="gathering" onclick="go('event-detail')"><div class="ebadges"><span class="ebadge" style="background:var(--fw-navy-lt);color:#333858">National</span><span class="ebadge" style="background:var(--bg3);color:var(--text-2)">Virtual</span><span class="ebadge" style="background:var(--fw-light);color:#333858">Gathering</span></div><h3>Pentecost Action National Gathering</h3><div class="event-info">May 18, 2025 · 7:00 PM CT<br>Online — Zoom</div><div class="ebtns"><span class="ebtn ebtn-s" onclick="event.stopPropagation();go('event-detail')">Details</span><span class="ebtn ebtn-p">Register</span></div></div>
+        <div class="event-card" data-type="training" onclick="go('event-detail')"><div class="ebadges"><span class="ebadge" style="background:var(--fw-navy-lt);color:#333858">Local</span><span class="ebadge" style="background:var(--fw-amber-lt);color:#4a4d5e">In Person</span><span class="ebadge" style="background:var(--fw-navy-lt);color:#333858">Training</span></div><h3>Know Your Rights Training — Chicago</h3><div class="event-info">May 22, 2025 · 6:30 PM CT<br>Lakeview Community Church</div><div class="ebtns"><span class="ebtn ebtn-s" onclick="event.stopPropagation();go('event-detail')">Details</span><span class="ebtn ebtn-p">Register</span></div></div>
+        <div class="event-card" data-type="training" onclick="go('event-detail')"><div class="ebadges"><span class="ebadge" style="background:var(--fw-navy-lt);color:#333858">National</span><span class="ebadge" style="background:var(--bg3);color:var(--text-2)">Virtual</span><span class="ebadge" style="background:var(--fw-navy-lt);color:#333858">Training</span></div><h3>Court Accompaniment Training Webinar</h3><div class="event-info">May 28, 2025 · 1:00 PM CT<br>Online — Zoom</div><div class="ebtns"><span class="ebtn ebtn-s" onclick="event.stopPropagation();go('event-detail')">Details</span><span class="ebtn ebtn-p">Register</span></div></div>
+        <div class="event-card" data-type="meeting" onclick="go('event-detail')"><div class="ebadges"><span class="ebadge" style="background:var(--fw-navy-lt);color:#333858">National</span><span class="ebadge" style="background:var(--bg3);color:var(--text-2)">Virtual</span><span class="ebadge" style="background:var(--fw-amber-lt);color:#4a4d5e">Meeting</span></div><h3>Faithful Witness Orientation Webinar</h3><div class="event-info">June 3, 2025 · 12:00 PM CT<br>Online — Zoom</div><div class="ebtns"><span class="ebtn ebtn-s" onclick="event.stopPropagation();go('event-detail')">Details</span><span class="ebtn ebtn-p">Register</span></div></div>
+        <div class="event-card" data-type="mobilization" onclick="go('event-detail')"><div class="ebadges"><span class="ebadge" style="background:var(--fw-navy-lt);color:#333858">Local</span><span class="ebadge" style="background:var(--fw-amber-lt);color:#4a4d5e">In Person</span><span class="ebadge" style="background:var(--fw-coral-lt);color:#1f2130">Mobilization</span></div><h3>Pentecost Action Public Witness — Atlanta</h3><div class="event-info">May 24, 2025 · 10:00 AM ET<br>Centennial Olympic Park, Atlanta</div><div class="ebtns"><span class="ebtn ebtn-s" onclick="event.stopPropagation();go('event-detail')">Details</span><span class="ebtn ebtn-p">Register</span></div></div>
+      </div>
+    </div>
+
+    <!-- CALENDAR -->
+    <div id="evt-cal" style="display:none">
+      <div class="cal-wrap">
+        <div class="cal-hdr"><button class="cal-nav-btn">← Apr</button><span>May 2025</span><button class="cal-nav-btn">Jun →</button></div>
+        <div class="cal-grid">
+          <div class="cal-dh">Sun</div><div class="cal-dh">Mon</div><div class="cal-dh">Tue</div><div class="cal-dh">Wed</div><div class="cal-dh">Thu</div><div class="cal-dh">Fri</div><div class="cal-dh">Sat</div>
+          <div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day empty"></div>
+          <div class="cal-day"><div class="dn">1</div></div><div class="cal-day"><div class="dn">2</div></div><div class="cal-day"><div class="dn">3</div></div><div class="cal-day"><div class="dn">4</div></div>
+          <div class="cal-day"><div class="dn">5</div></div><div class="cal-day"><div class="dn">6</div></div><div class="cal-day"><div class="dn">7</div></div><div class="cal-day"><div class="dn">8</div></div><div class="cal-day"><div class="dn">9</div></div><div class="cal-day"><div class="dn">10</div></div><div class="cal-day"><div class="dn">11</div></div>
+          <div class="cal-day"><div class="dn">12</div></div><div class="cal-day"><div class="dn">13</div></div><div class="cal-day"><div class="dn">14</div></div><div class="cal-day"><div class="dn">15</div></div><div class="cal-day"><div class="dn">16</div></div><div class="cal-day"><div class="dn">17</div></div>
+          <div class="cal-day has" onclick="go('event-detail')"><div class="dn">18</div><div class="cal-event-pill" style="background:var(--fw-light);color:#333858">Pentecost Action National Gathering · 7:00 PM · Virtual</div></div>
+          <div class="cal-day"><div class="dn">19</div></div>
+          <div class="cal-day has" onclick="go('event-detail')"><div class="dn">20</div><div class="cal-event-pill" style="background:var(--fw-purple-lt);color:#333858">Pentecost Prayer Vigil — Houston · 6:00 PM · In Person</div></div>
+          <div class="cal-day"><div class="dn">21</div></div>
+          <div class="cal-day has" onclick="go('event-detail')"><div class="dn">22</div><div class="cal-event-pill" style="background:var(--fw-navy-lt);color:#333858">Know Your Rights Training — Chicago · 6:30 PM · In Person</div></div>
+          <div class="cal-day"><div class="dn">23</div></div>
+          <div class="cal-day has" onclick="go('event-detail')"><div class="dn">24</div><div class="cal-event-pill" style="background:var(--fw-coral-lt);color:#1f2130">Pentecost Action Public Witness — Atlanta · 10:00 AM · In Person</div></div>
+          <div class="cal-day"><div class="dn">25</div></div>
+          <div class="cal-day"><div class="dn">26</div></div><div class="cal-day"><div class="dn">27</div></div>
+          <div class="cal-day has" onclick="go('event-detail')"><div class="dn">28</div><div class="cal-event-pill" style="background:var(--fw-navy-lt);color:#333858">Court Accompaniment Training · 1:00 PM · Virtual</div></div>
+          <div class="cal-day"><div class="dn">29</div></div><div class="cal-day"><div class="dn">30</div></div><div class="cal-day"><div class="dn">31</div></div><div class="cal-day empty"></div>
+        </div>
+        <p style="font-size:11px;color:var(--text-3);margin-top:12px">Click any event to see full details and register.</p>
+      </div>
+    </div>
+  </div>
+  <footer class="footer"><div class="footer-quote">"For the flourishing of our neighbors and the integrity of our witness."</div><div class="footer-legal">Not legal advice. © 2025 Faithful Witness Campaign</div></footer>
+</div>
+
+<!-- ═══════════════════════════════════
+     EVENT DETAIL
+════════════════════════════════════ -->
+<div class="page" id="page-event-detail">
+  <div class="detail-wrap">
+    <a class="back-link" onclick="go('events')">← Back to Events</a>
+    <div style="margin-bottom:10px">
+      <span class="ebadge" style="background:var(--fw-navy-lt);color:#333858;font-size:11px;padding:3px 9px;border-radius:10px">Local</span>
+      <span class="ebadge" style="background:var(--fw-amber-lt);color:#4a4d5e;font-size:11px;padding:3px 9px;border-radius:10px;margin-left:5px">In Person</span>
+      <span class="ebadge" style="background:var(--fw-purple-lt);color:#333858;font-size:11px;padding:3px 9px;border-radius:10px;margin-left:5px">Prayer</span>
+      <span class="ebadge" style="background:var(--fw-light);color:#333858;font-size:11px;padding:3px 9px;border-radius:10px;margin-left:5px;cursor:pointer" onclick="go('initiative-detail')">Pentecost Action</span>
+    </div>
+    <h1 class="detail-h1">Pentecost Prayer Vigil — Houston</h1>
+    <p style="font-size:13.5px;color:var(--text-2);line-height:1.85;margin:8px 0 16px">A community prayer vigil held during Pentecost Action week — a time to gather, lament, and ask for the courage to be faithful witnesses in our city. Open to all.</p>
+    <div class="reg-banner">
+      <p>Registration is free. Space is limited — RSVP to help us prepare. Childcare available.</p>
+      <span class="btn btn-p" style="flex-shrink:0">Register now →</span>
+    </div>
+    <div class="meta-grid">
+      <div class="meta-cell"><div class="meta-lbl">Date</div><div class="meta-val">Tuesday, May 20, 2025</div></div>
+      <div class="meta-cell"><div class="meta-lbl">Time</div><div class="meta-val">6:00 – 8:00 PM CT</div></div>
+      <div class="meta-cell"><div class="meta-lbl">Location</div><div class="meta-val">Houston Northwest Church<br><span style="font-size:11px;color:var(--fw-navy)">19911 TX-249, Houston, TX</span></div></div>
+      <div class="meta-cell"><div class="meta-lbl">Hosted by</div><div class="meta-val" style="color:var(--fw-navy);cursor:pointer" onclick="go('movement-detail')">Houston Northwest Church</div></div>
+      <div class="meta-cell"><div class="meta-lbl">Part of</div><div class="meta-val" style="color:var(--fw-navy);cursor:pointer" onclick="go('initiative-detail')">Pentecost Action — May 15–24</div></div>
+      <div class="meta-cell"><div class="meta-lbl">Languages</div><div class="meta-val">English & Spanish</div></div>
+    </div>
+    <div class="map-ph"><span>[Embedded map — Houston Northwest Church, 19911 TX-249]</span></div>
+    <div class="article-body">
+      <h2>About this event</h2>
+      <p>During Pentecost Action week, congregations across the country are gathering to pray, lament, and commit themselves to faithful witness on immigration. This Houston vigil will include guided prayer, scripture, a time of lament, and a commissioning for those who will accompany families to immigration hearings in the weeks ahead.</p>
+      <p>The service will be bilingual (English and Spanish) and is open to all — whether you're a long-time advocate or attending your first event.</p>
+      <div class="callout">This event is part of <strong>Pentecost Action</strong> — a 10-day initiative calling evangelicals to prophetic presence and public witness around immigration. <span style="color:var(--fw-navy);cursor:pointer" onclick="go('initiative-detail')">Learn more about Pentecost Action →</span></div>
+    </div>
+    <div style="margin-top:22px">
+      <div class="eye" style="margin-bottom:12px">Other events this week</div>
+      <div class="card-grid">
+        <div class="event-card" onclick="go('event-detail')"><div class="ebadges"><span class="ebadge" style="background:var(--fw-navy-lt);color:#333858">National</span><span class="ebadge" style="background:var(--fw-light);color:#333858">Gathering</span></div><h3>Pentecost Action National Gathering</h3><div class="event-info">May 18 · 7:00 PM CT · Online</div><div class="ebtns"><span class="ebtn ebtn-s">Details</span><span class="ebtn ebtn-p">Register</span></div></div>
+        <div class="event-card" onclick="go('event-detail')"><div class="ebadges"><span class="ebadge" style="background:var(--fw-navy-lt);color:#333858">Local</span><span class="ebadge" style="background:var(--fw-coral-lt);color:#1f2130">Mobilization</span></div><h3>Pentecost Action Public Witness — Atlanta</h3><div class="event-info">May 24 · 10:00 AM ET · Atlanta</div><div class="ebtns"><span class="ebtn ebtn-s">Details</span><span class="ebtn ebtn-p">Register</span></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     JOIN US
+════════════════════════════════════ -->
+<div class="page" id="page-join">
+  <div class="hero">
+    <div class="hero-eye">Join us</div>
+    <h1>Faithful witness is not a solo act.</h1>
+    <p class="lead">There are three ways to participate in the Faithful Witness Campaign. Start where you are.</p>
+  </div>
+  <div class="sec">
+    <div class="path-card">
+      <div class="path-top" style="border-left:4px solid var(--fw-gold)">
+        <div class="path-num">01</div>
+        <h3>Be Part of a Local Movement</h3>
+        <p class="path-desc">Find a local organizing group or church in the Faithful Witness network and get connected to the people already working in your community.</p>
+      </div>
+      <div class="path-actions">
+        <div class="action-item"><div class="action-icon" style="background:var(--fw-light);color:#333858;font-size:16px">↗</div><div class="aib"><h4>Find a group near you</h4><p>Search the network map for local churches and organizing groups in your city.</p><span class="btn btn-p btn-sm" onclick="go('movements')">Explore the network →</span></div></div>
+        <div class="action-item"><div class="action-icon" style="background:var(--fw-light);color:#333858;font-size:18px">+</div><div class="aib"><h4>Register your church or group</h4><p>Already organizing? Add your church or group to the Faithful Witness network map.</p><span class="btn btn-ghost btn-sm" onclick="go('movements')">Add your group →</span></div></div>
+      </div>
+    </div>
+    <div class="path-card">
+      <div class="path-top" style="border-left:4px solid var(--fw-navy)">
+        <div class="path-num">02</div>
+        <h3>Be Equipped to Walk Alongside Others</h3>
+        <p class="path-desc">Access free resources, training, and toolkits to equip your congregation — from Know Your Rights to court accompaniment to pastoral care.</p>
+      </div>
+      <div class="path-actions">
+        <div class="action-item"><div class="action-icon" style="background:var(--fw-purple-lt);color:#333858;font-size:16px">⇩</div><div class="aib"><h4>Browse the resource hub</h4><p>Sermon outlines, prayer guides, legal guides, pastoral care manuals — all free, all digital.</p><span class="btn btn-p btn-sm" onclick="go('resources')">Browse resources →</span></div></div>
+        <div class="action-item"><div class="action-icon" style="background:var(--fw-purple-lt);color:#333858;font-size:16px">◆</div><div class="aib"><h4>Find a training or event</h4><p>Join a Know Your Rights training, court accompaniment workshop, or prayer gathering near you.</p><span class="btn btn-ghost btn-sm" onclick="go('events')">View events →</span></div></div>
+      </div>
+    </div>
+    <div class="path-card">
+      <div class="path-top" style="border-left:4px solid var(--fw-gold)">
+        <div class="path-num">03</div>
+        <h3>Be a Witness in the Public Square</h3>
+        <p class="path-desc">The Church has a voice in this moment. We are nonpartisan but not neutral — the Gospel makes moral demands, and our elected leaders need to hear from people of faith.</p>
+      </div>
+      <div class="path-actions">
+        <div class="eye" style="margin-bottom:12px">Our policy commitments</div>
+        <div class="policy-item"><h4>Human dignity for all people</h4><p>Every person is made in the image of God — imago Dei — regardless of citizenship status. Immigration policy must recognize this dignity, not strip it.</p></div>
+        <div class="policy-item"><h4>Due process and the rule of law</h4><p>We support a fair legal process for all people, including access to legal representation, impartial hearings, and protection from arbitrary detention.</p></div>
+        <div class="policy-item"><h4>Humanitarian protections</h4><p>We call on Congress and the Administration to uphold protections for asylum seekers, refugees, and those fleeing violence — consistent with U.S. law and our international obligations.</p></div>
+        <div class="policy-item"><h4>Family unity</h4><p>Policies that deliberately separate families are contrary to the biblical vision of family and community. We oppose them.</p></div>
+        <div class="policy-item"><h4>Nonviolence in enforcement</h4><p>We oppose the use of terror, intimidation, or disproportionate force as tools of immigration enforcement. Our neighbors deserve safety, not fear.</p></div>
+        <div class="eye" style="margin:16px 0 12px">How to advocate</div>
+        <div class="adv-step"><div class="adv-n">1</div><div class="adv-b"><h4>Contact your representatives</h4><p>Find your senators and representatives and tell them where you stand — as a person of faith, not a partisan.</p><span class="btn btn-p btn-sm">Find your rep →</span></div></div>
+        <div class="adv-step"><div class="adv-n">2</div><div class="adv-b"><h4>Add your name to the open letter</h4><p>Join pastors and church leaders calling on Congress to act with biblical values on immigration.</p><span class="btn btn-amber btn-sm">Sign the letter →</span></div></div>
+        <div class="adv-step"><div class="adv-n">3</div><div class="adv-b"><h4>Write a letter to the editor</h4><p>Your voice in your local paper — as a pastor or church member — carries weight. Use our template.</p><span class="btn btn-ghost btn-sm">Use the template →</span></div></div>
+        <div class="adv-step"><div class="adv-n">4</div><div class="adv-b"><h4>Share resources in your congregation</h4><p>Download our policy one-pager and bulletin insert to help your congregation understand where we stand and why.</p><span class="btn btn-ghost btn-sm" onclick="go('resources')">Download materials →</span></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="signup-band"><h3>Stay connected.</h3><p>Updates on initiatives, resources, and ways your congregation can take faithful action.</p><div class="signup-form"><input class="full" placeholder="First name"/><input class="full" placeholder="Email address"/><select class="full"><option>I am a pastor or church leader</option><option>I am a congregation member</option><option>I am directly affected</option><option>I am a community organizer</option><option>I am still discerning</option></select><button class="signup-btn">Join the Faithful Witness Campaign</button></div></div>
+</div>
+
+<!-- ═══════════════════════════════════
+     NEWS & STORIES
+════════════════════════════════════ -->
+<div class="page" id="page-stories">
+  <div class="subnav">
+    <span class="sna on" onclick="filterStory('all',this)">All</span>
+    <span class="sna" onclick="filterStory('story',this)">Stories</span>
+    <span class="sna" onclick="filterStory('media',this)">Media Coverage</span>
+    <span class="sna" onclick="filterStory('press',this)">Press Statements</span>
+  </div>
+  <div class="hero" style="padding:40px 28px 32px">
+    <div class="hero-eye">News & Stories</div>
+    <h1>What we have seen and heard.</h1>
+    <p class="lead">Impact stories from the movement, media coverage, and official statements from the Faithful Witness Campaign.</p>
+  </div>
+  <div class="sec">
+    <div id="story-sec">
+      <div class="eye" style="margin-bottom:12px">Stories from the movement</div>
+      <div class="card-grid" style="margin-bottom:18px">
+        <div class="story-card" onclick="go('story-detail')"><div class="story-type">Impact Story</div><h3>"We didn't know what to do. Then someone from our church showed up."</h3><p>A family from Guatemala describes what it meant to have a congregation member accompany them to their immigration hearing in Atlanta.</p><div class="story-meta"><span class="story-author">As told to Faithful Witness · March 2025</span><span class="story-lnk">Read →</span></div></div>
+        <div class="story-card"><div class="story-type">Impact Story</div><h3>A pastor learns to show up before he knows what to say</h3><p>Pastor Marcus Williams of New Hope Baptist in Chicago describes his church's journey from uncertainty to court accompaniment — and what changed his mind.</p><div class="story-meta"><span class="story-author">Marcus Williams · February 2025</span><span class="story-lnk">Read →</span></div></div>
+        <div class="story-card"><div class="story-type">Impact Story</div><h3>120 people showed up on a Tuesday night for a Know Your Rights training</h3><p>The room was full. The fear was real. And the Church was there. A report from the KYR training at Redeemer Church in Houston.</p><div class="story-meta"><span class="story-author">Faithful Witness · January 2025</span><span class="story-lnk">Read →</span></div></div>
+      </div>
+      <div class="share-cta"><h4>Has your congregation's story changed because of this work?</h4><p>We want to hear what you have seen and heard. Share your story with the Faithful Witness Campaign — with your permission, we may feature it here.</p><span class="btn btn-p btn-sm">Share your story →</span></div>
+    </div>
+    <div id="media-sec" style="margin-top:26px">
+      <div class="eye" style="margin-bottom:12px">Media coverage</div>
+      <div class="media-card"><div class="media-logo">CT</div><div><div class="media-pub">Christianity Today · March 2025</div><h3>Evangelical Coalition Calls for 'Faithful Witness' on Immigration</h3><p>A new initiative from CCDA, NaLEC, World Relief, and Undivided is asking evangelical churches to move beyond partisanship toward presence.</p></div></div>
+      <div class="media-card"><div class="media-logo">RNS</div><div><div class="media-pub">Religion News Service · February 2025</div><h3>Churches Across the Country Are Showing Up to Immigration Hearings</h3><p>Court accompaniment is becoming a quiet, persistent form of church witness in cities from Chicago to Atlanta.</p></div></div>
+      <div class="media-card"><div class="media-logo">NPR</div><div><div class="media-pub">NPR · January 2025</div><h3>What Does It Mean for a Church to be a 'Faithful Witness' on Immigration?</h3><p>An interview with Faithful Witness Campaign organizers on the theology and practice behind the movement.</p></div></div>
+    </div>
+    <div id="press-sec" style="margin-top:26px">
+      <div class="eye" style="margin-bottom:12px">Press statements</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="story-card" onclick="go('press-detail')"><div class="story-type">Press Statement · March 15, 2025</div><h3>Faithful Witness Campaign Statement on Recent Immigration Enforcement Actions</h3><p>The Faithful Witness Campaign calls on the Administration to uphold due process and human dignity in immigration enforcement — and calls the Church to bear witness.</p><div class="story-meta"><span class="story-author">Faithful Witness Campaign</span><span class="story-lnk">Read full statement →</span></div></div>
+        <div class="story-card"><div class="story-type">Press Statement · February 2, 2025</div><h3>A Statement on the Pentecost Action Initiative</h3><p>We are announcing a 10-day period of prophetic presence and action from May 15–24, calling evangelicals to move from formation to public witness.</p><div class="story-meta"><span class="story-author">Faithful Witness Campaign</span><span class="story-lnk">Read full statement →</span></div></div>
+      </div>
+      <div style="margin-top:18px;background:var(--bg2);border-radius:10px;padding:16px;border:1px solid var(--border)"><p style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:5px">Media inquiries</p><p style="font-size:12px;color:var(--text-2);margin-bottom:12px">Journalists and media professionals — use the form below to reach the Faithful Witness communications team.</p><span class="btn btn-ghost btn-sm">Submit a media inquiry →</span></div>
+    </div>
+  </div>
+  <footer class="footer"><div class="footer-quote">"For the flourishing of our neighbors and the integrity of our witness."</div><div class="footer-legal">Not legal advice. © 2025 Faithful Witness Campaign</div></footer>
+</div>
+
+<!-- ═══════════════════════════════════
+     ABOUT
+════════════════════════════════════ -->
+<div class="page" id="page-about">
+  <div class="hero" style="padding:44px 28px 36px">
+    <div class="hero-eye">About</div>
+    <h1>Who we are and why we're here.</h1>
+    <p class="lead">The Faithful Witness Campaign is a shared evangelical initiative committed to forming the Church for courageous, nonviolent, Gospel-rooted engagement around immigration at this moment.</p>
+  </div>
+  <div class="sec">
+    <div class="about-section">
+      <h2>Vision</h2>
+      <p>A Church that speaks with one moral voice — rooted in Scripture, shaped by relationship with those most affected, and courageous enough to act when silence would be easier.</p>
+    </div>
+    <div class="about-section">
+      <h2>Mission</h2>
+      <p>We are a shared evangelical initiative committed to forming the Church for courageous, nonviolent, Gospel-rooted engagement around immigration at this moment. Inspired by the witness of the early church, we seek to discern and move together to be faithful witnesses to what we have seen and heard.</p>
+    </div>
+    <div class="about-section">
+      <h2>What makes us distinct</h2>
+      <div class="distinctive"><h4>Formation-first</h4><p>Action without spiritual formation burns out. We prioritize the interior life of the Church because we believe faithful witness is formed before it is enacted.</p></div>
+      <div class="distinctive"><h4>Nonpartisan but not neutral</h4><p>We are not a political campaign. We are not aligned with any party. But the Gospel makes moral demands, and we will not pretend otherwise.</p></div>
+      <div class="distinctive"><h4>Centered on those most affected</h4><p>Our strategies are shaped by immigrant families, not just by advocates. We listen before we act, and we follow the leadership of those with the most at stake.</p></div>
+      <div class="distinctive"><h4>Equipping the local church</h4><p>Transformation starts in congregations. We exist to resource and support local churches, not to replace them or speak over them.</p></div>
+      <div class="distinctive"><h4>The Church as sanctuary</h4><p>Sacred spaces must remain places of refuge. We believe congregations can be centers of safety, accurate information, and pastoral care — regardless of their legal sanctuary status.</p></div>
+    </div>
+    <div class="about-section">
+      <h2>Partner organizations</h2>
+      <div class="partner-card"><h3>CCDA — Christian Community Development Association</h3><p>A national network supporting community development, immigrant support, and church-based organizing.</p></div>
+      <div class="partner-card"><h3>NaLEC — National Latino Evangelical Coalition</h3><p>A national network of Latino evangelical leaders advancing immigration justice and church formation.</p></div>
+      <div class="partner-card"><h3>Undivided</h3><p>A curriculum and movement helping churches navigate racial reconciliation and immigration — together, not divided.</p></div>
+      <div class="partner-card"><h3>World Relief</h3><p>Refugee resettlement, immigrant integration, and church mobilization around immigration justice for over 80 years.</p></div>
+    </div>
+    <div class="about-section">
+      <h2>Contact us</h2>
+      <div style="border:1px solid var(--border);border-radius:10px;padding:18px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <input style="padding:9px 13px;border:1px solid var(--border);border-radius:6px;font-size:13px" placeholder="Your name"/>
+          <input style="padding:9px 13px;border:1px solid var(--border);border-radius:6px;font-size:13px" placeholder="Email address"/>
+          <select style="grid-column:1/-1;padding:9px 13px;border:1px solid var(--border);border-radius:6px;font-size:13px;color:var(--text-2)"><option>Subject...</option><option>General inquiry</option><option>Media inquiry</option><option>Partnership</option><option>Join the network</option></select>
+          <textarea style="grid-column:1/-1;padding:9px 13px;border:1px solid var(--border);border-radius:6px;font-size:13px;height:100px;resize:vertical" placeholder="Your message"></textarea>
+          <button class="btn btn-p" style="grid-column:1/-1;border:none;font-size:13px">Send message</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <footer class="footer"><div class="footer-quote">"For the flourishing of our neighbors and the integrity of our witness."</div><div class="footer-grid"><div class="footer-col"><h5>Faithful Witness Campaign</h5><p>A Gospel-centered initiative equipping evangelical churches for courageous, nonviolent witness. A project of CCDA, NaLEC, World Relief, and Undivided.</p></div><div class="footer-col"><h5>Navigate</h5><a onclick="go('movements')">Movements</a><a onclick="go('initiatives')">Initiatives</a><a onclick="go('resources')">Resources</a><a onclick="go('events')">Events</a><a onclick="go('stories')">News & Stories</a><a onclick="go('join')">Join Us</a></div><div class="footer-col"><h5>Connect</h5><a onclick="go('join')">Join the campaign</a><a onclick="go('support')">Find support</a><a onclick="go('stories')">Share your story</a></div></div><div class="footer-legal">Not legal advice. Automated translation provided for convenience — accuracy not guaranteed. © 2025 Faithful Witness Campaign</div></footer>
+</div>
+
+<!-- ═══════════════════════════════════
+     FIND SUPPORT
+════════════════════════════════════ -->
+<div class="page" id="page-support">
+  <div class="subnav">
+    <span class="sna on">All</span>
+    <span class="sna">Basic Needs</span>
+    <span class="sna">Legal</span>
+    <span class="sna">Spiritual</span>
+    <span class="sna">Community</span>
+  </div>
+  <div class="hero" style="padding:40px 28px 32px">
+    <div class="hero-eye">Find support</div>
+    <h1>You are not alone.</h1>
+    <p class="lead">Whether you are facing a legal crisis, need food or transportation, are looking for spiritual care, or simply need someone to walk with you — we are here, and so is the Church.</p>
+  </div>
+  <div class="sec">
+    <div class="eye" style="margin-bottom:12px">Basic needs</div>
+    <div class="support-card"><h3>Food & Transportation Assistance</h3><p>Local churches in the Faithful Witness network offer food distribution and transportation assistance. Contact your nearest network partner to connect with services in your area.</p><span class="btn btn-p btn-sm" style="display:inline-block;margin-top:8px" onclick="go('movements')">Find a group near you →</span></div>
+    <div class="eye" style="margin:20px 0 12px">Legal information</div>
+    <div class="callout"><strong>Important:</strong> The Faithful Witness Campaign does not provide legal representation. The resources below are for general informational purposes only. For legal representation, please contact an immigration attorney or legal aid organization. This does not establish an attorney-client relationship.</div>
+    <div class="support-card"><h3>Know Your Rights Resources</h3><p>Access our Know Your Rights guides — covering rights during enforcement encounters, warrants, and how to prepare your family.</p><span class="btn btn-p btn-sm" style="display:inline-block;margin-top:8px" onclick="go('resource-detail')">Access resources →</span></div>
+    <div class="support-card"><h3>Legal Referrals</h3><p>Connect with immigration legal services through our partner organizations: NaLEC legal referral network, CCDA immigration legal support, World Relief immigration legal services.</p><span class="support-contact">Find legal help through our partners →</span></div>
+    <div class="eye" style="margin:20px 0 12px">Spiritual & pastoral care</div>
+    <div class="support-card"><h3>Pastoral Care & Counseling</h3><p>Local churches in the Faithful Witness network offer pastoral care and spiritual support for families navigating fear and uncertainty. You do not have to walk through this alone.</p><span class="btn btn-p btn-sm" style="display:inline-block;margin-top:8px" onclick="go('movements')">Find a church near you →</span></div>
+  </div>
+  <footer class="footer"><div class="footer-quote">"For the flourishing of our neighbors and the integrity of our witness."</div><div class="footer-legal">Not legal advice and does not establish an attorney-client relationship. © 2025 Faithful Witness Campaign</div></footer>
+</div>
+
+<!-- ═══════════════════════════════════
+     IMPACT STORY DETAIL
+════════════════════════════════════ -->
+<div class="page" id="page-story-detail">
+  <div class="detail-wrap">
+    <a class="back-link" onclick="go('stories')">← Back to News & Stories</a>
+    <div style="margin-bottom:10px">
+      <span class="tag" style="background:var(--fw-light);color:#333858">Impact Story</span>
+      <span class="tag tc">Court Accompaniment</span>
+      <span class="tag tc">Chicago, IL</span>
+    </div>
+    <h1 class="detail-h1">"We didn't know what to do. Then someone from our church showed up."</h1>
+    <div style="display:flex;align-items:center;gap:14px;margin:10px 0 20px;padding-bottom:18px;border-bottom:1px solid var(--border-light);flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--fw-light);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#333858">FW</div>
+        <div>
+          <div style="font-size:12px;font-weight:500;color:var(--text)">As told to Faithful Witness</div>
+          <div style="font-size:11px;color:var(--text-3)">March 2025 · 6 min read</div>
+        </div>
+      </div>
+    </div>
+    <div class="article-body">
+      <p style="font-size:15px;font-style:italic;color:var(--text-2);line-height:1.85;margin-bottom:22px;border-left:3px solid var(--fw-gold);padding-left:16px">The following is a story shared with the Faithful Witness Campaign with permission. Names have been changed to protect privacy.</p>
+
+      <p>Marisol had been in the United States for eleven years. Her three children — ages 7, 10, and 14 — were all born here. Her husband, Eduardo, had a work visa. She did not. When ICE came to their apartment on a Tuesday morning in January, she didn't know she had the right not to open the door.</p>
+
+      <p>She opened it.</p>
+
+      <p>Eduardo was detained. By 9 a.m., Marisol was sitting on the floor of her kitchen, her youngest child in her lap, her phone in her hand, and no idea who to call.</p>
+
+      <p>"I called the church office," she said. "Not because I thought they could do something. I just didn't know who else to call."</p>
+
+      <h2>The call that changed everything</h2>
+
+      <p>The pastor who answered that morning was new — he'd been at Lakeview Community Church for less than a year. He had attended one Faithful Witness training on court accompaniment in October. He had never accompanied anyone to a hearing.</p>
+
+      <p>"I told her I was coming," he said. "I didn't know what I was going to do when I got there. But I knew I wasn't going to let her sit on that floor alone."</p>
+
+      <p>When he arrived, he found Marisol and her three children, her neighbor, and two other women from the congregation who had heard the news and come on their own. Together, they contacted an immigration attorney through the NaLEC legal referral network. Together, they drove to the processing center.</p>
+
+      <p>"We sat in the parking lot for four hours," the pastor said. "We prayed. We called people. We waited. That is what accompaniment looks like — it's not dramatic. It's just not leaving."</p>
+
+      <h2>Eduardo came home</h2>
+
+      <p>Eduardo was released on bond three days later, with a hearing date scheduled for April. The congregation has since organized a court accompaniment team — five people who are prepared to go with Eduardo to every hearing until his case is resolved.</p>
+
+      <p>Marisol said the hardest part wasn't the fear. It was the sense of invisibility.</p>
+
+      <p>"When someone shows up — just shows up, with no agenda, just to be with you — you remember that you exist. That your family exists. That the Church sees you."</p>
+
+      <div class="callout">The Faithful Witness Campaign trains congregations for court accompaniment — because presence is witness. If your congregation wants to be equipped, visit our <a style="color:var(--fw-navy);cursor:pointer" onclick="go('initiatives')">Initiatives page</a> to learn how to get started.</div>
+
+      <h2>What this congregation learned</h2>
+      <p>In the weeks after, Lakeview Community Church hosted their first Know Your Rights training — 47 people attended, including neighbors who are not members of the congregation. They have since connected with three other families navigating similar circumstances.</p>
+      <p>"I used to think I needed to know what to say before I showed up," the pastor said. "I don't believe that anymore. You just have to show up."</p>
+    </div>
+
+    <div style="background:var(--bg2);border-radius:10px;padding:18px;margin-top:24px;border:1px solid var(--border)">
+      <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);margin-bottom:10px">Related resources</div>
+      <div class="card-grid">
+        <div class="res-card" onclick="go('resource-detail')"><div class="res-top" style="background:var(--fw-navy-mid)"></div><div class="res-body"><div><span class="tag tp">Toolkit</span></div><h3>Court Accompaniment Checklist</h3><p>Step-by-step guide for accompanying families to hearings.</p><div class="res-footer"><span class="res-meta">PDF · 8 min</span><span class="res-read">Read →</span></div></div></div>
+        <div class="res-card" onclick="go('resource-detail')"><div class="res-top" style="background:var(--fw-navy)"></div><div class="res-body"><div><span class="tag tg">Tool</span></div><h3>Know Your Rights: Congregation Guide</h3><p>Essential legal info for churches supporting immigrant neighbors.</p><div class="res-footer"><span class="res-meta">PDF · 12 min</span><span class="res-read">Read →</span></div></div></div>
+      </div>
+    </div>
+
+    <div class="share-cta" style="margin-top:16px">
+      <h4>Has your congregation's story changed because of this work?</h4>
+      <p>We want to hear what you have seen and heard. Share your story with the Faithful Witness Campaign — with your permission, we may feature it here.</p>
+      <span class="btn btn-p btn-sm">Share your story →</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     PRESS STATEMENT DETAIL
+════════════════════════════════════ -->
+<div class="page" id="page-press-detail">
+  <div class="detail-wrap">
+    <a class="back-link" onclick="go('stories')">← Back to News & Stories</a>
+    <div style="margin-bottom:10px">
+      <span class="tag ta">Press Statement</span>
+      <span class="tag tc">March 15, 2025</span>
+    </div>
+    <h1 class="detail-h1">Faithful Witness Campaign Statement on Recent Immigration Enforcement Actions</h1>
+    <div style="display:flex;align-items:center;gap:14px;margin:10px 0 20px;padding-bottom:18px;border-bottom:1px solid var(--border-light)">
+      <div>
+        <div style="font-size:12px;font-weight:500;color:var(--text)">Faithful Witness Campaign</div>
+        <div style="font-size:11px;color:var(--text-3)">March 15, 2025</div>
+      </div>
+    </div>
+    <div class="article-body">
+      <p style="font-size:13px;font-weight:500;color:var(--text-2);line-height:1.8;margin-bottom:20px;padding:14px 16px;background:var(--bg2);border-radius:8px;border-left:3px solid var(--fw-amber)">For immediate release. Media inquiries: contact the Faithful Witness Campaign communications team via the form on our <a style="color:var(--fw-navy);cursor:pointer" onclick="go('stories')">News & Stories page</a>.</p>
+
+      <p>The Faithful Witness Campaign — a shared evangelical initiative of CCDA, NaLEC, World Relief, and Undivided — issues the following statement in response to the escalation of immigration enforcement actions across the United States over the past several weeks.</p>
+
+      <p>We are deeply troubled by what we have seen and heard from the communities we serve. In cities across the country, immigrant families — many of them longtime members of evangelical congregations — are living in fear. Children are going to school not knowing if their parents will be home when they return. Pastors are receiving calls from families who have had doors broken down, fathers taken, mothers detained. We cannot be silent.</p>
+
+      <h2>What we believe</h2>
+
+      <p>We believe that every person is made in the image of God — imago Dei — and that this dignity does not expire at a border. We believe in due process, not because it is politically convenient, but because the biblical tradition has always held that the powerful may not arbitrarily deprive the vulnerable of liberty. We believe in family unity, because the destruction of families is not a policy — it is a wound.</p>
+
+      <p>We are nonpartisan. We are not aligned with any political party. We have called on administrations of both parties to uphold these values. We do so again now.</p>
+
+      <h2>What we are calling for</h2>
+
+      <p>We call on the Administration to:</p>
+
+      <ul>
+        <li>Immediately cease enforcement actions that separate parents from children</li>
+        <li>Ensure that all detained individuals have access to legal counsel before any proceeding</li>
+        <li>Respect the due process rights guaranteed to all persons under the U.S. Constitution, regardless of immigration status</li>
+        <li>Restore humanitarian protections for asylum seekers and those fleeing violence</li>
+        <li>Ensure that places of worship, schools, and hospitals are not sites of immigration enforcement</li>
+      </ul>
+
+      <p>We call on Congress to act — with bipartisan urgency — on comprehensive immigration reform that upholds human dignity, due process, and the rule of law. The Church has waited long enough for Congress to do its work.</p>
+
+      <p>We call on evangelical pastors and church leaders across the country to speak from their pulpits, to accompany their neighbors to court, to host Know Your Rights trainings in their fellowship halls, and to refuse the comfort of silence when their brothers and sisters in Christ are suffering.</p>
+
+      <h2>What the Church can do right now</h2>
+
+      <p>The Faithful Witness Campaign exists to equip and resource the Church for exactly this moment. We have resources for court accompaniment, pastoral care, Know Your Rights training, and policy advocacy — all free, all available now.</p>
+
+      <div class="callout">Visit our <a style="color:var(--fw-navy);cursor:pointer" onclick="go('resources')">Resource Hub</a> for Know Your Rights guides, court accompaniment checklists, and pastoral care manuals. Visit our <a style="color:var(--fw-navy);cursor:pointer" onclick="go('events')">Events page</a> for trainings and gatherings in your area. Visit our <a style="color:var(--fw-navy);cursor:pointer" onclick="go('join')">Join Us page</a> to add your name and contact your representative.</div>
+
+      <p>We do not know how long this season will last. We know that the Church has outlasted every empire that has tried to silence it. We know that Acts 4:20 was not written for a comfortable moment. And we know that we cannot help speaking about what we have seen and heard.</p>
+
+      <p style="font-style:italic;color:var(--text-2)">Issued jointly by the leadership of CCDA, NaLEC, World Relief, and Undivided on behalf of the Faithful Witness Campaign.</p>
+    </div>
+
+    <div style="margin-top:28px;background:var(--bg2);border-radius:10px;padding:16px;border:1px solid var(--border)">
+      <p style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:4px">Media inquiries</p>
+      <p style="font-size:12px;color:var(--text-2);margin-bottom:12px">Journalists and media professionals seeking comment, background, or interviews with Faithful Witness Campaign leadership — please use the form on our News & Stories page.</p>
+      <span class="btn btn-ghost btn-sm" onclick="go('stories')">Submit a media inquiry →</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     JS ROUTER
+════════════════════════════════════ -->
+<script>
+const NAV_LINKS = [
+  {id:'movements', label:'Movements'},
+  {id:'initiatives',label:'Initiatives'},
+  {id:'resources', label:'Resources'},
+  {id:'events',    label:'Events'},
+  {id:'stories',   label:'News & Stories'},
+];
+
+function buildNav(activeId) {
+  const nav = document.getElementById('global-nav');
+  nav.innerHTML = `<nav class="site-header">
+    <a class="logo" onclick="go('home')">
+      <div class="logo-mark">FW</div>
+      <span class="logo-text">Faithful Witness</span>
+    </a>
+    <div class="nav-row">
+      ${NAV_LINKS.map(l=>`<span class="nav-a${l.id===activeId?' active':''}" onclick="go('${l.id}')">${l.label}</span>`).join('')}
+      <span class="nav-cta${activeId==='join'?' active':''}" onclick="go('join')">Join Us</span>
+    </div>
+  </nav>`;
+}
+
+const PAGE_MAP = {
+  'home':'home','movements':'movements','movement-detail':'movements',
+  'initiatives':'initiatives','initiative-detail':'initiatives',
+  'resources':'resources','resource-detail':'resources',
+  'events':'events','event-detail':'events',
+  'join':'join','stories':'stories','support':'home',
+  'story-detail':'stories','press-detail':'stories'
+};
+
+function go(id) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  const pg = document.getElementById('page-'+id);
+  if(pg){
+    pg.classList.add('on');
+    buildNav(PAGE_MAP[id]||id);
+    window.scrollTo(0,0);
+  }
+}
+
+// Resources subnav filter — also syncs category chip
+function filterRes(cat, btn) {
+  document.querySelectorAll('#page-resources .subnav .sna').forEach(s=>s.classList.remove('on'));
+  btn.classList.add('on');
+  // sync category row chips
+  document.querySelectorAll('#res-cat-row .chip').forEach(c=>c.classList.remove('on'));
+  const chipMap = {all:'#res-cat-row .chip:first-of-type', spiritual:'#chip-spiritual', civic:'#chip-civic'};
+  const target = document.querySelector(cat==='all' ? '#res-cat-row .chip' : '#chip-'+cat);
+  if(target) target.classList.add('on');
+  applyResFilter(cat);
+}
+
+// Category chip filter — also syncs subnav
+function filterResCat(cat, btn) {
+  document.querySelectorAll('#res-cat-row .chip').forEach(c=>c.classList.remove('on'));
+  btn.classList.add('on');
+  // sync subnav
+  document.querySelectorAll('#page-resources .subnav .sna').forEach(s=>{
+    s.classList.remove('on');
+    const lbl = s.textContent.trim().toLowerCase();
+    if((cat==='all' && lbl==='all resources') || (cat==='spiritual' && lbl==='spiritual formation') || (cat==='civic' && lbl==='civic engagement')) s.classList.add('on');
+  });
+  applyResFilter(cat);
+}
+
+function applyResFilter(cat) {
+  document.querySelectorAll('#res-grid .res-card').forEach(c=>{
+    c.style.display=(cat==='all'||c.dataset.cat===cat)?'flex':'none';
+  });
+}
+
+// Events subnav filter (also syncs chips)
+function filterEvt(type,btn) {
+  document.querySelectorAll('#page-events .subnav .sna').forEach(s=>s.classList.remove('on'));
+  btn.classList.add('on');
+  // Sync the chips
+  document.querySelectorAll('#page-events .filter-row:last-child .chip').forEach(c=>{
+    c.classList.remove('on');
+    if((type==='all'&&c.textContent.trim()==='All')||(c.textContent.trim().toLowerCase()===type)){
+      c.classList.add('on');
+    }
+  });
+  applyEvtFilter(type);
+}
+
+// Events chips filter (also syncs subnav)
+function filterEvtChip(type,btn) {
+  document.querySelectorAll('#page-events .filter-row:last-child .chip').forEach(c=>c.classList.remove('on'));
+  btn.classList.add('on');
+  // Sync the subnav
+  document.querySelectorAll('#page-events .subnav .sna').forEach(s=>{
+    s.classList.remove('on');
+    const label = s.textContent.trim().toLowerCase();
+    if((type==='all'&&label==='all events')||(label===type)||(type==='gathering'&&label==='gatherings')||(type==='meeting'&&label==='meetings')){
+      s.classList.add('on');
+    }
+  });
+  applyEvtFilter(type);
+}
+
+function applyEvtFilter(type) {
+  document.querySelectorAll('#evt-grid .event-card').forEach(c=>{
+    c.style.display=(type==='all'||c.dataset.type===type)?'block':'none';
+  });
+}
+
+// Cal toggle
+function toggleCal(view,btn) {
+  document.querySelectorAll('.vtbtn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('evt-list').style.display=view==='list'?'block':'none';
+  document.getElementById('evt-cal').style.display=view==='cal'?'block':'none';
+}
+
+// Stories filter
+function filterStory(type,btn) {
+  document.querySelectorAll('#page-stories .subnav .sna').forEach(s=>s.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('story-sec').style.display=(type==='all'||type==='story')?'block':'none';
+  document.getElementById('media-sec').style.display=(type==='all'||type==='media')?'block':'none';
+  document.getElementById('press-sec').style.display=(type==='all'||type==='press')?'block':'none';
+}
+
+// Generic chip toggle
+function chipToggle(btn) {
+  const row = btn.closest('.filter-row');
+  row.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));
+  btn.classList.add('on');
+}
+
+// Init
+buildNav('home');
+</script>
+</body>
+</html>
